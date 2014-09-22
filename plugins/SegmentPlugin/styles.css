@@ -1,0 +1,19 @@
+<style type="text/css">
+.segment select {
+    width: auto;
+}
+.segment-block {
+    display: inline-block;
+    margin: 0px 15px 15px 0px;
+}
+selfclear:after {
+    clear: both
+}
+ul {
+    list-style: none outside none;
+}
+input[type="text"] {
+    display: inline;
+}
+</style>
+
