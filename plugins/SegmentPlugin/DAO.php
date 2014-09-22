@@ -94,7 +94,7 @@ END
         }
             
         $sql = <<<END
-            SELECT id AS userid
+            SELECT id
             FROM {$this->tables['user']}
             WHERE email $op '$value'
 END;
@@ -108,7 +108,7 @@ END;
             : ($operator == 'before' ? '<' : '>');
             
         $sql = <<<END
-            SELECT id AS userid
+            SELECT id
             FROM {$this->tables['user']}
             WHERE entered $op '$value'
 END;
@@ -119,7 +119,7 @@ END;
     {
         $op = $operator == 'opened' ? 'IS NOT NULL' : 'IS NULL';
         $sql = <<<END
-            SELECT um.userid
+            SELECT um.userid AS id
             FROM {$this->tables['usermessage']} um
             WHERE um.viewed $op
             AND um.messageid = $value
@@ -152,10 +152,10 @@ END;
         }
             
         $sql = <<<END
-            SELECT userid
-            FROM {$this->tables['user_attribute']}
-            WHERE attributeid = $attributeId 
-            AND COALESCE(value, '') $op '$target'
+            SELECT id
+            FROM {$this->tables['user']} u
+            LEFT JOIN {$this->tables['user_attribute']} ua ON u.id = ua.userid AND ua.attributeid = $attributeId 
+            WHERE COALESCE(value, '') $op '$target'
 END;
         return $sql;
     }
@@ -164,7 +164,7 @@ END;
     {
         $op = $operator == 'is' ? '=' : '!=';
         $sql = <<<END
-            SELECT id AS userid
+            SELECT id
             FROM {$this->tables['user']} u
             LEFT JOIN {$this->tables['user_attribute']} ua ON u.id = ua.userid AND ua.attributeid = $attributeId 
             WHERE COALESCE(value, 0) $op $target
@@ -178,7 +178,7 @@ END;
         $op = $operator == 'is' ? '=' 
             : ($operator == 'before' ? '<' : '>');
         $sql = <<<END
-            SELECT id AS userid
+            SELECT id
             FROM {$this->tables['user']} u
             LEFT JOIN {$this->tables['user_attribute']} ua  ON u.id = ua.userid AND ua.attributeid = $attributeId 
             WHERE COALESCE(value, '') != '' AND COALESCE(value, '') $op '$target'
@@ -190,7 +190,7 @@ END;
     {
         $op = $operator == 'is' ? '=' : '!=';
         $sql = <<<END
-            SELECT id AS userid
+            SELECT id
             FROM {$this->tables['user']} u
             LEFT JOIN {$this->tables['user_attribute']} ua ON u.id = ua.userid AND ua.attributeid = $attributeId 
             WHERE COALESCE(value, '') $op 'on'
@@ -205,13 +205,13 @@ END;
 
         foreach (array_slice($subquery, 1) as $s) {
             ++$n;
-            $from .= "JOIN ($s) AS T$n ON T0.userid = T$n.userid\n";
+            $from .= "JOIN ($s) AS T$n ON T0.id = T$n.id\n";
         }
         $sql = <<<END
-            SELECT T0.userid AS userid
+            SELECT T0.id AS id
             FROM $from
 END;
-        return $this->dbCommand->queryColumn($sql, 'userid');
+        return $this->dbCommand->queryColumn($sql, 'id');
     }
 
 //~ (SELECT id FROM `phplist_user_user`
