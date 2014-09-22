@@ -47,7 +47,7 @@ class SegmentPlugin extends phplistPlugin
           'allowempty' => 0,
           'min' => 4,
           'max' => 25,
-          'category'=> 'Criteria',
+          'category'=> 'Segmentation',
         )
     );
 
@@ -76,7 +76,7 @@ class SegmentPlugin extends phplistPlugin
         $dao->deleteNotSent($campaign);
     }
 
-    private function loadSubscribers(array $conditions)
+    private function loadSubscribers($messageId, array $conditions)
     {
         global $plugins;
         include_once $plugins['CommonPlugin']->coderoot . 'Autoloader.php';
@@ -92,7 +92,7 @@ class SegmentPlugin extends phplistPlugin
         }
 
         if (count($subquery) > 0) {
-            $this->selectedSubscribers = array_flip($dao->subscribers($subquery));
+            $this->selectedSubscribers = array_flip($dao->subscribers($messageId, $subquery));
         }
     }
 
@@ -103,7 +103,7 @@ class SegmentPlugin extends phplistPlugin
             ? file_get_contents($f)
             : '';
         parent::__construct();
-        $this->campaignListMax = getConfig('criteria_campaign_max');
+        $this->campaignListMax = getConfig('segment_campaign_max');
     }
 
     public function adminmenu()
@@ -111,7 +111,7 @@ class SegmentPlugin extends phplistPlugin
         return array();
     }
 
-    public function sendMessageTab($messageid, $data)
+    public function sendMessageTab($messageId, $data)
     {
         error_reporting(-1);
         global $plugins, $pagefooter;
@@ -128,6 +128,7 @@ class SegmentPlugin extends phplistPlugin
             if (isset($data['segment']['c'])) {
                 $conditions = array_values($this->filterEmptyFields($data['segment']['c']));
                 $this->loadSubscribers(
+                    $messageId,
                     $this->filterIncompleteConditions($data['segment']['c'])
                 );
             } else {
@@ -227,7 +228,7 @@ END;
     {
         error_reporting(-1);
 
-        if ($this->firstTime === true) {
+        if ($this->firstTime) {
             $this->firstTime = false;
 
             if (isset($messageData['segment']['c'])) {
@@ -235,7 +236,7 @@ END;
 
                 if (count($conditions) > 0) {
                     $this->noConditions = false;
-                    $this->loadSubscribers($this->filterIncompleteConditions($conditions));
+                    $this->loadSubscribers($messageData['id'], $this->filterIncompleteConditions($conditions));
                 }
             }
         }

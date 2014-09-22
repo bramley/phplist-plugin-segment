@@ -198,18 +198,22 @@ END;
         return $sql;
     }
 
-    public function subscribers(array $subquery)
+    public function subscribers($messageId, array $subquery)
     {
-        $from = "($subquery[0]) AS T0\n";
-        $n = 0;
+        $join = '';
 
-        foreach (array_slice($subquery, 1) as $s) {
-            ++$n;
-            $from .= "JOIN ($s) AS T$n ON T0.id = T$n.id\n";
+        foreach ($subquery as $n => $s) {
+            $join .= "JOIN ($s) AS T$n ON u.id = T$n.id\n";
         }
         $sql = <<<END
-            SELECT T0.id AS id
-            FROM $from
+            SELECT DISTINCT u.id
+            FROM {$this->tables['user']} u
+            JOIN {$this->tables['listuser']} lu ON u.id = lu.userid
+            JOIN {$this->tables['listmessage']} lm ON lm.listid = lu.listid AND lm.messageid = $messageId
+            LEFT JOIN {$this->tables['usermessage']} um ON um.userid = u.id AND um.messageid = $messageId
+            $join
+            WHERE confirmed = 1 AND blacklisted = 0
+            AND COALESCE(um.status, 'not sent') = 'not sent'
 END;
         return $this->dbCommand->queryColumn($sql, 'id');
     }
