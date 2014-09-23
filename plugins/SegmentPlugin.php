@@ -37,7 +37,7 @@ class SegmentPlugin extends phplistPlugin
 
     public $name = "Segmentation";
     public $authors = 'Duncan Cameron';
-    public $description = 'Use custom criteria to segment message';
+    public $description = 'Send to a subset of subscribers using custom conditions';
     public $settings = array(
         'segment_campaign_max' => array (
           'description' => 'The maximum number of earlier campaigns to select from',
@@ -87,7 +87,12 @@ class SegmentPlugin extends phplistPlugin
         foreach ($conditions as $i => $c) {
             $field = $c['field'];
             $condition = $cf->createCondition($field);
-            $subquery[] = $condition->subquery($c['op'], isset($c['value']) ? $c['value'] : '');
+
+            try {
+                $subquery[] = $condition->subquery($c['op'], isset($c['value']) ? $c['value'] : '');
+            } catch (SegmentPlugin_ValueException $e) {
+                // do nothing
+            }
         }
 
         if (count($subquery) > 0) {

@@ -49,10 +49,14 @@ class SegmentPlugin_AttributeConditionDate extends SegmentPlugin_AttributeCondit
 
     public function subquery($op, $value)
     {
+        if (!$value) {
+            throw new SegmentPlugin_ValueException;
+        }
+
         try {
             $target = new DateTime($value);
         } catch (Exception $e) {
-            $target = new DateTime();
+            throw new SegmentPlugin_ValueException;
         }
         return $this->dao->dateSubquery($this->attribute['id'], $op, $target->format('Y-m-d'));
     }

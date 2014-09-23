@@ -54,6 +54,9 @@ class SegmentPlugin_SubscriberConditionActivity extends SegmentPlugin_Subscriber
 
     public function subquery($op, $value)
     {
-        return $this->dao->activitySubquery($op, ctype_digit($value) ? $value : 0);
+        if (!ctype_digit($value)) {
+            throw new SegmentPlugin_ValueException;
+        }
+        return $this->dao->activitySubquery($op, $value);
     }
 }

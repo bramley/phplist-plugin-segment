@@ -50,6 +50,9 @@ class SegmentPlugin_AttributeConditionSelect extends SegmentPlugin_AttributeCond
 
     public function subquery($op, $value)
     {
-        return $this->dao->selectSubquery($this->attribute['id'], $op, ctype_digit($value) ? $value : 0);
+        if (!ctype_digit($value)) {
+            throw new SegmentPlugin_ValueException;
+        }
+        return $this->dao->selectSubquery($this->attribute['id'], $op, $value);
     }
 }
