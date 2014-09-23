@@ -34,7 +34,6 @@ class SegmentPlugin extends phplistPlugin
 
     private $selectedSubscribers = array();
     private $noConditions = true;
-    private $firstTime = true;
 
     public $name = "Segmentation";
     public $authors = 'Duncan Cameron';
@@ -209,14 +208,7 @@ END;
 
     public function messageQueued($id)
     {
-        error_reporting(-1);
         $this->deleteNotSent($id);
-
-        //$messageData = loadMessageData($id);
-        //$this->loadSubscribers(
-            //$this->filterIncompleteConditions($messageData['segment']['c'])
-        //);
-
     }
 
     public function messageReQueued($id)
@@ -224,23 +216,25 @@ END;
         $this->messageQueued($id);
     }
 
-    public function canSend($messageData, $userData)
+    public function campaignStarted($messageData)
     {
-        error_reporting(-1);
+        $er = error_reporting(-1);
+        $this->noConditions = true;
+        $this->selectedSubscribers = array();
 
-        if ($this->firstTime) {
-            $this->firstTime = false;
+        if (isset($messageData['segment']['c'])) {
+            $conditions = $this->filterIncompleteConditions($messageData['segment']['c']);
 
-            if (isset($messageData['segment']['c'])) {
-                $conditions = $this->filterIncompleteConditions($messageData['segment']['c']);
-
-                if (count($conditions) > 0) {
-                    $this->noConditions = false;
-                    $this->loadSubscribers($messageData['id'], $this->filterIncompleteConditions($conditions));
-                }
+            if (count($conditions) > 0) {
+                $this->noConditions = false;
+                $this->loadSubscribers($messageData['id'], $conditions);
             }
         }
+        error_reporting($er);
+    }
 
+    public function canSend($messageData, $userData)
+    {
         if ($this->noConditions) {
             return true;
         }
