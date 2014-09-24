@@ -35,6 +35,9 @@ class SegmentPlugin extends phplistPlugin
     private $selectedSubscribers = array();
     private $noConditions = true;
 
+/*
+ *  Inherited variables
+ */
     public $name = "Segmentation";
     public $authors = 'Duncan Cameron';
     public $description = 'Send to a subset of subscribers using custom conditions';
@@ -50,6 +53,9 @@ class SegmentPlugin extends phplistPlugin
         )
     );
 
+/*
+ *  Private methods
+ */
     private function filterEmptyFields(array $conditions)
     {
         return array_filter(
@@ -100,6 +106,9 @@ class SegmentPlugin extends phplistPlugin
         }
     }
 
+/*
+ *  Public methods
+ */
     public function __construct()
     {
         $this->coderoot = dirname(__FILE__) . '/' . __CLASS__ . '/';
@@ -107,7 +116,6 @@ class SegmentPlugin extends phplistPlugin
             ? file_get_contents($f)
             : '';
         parent::__construct();
-        $this->campaignListMax = getConfig('segment_campaign_max');
     }
 
     public function adminmenu()
@@ -126,24 +134,15 @@ class SegmentPlugin extends phplistPlugin
 
         include_once $plugins['CommonPlugin']->coderoot . 'Autoloader.php';
 
-        try {
-            $cf = new SegmentPlugin_ConditionFactory();
+        $cf = new SegmentPlugin_ConditionFactory();
 
-            if (isset($data['segment']['c'])) {
-                $conditions = array_values($this->filterEmptyFields($data['segment']['c']));
-                $this->loadSubscribers(
-                    $messageId,
-                    $this->filterIncompleteConditions($data['segment']['c'])
-                );
-            } else {
-                $conditions = array();
-            }
-            $conditions[] = array('field' => '');
-            $area = '';
-        } catch (Exception $e) {
-            echo $e->getTraceAsString();
-            return '';
+        if (isset($data['segment']['c'])) {
+            $conditions = array_values($this->filterEmptyFields($data['segment']['c']));
+        } else {
+            $conditions = array();
         }
+        $conditions[] = array('field' => '');
+        $conditionArea = '';
 
         foreach ($conditions as $i => $c) {
             $fieldList = CHtml::dropDownList(
@@ -158,48 +157,69 @@ class SegmentPlugin extends phplistPlugin
                     'onchange' => 'this.form.submit()',
                 )
             );
+            // hidden input to detect when field changes
+            $hiddenField = CHtml::hiddenField(
+                "segment[c][$i][_field]",
+                $c['field']
+            );
             $field = $c['field'];
 
             if ($field != '') {
                 $condition = $cf->createCondition($field);
+                $operators = $condition->operators();
+
+                if ($field == $c['_field'] && isset($c['op'])) {
+                    $op = $c['op'];
+                } else {
+                    $op = key($operators);
+                }
                 $operatorList = CHtml::dropDownList(
                     "segment[c][$i][op]",
-                    isset($c['op']) ? $c['op'] : '',
-                    $condition->operators(),
-                    array('onchange' => 'this.form.submit()')
+                    $op,
+                    $operators
                 );
-                $value = isset($c['value']) ? $c['value'] : '';
+
+                if ($field == $c['_field'] && isset($c['value'])) {
+                    $value = $c['value'];
+                } else {
+                    $value = '';
+                }
                 $valueInput = $condition->valueEntry($value, "segment[c][$i]");
             } else {
                 $operatorList = '';
                 $valueInput = '';
             }
-            $area .= <<<END
+            $conditionArea .= <<<END
         <li class="selfclear">
-        <div class="segment-block">$fieldList</div>
+        <div class="segment-block">$fieldList$hiddenField</div>
         <div class="segment-block">$operatorList</div>
         <div class="segment-block">$valueInput</div>
         </li>
 END;
         }
-        $calculateButton = new CommonPlugin_PageLink(
-            (string) new CommonPlugin_PageURL($_GET['page'], array('id' => $_GET['id'], 'tab' => $_GET['tab'])),
-            'Recalculate',
-            array('class' => 'button savechanges')
+        $calculateButton = CHtml::submitButton('Calculate',
+            array('name' => 'segment[calculate]')
         );
-        $subscribers = count($this->selectedSubscribers);
+
+        if (isset($data['segment']['calculate'])) {
+            $this->loadSubscribers(
+                $messageId,
+                $this->filterIncompleteConditions($data['segment']['c'])
+            );
+            $subscribers = count($this->selectedSubscribers) . ' subscribers will be selected';
+        } else {
+            $subscribers = '';
+        }
         $html = file_get_contents($this->coderoot . '/styles.css');
         $html .= <<<END
 <div class="segment">
-    <div>
-        <p>Select one or more subscriber fields or attributes.
-        The campaign will be sent only to those subscribers who match all of the conditions.
-        <br/>To remove a condition, choose 'Select ...' from the drop-down list.
-        </p>
-        <ul>$area
-        </ul>
-        <p id="recalculate">$calculateButton $subscribers subscribers will be selected</p>
-    </div>
+    <p>Select one or more subscriber fields or attributes.
+    The campaign will be sent only to those subscribers who match all of the conditions.
+    <br/>To remove a condition, choose 'Select ...' from the drop-down list.
+    </p>
+    <ul>$conditionArea
+    </ul>
+    <p id="recalculate">$calculateButton $subscribers</p>
 </div>
 END;
         $pagefooter[basename(__FILE__)] = file_get_contents($this->coderoot . '/date.js');
