@@ -198,6 +198,36 @@ END;
         return $sql;
     }
 
+    public function checkboxgroupSubquery($attributeId, $operator, $target)
+    {
+        $where = array();
+
+        if ($operator == 'one') {
+            $compare = '>';
+            $boolean = 'OR';
+        } elseif ($operator == 'all') {
+            $compare = '>';
+            $boolean = 'AND';
+        } else  {
+            $compare = '=';
+            $boolean = 'AND';
+        }
+
+        foreach ($target as $item) {
+            $where[] = "FIND_IN_SET($item, COALESCE(value, '')) $compare 0";
+        }
+        $where = implode(" $boolean ", $where);
+        $where = "WHERE ($where)";
+
+        $sql = <<<END
+            SELECT id
+            FROM {$this->tables['user']} u
+            LEFT JOIN {$this->tables['user_attribute']} ua ON u.id = ua.userid AND ua.attributeid = $attributeId 
+            $where
+END;
+        return $sql;
+    }
+
     public function subscribers($messageId, array $subquery)
     {
         $join = '';

@@ -48,6 +48,9 @@ class SegmentPlugin_ConditionFactory
                 case 'checkbox':
                     return new SegmentPlugin_AttributeConditionCheckbox($attr);
                     break;
+                case 'checkboxgroup':
+                    return new SegmentPlugin_AttributeConditionCheckboxgroup($attr);
+                    break;
                 case 'textline':
                 case 'textarea':
                 case 'hidden':
