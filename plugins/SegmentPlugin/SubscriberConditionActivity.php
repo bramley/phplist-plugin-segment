@@ -43,7 +43,7 @@ class SegmentPlugin_SubscriberConditionActivity extends SegmentPlugin_Subscriber
 
     public function valueEntry($value, $namePrefix)
     {
-        $selectData = CHtml::listData($this->dao->campaigns(null, 10), 'id', 'subject');
+        $selectData = CHtml::listData($this->dao->campaigns(null, getConfig('segment_campaign_max')), 'id', 'subject');
 
         return CHtml::dropDownList(
             $namePrefix . '[value]',
