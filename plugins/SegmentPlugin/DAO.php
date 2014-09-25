@@ -104,13 +104,13 @@ END;
     public function enteredSubquery($operator, $value)
     {
         $value = sql_escape($value);
-        $op = $operator == 'is' ? '=' 
-            : ($operator == 'before' ? '<' : '>');
+        $op = $operator == 'before' ? '<' 
+            : ($operator == 'after' ? '>' : '=');
             
         $sql = <<<END
             SELECT id
             FROM {$this->tables['user']}
-            WHERE entered $op '$value'
+            WHERE DATE(entered) $op '$value'
 END;
         return $sql;
     }
@@ -175,13 +175,13 @@ END;
     public function dateSubquery($attributeId, $operator, $target)
     {
         $target = sql_escape($target);
-        $op = $operator == 'is' ? '=' 
-            : ($operator == 'before' ? '<' : '>');
+        $op = $operator == 'before' ? '<' 
+            : ($operator == 'after' ? '>' : '=');
         $sql = <<<END
             SELECT id
             FROM {$this->tables['user']} u
             LEFT JOIN {$this->tables['user_attribute']} ua  ON u.id = ua.userid AND ua.attributeid = $attributeId 
-            WHERE COALESCE(value, '') != '' AND COALESCE(value, '') $op '$target'
+            WHERE COALESCE(value, '') != '' AND DATE(COALESCE(value, '')) $op '$target'
 END;
         return $sql;
     }
