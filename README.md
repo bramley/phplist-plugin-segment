@@ -54,9 +54,9 @@ In the Segmentation group on the Settings page you can specify:
 
 * The size of the list of previous campaigns for Campaign activity. The default is 10.
 
-###Usage###
+##Usage##
 
-####Add segment conditions####
+###Add segment conditions###
 The plugin adds a tab to the Send a campaign page.
 The steps to add a condition are
 
@@ -69,7 +69,7 @@ The plugin calculates the number of subscribers using the lists chosen on the Li
 It selects only those subscribers who belong to the lists and who meet all of the conditions.
 It also excludes unconfirmed or blacklisted subscribers and any subscribers who have already received the campaign.
 
-####Entering the target value####
+###Entering the target value###
 *textline, textarea, hidden attributes*
 
 The target value is entered directly in the text field.
@@ -86,10 +86,26 @@ The target date is selected using the date-picker control.
 
 The target values are selected from the multi-select list box.
 
-####Evaluating conditions####
+###Evaluating conditions###
 
 For most operators the user attribute value is compared directly with the target value or a constant.
 These include "is", "is not", "is blank", "is not blank".
+
+*email address and text attributes*
+
+The "matches" and "does not match" operators use the mysql LIKE operator.
+This means that you need to include % or _ characters (sql wildcard characters) as necessary.
+See <http://dev.mysql.com/doc/refman/5.0/en/string-comparison-functions.html#operator_like> for guidance
+on using the LIKE operator.
+
+As an example, to match email addresses on the gmail domain the target value should be "%gmail.com"
+
+The "REGEXP" and "not REGEXP" operators use the mysql REGEXP operator. 
+See <http://dev.mysql.com/doc/refman/5.0/en/regexp.html#operator_regexp> for guidance on using
+regular expressions in mysql.
+
+As an example, to match email addresses on the gmail.com or yahoo.co.uk domains the target value
+should be "(yahoo.co.uk|gmail.com)$"
 
 *Date fields*
 
@@ -98,12 +114,6 @@ and test for being less than and greater than respectively.
 
 So if you want to match subscribers who have subscribed since, and including, 1 January 2014 then the target date will need to be
 31 December 2013 in order to include 1 January.
-
-*email address*
-
-The "matches" and "does not match" operators use the mysql LIKE operator.
-This means that you need to include % characters (sql wildcard characters) as necessary.
-As an example, to match email addresses on the gmail domain the target value should be "%gmail.com"
 
 *checkbox group attribute*
 
@@ -114,7 +124,7 @@ The operator 'all of' tests whether the attribute value checkbox group has all o
 The operator 'none of' tests whether all of the target values are not set in the attribute value. 
 
 
-####Empty or missing attribute values####
+###Empty or missing attribute values###
 
 The way that the plugin handles empty or missing attribute values varies slightly for each type of attribute and its operators.
 
@@ -138,11 +148,12 @@ missing, null or empty values are treated as all being unchecked. So the operato
 
 missing, null or empty values are ignored. So subscribers with these values will not be selected for any operator, 'is', 'is after', or 'is before'.
 
-## To Do ##
+## Known issues / To Do ##
 
+* Does not take account of excluded lists when calculating the number of subscribers
 * Allow a subscriber to be selected if ANY condition is true, rather than ALL conditions
-* Provide LIKE matching for text fields
 * Use multi-select for select lists, radio buttons to allow multiple target values
+* Add link clicking to Campaign Activity
 
 ## Donation ##
 This plugin is free but if you install and find it useful then a donation to support further development is greatly appreciated.
@@ -152,4 +163,5 @@ This plugin is free but if you install and find it useful then a donation to sup
 ## Version history ##
 
     version     Description
+    2014-09-25  Add regexp matching
     2014-09-24  Release to GitHub

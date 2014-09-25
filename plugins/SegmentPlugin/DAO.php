@@ -88,6 +88,12 @@ END
             case 'notmatches':
                 $op = 'NOT LIKE';
                 break;
+            case 'regexp':
+                $op = 'REGEXP';
+                break;
+            case 'notregexp':
+                $op = 'NOT REGEXP';
+                break;
             case 'is':
             default:
                 $op = '=';
@@ -144,6 +150,18 @@ END;
             case 'notblank':
                 $op = '!=';
                 $target = '';
+                break;
+            case 'matches':
+                $op = 'LIKE';
+                break;
+            case 'notmatches':
+                $op = 'NOT LIKE';
+                break;
+            case 'regexp':
+                $op = 'REGEXP';
+                break;
+            case 'notregexp':
+                $op = 'NOT REGEXP';
                 break;
             case 'is':
             default:

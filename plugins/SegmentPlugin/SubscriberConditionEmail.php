@@ -35,6 +35,8 @@ class SegmentPlugin_SubscriberConditionEmail extends SegmentPlugin_SubscriberCon
             'is' => 'is',
             'matches' => 'matches',
             'notmatches' => 'does not match',
+            'regexp' => 'REGEXP',
+            'notregexp' => 'not REGEXP',
         );
     }
 

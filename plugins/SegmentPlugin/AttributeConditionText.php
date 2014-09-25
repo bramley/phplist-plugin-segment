@@ -36,6 +36,10 @@ class SegmentPlugin_AttributeConditionText extends SegmentPlugin_AttributeCondit
             'isnot' => 'is not',
             'blank' => 'is blank',
             'notblank' => 'is not blank',
+            'matches' => 'matches',
+            'notmatches' => 'does not match',
+            'regexp' => 'REGEXP',
+            'notregexp' => 'not REGEXP',
         );
     }
 

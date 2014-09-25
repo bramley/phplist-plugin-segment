@@ -1,2 +1,5 @@
+version 2014-09-25
+      Add regexp matching for email address and text attributes
+
 version 2014-09-24
       Initial release to GitHub
