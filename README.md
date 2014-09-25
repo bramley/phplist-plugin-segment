@@ -22,18 +22,17 @@ The target value, also specific to each field, can be a text value, a select val
 
 ### Dependencies ###
 
-Requires php version 5.3 or later.
+Requires php version 5.3 or later. 
 
-Requires the Common Plugin to be installed. 
-
-See <https://github.com/bramley/phplist-plugin-common>
+Requires the Common Plugin to be installed. See <https://github.com/bramley/phplist-plugin-common>
 
 ### Set the plugin directory ###
-You can use a directory outside of the web root by changing the definition of `PLUGIN_ROOTDIR` in config.php.
+The default plugin directory is `/lists/admin/plugins` but you can use a directory outside of the web root by
+changing the definition of `PLUGIN_ROOTDIR` in config.php.
 The benefit of this is that plugins will not be affected when you upgrade phplist.
 
 ### Install through phplist ###
-Install on the Plugins page (menu Config > Plugins) using the package URL `https://github.com/bramley/phplist-plugin-segment/archive/master.zip`.
+Install on the Plugins page (menu Config > Plugins) using the package URL `https://github.com/bramley/phplist-plugin-segment/archive/master.zip`
 
 In phplist releases 3.0.5 and earlier there is a bug that can cause a plugin to be incompletely installed on some configurations (<https://mantis.phplist.com/view.php?id=16865>). 
 Check that these files are in the plugin directory. If not then you will need to install manually. The bug has been fixed in release 3.0.6.
@@ -68,29 +67,29 @@ The steps to add a condition are
 
 The plugin calculates the number of subscribers using the lists chosen on the Lists tab.
 It selects only those subscribers who belong to the lists and who meet all of the conditions.
-It also ignores unconfirmed or blacklisted subscribers and any subscribers who have already received the campaign.
+It also excludes unconfirmed or blacklisted subscribers and any subscribers who have already received the campaign.
  
 ####Empty or missing attribute values####
 
 The way that the plugin handles empty or missing attribute values varies slightly for each type of attribute and its operators.
 
-<u>textline, textarea, hidden attributes</u>
+*textline, textarea, hidden attributes*
 
 missing, null or empty values are treated as an empty string. So, for example, the operator 'empty' will be true, and the operator 'not empty' will be false.
 
-<u>select, radio button attributes</u>
+*select, radio button attributes*
 
 missing, null or empty values are treated as select list index of 0. So, for example, the operator 'is' will be false, and the operator 'is not' will be true.
 
-<u>checkbox attributes</u>
+*checkbox attributes*
 
 missing, null or empty values are treated as being unchecked. So the operator 'checked' will be false.
 
-<u>checkboxgroup attributes</u>
+*checkboxgroup attributes*
 
 missing, null or empty values are treated as all being unchecked. So the operators 'one checked' and 'all checked' will be false.
 
-<u>date attributes</u>
+*date attributes*
 
 missing, null or empty values are ignored. So subscribers with these values will not be selected for any operator, 'is', 'is after', or 'is before'.
 
