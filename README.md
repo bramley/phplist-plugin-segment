@@ -56,97 +56,11 @@ In the Segmentation group on the Settings page you can specify:
 
 ##Usage##
 
-###Add segment conditions###
-The plugin adds a tab to the Send a campaign page.
-The steps to add a condition are
+For guidance on usage see the plugin page within the phplist documentation site <https://resources.phplist.com/plugin/segment>
 
-* select an attribute or a subscriber field from the drop-down list.
-* the page will then refresh automatically showing a list of the operators for the selected field and a target input field.
-* select an operator and then enter or select the target value
-* click the Calculate button to see how many subscribers will be selected when the campaign is actually sent.
+##Support##
 
-The plugin calculates the number of subscribers using the lists chosen on the Lists tab.
-It selects only those subscribers who belong to the lists and who meet all of the conditions.
-It also excludes unconfirmed or blacklisted subscribers and any subscribers who have already received the campaign.
-
-###Entering the target value###
-*textline, textarea, hidden attributes*
-
-The target value is entered directly in the text field.
-
-*select, radio button attributes*
-
-The target value is selected from the drop-down list.
-
-*date attributes*
-
-The target date is selected using the date-picker control.
-
-*checkboxgroup attributes*
-
-The target values are selected from the multi-select list box.
-
-###Evaluating conditions###
-
-For most operators the user attribute value is compared directly with the target value or a constant.
-These include "is", "is not", "is blank", "is not blank".
-
-*email address and text attributes*
-
-The "matches" and "does not match" operators use the mysql LIKE operator.
-This means that you need to include % or _ characters (sql wildcard characters) as necessary.
-See <http://dev.mysql.com/doc/refman/5.0/en/string-comparison-functions.html#operator_like> for guidance
-on using the LIKE operator.
-
-As an example, to match email addresses on the gmail domain the target value should be "%gmail.com"
-
-The "REGEXP" and "not REGEXP" operators use the mysql REGEXP operator. 
-See <http://dev.mysql.com/doc/refman/5.0/en/regexp.html#operator_regexp> for guidance on using
-regular expressions in mysql.
-
-As an example, to match email addresses on the gmail.com or yahoo.co.uk domains the target value
-should be "(yahoo.co.uk|gmail.com)$"
-
-*Date fields*
-
-The "is before" and "is after" operators compare the date part of the Entered date with the target date,
-and test for being less than and greater than respectively.
-
-So if you want to match subscribers who have subscribed since, and including, 1 January 2014 then the target date will need to be
-31 December 2013 in order to include 1 January.
-
-*checkbox group attribute*
-
-The operator 'one of' tests whether the attribute value checkbox group has at least one of the target values. 
-
-The operator 'all of' tests whether the attribute value checkbox group has all of the target values. 
-
-The operator 'none of' tests whether all of the target values are not set in the attribute value. 
-
-
-###Empty or missing attribute values###
-
-The way that the plugin handles empty or missing attribute values varies slightly for each type of attribute and its operators.
-
-*textline, textarea, hidden attributes*
-
-missing, null or empty values are treated as an empty string. So, for example, the operator 'empty' will be true, and the operator 'not empty' will be false.
-
-*select, radio button attributes*
-
-missing, null or empty values are treated as select list index of 0. So, for example, the operator 'is' will be false, and the operator 'is not' will be true.
-
-*checkbox attributes*
-
-missing, null or empty values are treated as being unchecked. So the operator 'checked' will be false.
-
-*checkboxgroup attributes*
-
-missing, null or empty values are treated as all being unchecked. So the operators 'one checked' and 'all checked' will be false.
-
-*date attributes*
-
-missing, null or empty values are ignored. So subscribers with these values will not be selected for any operator, 'is', 'is after', or 'is before'.
+Questions and problems can be reported in the phplist user forum topic <http://forums.phplist.com/viewtopic.php?f=7&t=41650>.
 
 ## Known issues / To Do ##
 
@@ -163,5 +77,6 @@ This plugin is free but if you install and find it useful then a donation to sup
 ## Version history ##
 
     version     Description
+    2014-09-26  Pull Request #1
     2014-09-25  Add regexp matching
     2014-09-24  Release to GitHub

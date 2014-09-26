@@ -123,7 +123,7 @@ class SegmentPlugin extends phplistPlugin
         return array();
     }
 
-    public function sendMessageTab($messageId, $data)
+    public function sendMessageTab($messageId = 0 , $data = array())
     {
         error_reporting(-1);
         global $plugins, $pagefooter;
@@ -241,7 +241,7 @@ END;
         $this->messageQueued($id);
     }
 
-    public function campaignStarted($messageData)
+    public function campaignStarted($messageData = array())
     {
         $er = error_reporting(-1);
         $this->noConditions = true;
