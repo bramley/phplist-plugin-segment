@@ -125,7 +125,7 @@ class SegmentPlugin extends phplistPlugin
 
     public function sendMessageTab($messageId = 0 , $data = array())
     {
-        error_reporting(-1);
+        $er = error_reporting(-1);
         global $plugins, $pagefooter;
 
         if (!phplistPlugin::isEnabled('CommonPlugin')) {
@@ -223,6 +223,7 @@ END;
 </div>
 END;
         $pagefooter[basename(__FILE__)] = file_get_contents($this->coderoot . '/date.js');
+        error_reporting($er);
         return $html;
     }
 

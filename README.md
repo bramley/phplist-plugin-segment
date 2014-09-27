@@ -77,6 +77,7 @@ This plugin is free but if you install and find it useful then a donation to sup
 ## Version history ##
 
     version     Description
+    2014-09-27  Correct error reporting
     2014-09-26  Pull Request #1
     2014-09-25  Add regexp matching
     2014-09-24  Release to GitHub
