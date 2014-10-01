@@ -32,8 +32,8 @@ class SegmentPlugin_AttributeConditionSelect extends SegmentPlugin_AttributeCond
     public function operators()
     {
         return array(
-            'is' => 'is',
-            'isnot' => 'is not',
+            'oneof' => 'is one of',
+            'noneof' => 'is none of',
         );
     }
 
@@ -41,16 +41,19 @@ class SegmentPlugin_AttributeConditionSelect extends SegmentPlugin_AttributeCond
     {
         $selectData = CHtml::listData($this->dao->selectData($this->attribute), 'id', 'name');
 
-        return CHtml::dropDownList(
+        return CHtml::listBox(
             $namePrefix . '[value]',
             $value,
-            $selectData
+            $selectData,
+            array(
+                'multiple' => 1, 'size' => 4,
+            )
         );
     }
 
     public function subquery($op, $value)
     {
-        if (!ctype_digit($value)) {
+        if (!is_array($value) || count($value) == 0) {
             throw new SegmentPlugin_ValueException;
         }
         return $this->dao->selectSubquery($this->attribute['id'], $op, $value);

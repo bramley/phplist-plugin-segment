@@ -180,12 +180,12 @@ END;
 
     public function selectSubquery($attributeId, $operator, $target)
     {
-        $op = $operator == 'is' ? '=' : '!=';
+        $in = ($operator == 'oneof' ? 'IN' : 'NOT IN') . ' (' . implode(', ', $target) . ')';
         $sql = <<<END
             SELECT id
             FROM {$this->tables['user']} u
             LEFT JOIN {$this->tables['user_attribute']} ua ON u.id = ua.userid AND ua.attributeid = $attributeId 
-            WHERE COALESCE(value, 0) $op $target
+            WHERE COALESCE(value, 0) $in
 END;
         return $sql;
     }

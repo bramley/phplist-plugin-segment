@@ -66,7 +66,6 @@ Questions and problems can be reported in the phplist user forum topic <http://f
 
 * Does not take account of excluded lists when calculating the number of subscribers
 * Allow a subscriber to be selected if ANY condition is true, rather than ALL conditions
-* Use multi-select for select lists, radio buttons to allow multiple target values
 * Add link clicking to Campaign Activity
 
 ## Donation ##
