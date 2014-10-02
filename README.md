@@ -5,7 +5,7 @@
 The plugin allows you to send a campaign to a segment, a subset, of the subscribers who belong to the selected lists.
 
 The plugin adds a tab to the Send a campaign page that lets you define conditions. A condition comprises a field, an operator, and a target value.
-When the campaign is sent only those subscribers who meet all of the conditions will be selected. 
+When the campaign is sent only those subscribers who meet either any or all of the conditions will be selected. 
 
 These subscriber fields and attributes are supported for fields:
 
@@ -65,7 +65,6 @@ Questions and problems can be reported in the phplist user forum topic <http://f
 ## Known issues / To Do ##
 
 * Does not take account of excluded lists when calculating the number of subscribers
-* Allow a subscriber to be selected if ANY condition is true, rather than ALL conditions
 * Add link clicking to Campaign Activity
 
 ## Donation ##

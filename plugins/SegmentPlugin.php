@@ -81,7 +81,7 @@ class SegmentPlugin extends phplistPlugin
         $dao->deleteNotSent($campaign);
     }
 
-    private function loadSubscribers($messageId, array $conditions)
+    private function loadSubscribers($messageId, array $conditions, $combine)
     {
         global $plugins;
         include_once $plugins['CommonPlugin']->coderoot . 'Autoloader.php';
@@ -102,7 +102,7 @@ class SegmentPlugin extends phplistPlugin
         }
 
         if (count($subquery) > 0) {
-            $this->selectedSubscribers = array_flip($dao->subscribers($messageId, $subquery));
+            $this->selectedSubscribers = array_flip($dao->subscribers($messageId, $subquery, $combine));
         }
     }
 
@@ -201,25 +201,35 @@ END;
             array('name' => 'segment[calculate]')
         );
 
+        $combine = isset($data['segment']['combine']) ? $data['segment']['combine'] : 1;
+        $combineList = CHtml::dropDownList(
+            "segment[combine]",
+            $combine,
+            array(1 => 'any', 2 => 'all')
+        );
+
         if (isset($data['segment']['calculate'])) {
             $this->loadSubscribers(
                 $messageId,
-                $this->filterIncompleteConditions($data['segment']['c'])
+                $this->filterIncompleteConditions($data['segment']['c']),
+                $combine
             );
             $subscribers = count($this->selectedSubscribers) . ' subscribers will be selected';
         } else {
             $subscribers = '';
         }
+
         $html = file_get_contents($this->coderoot . '/styles.css');
         $html .= <<<END
 <div class="segment">
-    <p>Select one or more subscriber fields or attributes.
-    The campaign will be sent only to those subscribers who match all of the conditions.
-    <br/>To remove a condition, choose 'Select ...' from the drop-down list.
-    </p>
+    <div>Select one or more subscriber fields or attributes.
+    The campaign will be sent only to those subscribers who match any or all of the conditions.
+    To remove a condition, choose 'Select ...' from the drop-down list.
+    </div>
+    <div>Subscribers match $combineList of the following:</div>
     <ul>$conditionArea
     </ul>
-    <p id="recalculate">$calculateButton $subscribers</p>
+    <div id="recalculate">$calculateButton $subscribers</div>
 </div>
 END;
         $pagefooter[basename(__FILE__)] = file_get_contents($this->coderoot . '/date.js');
@@ -253,7 +263,7 @@ END;
 
             if (count($conditions) > 0) {
                 $this->noConditions = false;
-                $this->loadSubscribers($messageData['id'], $conditions);
+                $this->loadSubscribers($messageData['id'], $conditions, $messageData['segment']['combine']);
             }
         }
         error_reporting($er);

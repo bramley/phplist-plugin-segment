@@ -246,12 +246,16 @@ END;
         return $sql;
     }
 
-    public function subscribers($messageId, array $subquery)
+    public function subscribers($messageId, array $subquery, $combine)
     {
-        $join = '';
+        if ($combine == 1) {
+            $join = "JOIN (\n" . implode("\nUNION\n", $subquery) . ") AS T1 ON u.id = T1.id\n";
+        } else {
+            $join = '';
 
-        foreach ($subquery as $n => $s) {
-            $join .= "JOIN ($s) AS T$n ON u.id = T$n.id\n";
+            foreach ($subquery as $n => $s) {
+                $join .= "JOIN (\n$s) AS T$n ON u.id = T$n.id\n";
+            }
         }
         $sql = <<<END
             SELECT DISTINCT u.id
@@ -265,11 +269,4 @@ END;
 END;
         return $this->dbCommand->queryColumn($sql, 'id');
     }
-
-//~ (SELECT id FROM `phplist_user_user`
-//~ where id in (1,3))
-//~ union
- //~ (SELECT id FROM `phplist_user_user`
-//~ where id in (1,4))
-
 }

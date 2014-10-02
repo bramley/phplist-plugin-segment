@@ -7,6 +7,9 @@
     margin: 0px 15px 15px 0px;
     vertical-align: top;
 }
+select {
+    display: inline-block;
+}
 selfclear:after {
     clear: both
 }
