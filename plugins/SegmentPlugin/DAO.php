@@ -82,19 +82,19 @@ END
         $value = sql_escape($value);
 
         switch ($operator) {
-            case 'matches':
+            case SegmentPlugin_Operator::MATCHES:
                 $op = 'LIKE';
                 break;
-            case 'notmatches':
+            case SegmentPlugin_Operator::NOTMATCHES:
                 $op = 'NOT LIKE';
                 break;
-            case 'regexp':
+            case SegmentPlugin_Operator::REGEXP:
                 $op = 'REGEXP';
                 break;
-            case 'notregexp':
+            case SegmentPlugin_Operator::NOTREGEXP:
                 $op = 'NOT REGEXP';
                 break;
-            case 'is':
+            case SegmentPlugin_Operator::IS:
             default:
                 $op = '=';
         }
@@ -110,8 +110,8 @@ END;
     public function enteredSubquery($operator, $value)
     {
         $value = sql_escape($value);
-        $op = $operator == 'before' ? '<' 
-            : ($operator == 'after' ? '>' : '=');
+        $op = $operator == SegmentPlugin_Operator::BEFORE ? '<' 
+            : ($operator == SegmentPlugin_Operator::AFTER ? '>' : '=');
             
         $sql = <<<END
             SELECT id
@@ -123,7 +123,7 @@ END;
 
     public function activitySubquery($operator, $value)
     {
-        $op = $operator == 'opened' ? 'IS NOT NULL' : 'IS NULL';
+        $op = $operator == SegmentPlugin_Operator::OPENED ? 'IS NOT NULL' : 'IS NULL';
         $sql = <<<END
             SELECT um.userid AS id
             FROM {$this->tables['usermessage']} um
@@ -140,30 +140,30 @@ END;
         $target = sql_escape($target);
 
         switch ($operator) {
-            case 'isnot':
+            case SegmentPlugin_Operator::ISNOT:
                 $op = '!=';
                 break;
-            case 'blank':
+            case SegmentPlugin_Operator::BLANK:
                 $op = '=';
                 $target = '';
                 break;
-            case 'notblank':
+            case SegmentPlugin_Operator::NOTBLANK:
                 $op = '!=';
                 $target = '';
                 break;
-            case 'matches':
+            case SegmentPlugin_Operator::MATCHES:
                 $op = 'LIKE';
                 break;
-            case 'notmatches':
+            case SegmentPlugin_Operator::NOTMATCHES:
                 $op = 'NOT LIKE';
                 break;
-            case 'regexp':
+            case SegmentPlugin_Operator::REGEXP:
                 $op = 'REGEXP';
                 break;
-            case 'notregexp':
+            case SegmentPlugin_Operator::NOTREGEXP:
                 $op = 'NOT REGEXP';
                 break;
-            case 'is':
+            case SegmentPlugin_Operator::IS:
             default:
                 $op = '=';
                 break;
@@ -180,7 +180,7 @@ END;
 
     public function selectSubquery($attributeId, $operator, $target)
     {
-        $in = ($operator == 'oneof' ? 'IN' : 'NOT IN') . ' (' . implode(', ', $target) . ')';
+        $in = ($operator == SegmentPlugin_Operator::ONE ? 'IN' : 'NOT IN') . ' (' . implode(', ', $target) . ')';
         $sql = <<<END
             SELECT id
             FROM {$this->tables['user']} u
@@ -193,8 +193,8 @@ END;
     public function dateSubquery($attributeId, $operator, $target)
     {
         $target = sql_escape($target);
-        $op = $operator == 'before' ? '<' 
-            : ($operator == 'after' ? '>' : '=');
+        $op = $operator == SegmentPlugin_Operator::BEFORE ? '<' 
+            : ($operator == SegmentPlugin_Operator::AFTER ? '>' : '=');
         $sql = <<<END
             SELECT id
             FROM {$this->tables['user']} u
@@ -206,7 +206,7 @@ END;
 
     public function checkboxSubquery($attributeId, $operator, $target)
     {
-        $op = $operator == 'is' ? '=' : '!=';
+        $op = $operator == SegmentPlugin_Operator::IS ? '=' : '!=';
         $sql = <<<END
             SELECT id
             FROM {$this->tables['user']} u
@@ -220,10 +220,10 @@ END;
     {
         $where = array();
 
-        if ($operator == 'one') {
+        if ($operator == SegmentPlugin_Operator::ONE) {
             $compare = '>';
             $boolean = 'OR';
-        } elseif ($operator == 'all') {
+        } elseif ($operator == SegmentPlugin_Operator::ALL) {
             $compare = '>';
             $boolean = 'AND';
         } else  {
@@ -248,7 +248,7 @@ END;
 
     public function subscribers($messageId, array $subquery, $combine)
     {
-        if ($combine == 1) {
+        if ($combine == SegmentPlugin_Operator::ONE) {
             $join = "JOIN (\n" . implode("\nUNION\n", $subquery) . ") AS T1 ON u.id = T1.id\n";
         } else {
             $join = '';

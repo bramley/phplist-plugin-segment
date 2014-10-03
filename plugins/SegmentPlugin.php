@@ -136,11 +136,10 @@ class SegmentPlugin extends phplistPlugin
 
         $cf = new SegmentPlugin_ConditionFactory();
 
-        if (isset($data['segment']['c'])) {
-            $conditions = array_values($this->filterEmptyFields($data['segment']['c']));
-        } else {
-            $conditions = array();
-        }
+        $conditions = (isset($data['segment']['c']))
+            ? array_values($this->filterEmptyFields($data['segment']['c']))
+            : array();
+
         $conditions[] = array('field' => '');
         $conditionArea = '';
 
@@ -158,32 +157,23 @@ class SegmentPlugin extends phplistPlugin
                 )
             );
             // hidden input to detect when field changes
-            $hiddenField = CHtml::hiddenField(
-                "segment[c][$i][_field]",
-                $c['field']
-            );
+            $hiddenField = CHtml::hiddenField("segment[c][$i][_field]", $c['field']);
             $field = $c['field'];
 
             if ($field != '') {
                 $condition = $cf->createCondition($field);
                 $operators = $condition->operators();
 
-                if ($field == $c['_field'] && isset($c['op'])) {
-                    $op = $c['op'];
-                } else {
-                    $op = key($operators);
-                }
+                $op = ($field == $c['_field'] && isset($c['op']))
+                    ? $c['op'] : key($operators);
                 $operatorList = CHtml::dropDownList(
                     "segment[c][$i][op]",
                     $op,
                     $operators
                 );
 
-                if ($field == $c['_field'] && isset($c['value'])) {
-                    $value = $c['value'];
-                } else {
-                    $value = '';
-                }
+                $value = ($field == $c['_field'] && isset($c['value']))
+                    ? $c['value'] : '';
                 $valueInput = $condition->valueEntry($value, "segment[c][$i]");
             } else {
                 $operatorList = '';
@@ -197,15 +187,13 @@ class SegmentPlugin extends phplistPlugin
         </li>
 END;
         }
-        $calculateButton = CHtml::submitButton('Calculate',
-            array('name' => 'segment[calculate]')
-        );
-
-        $combine = isset($data['segment']['combine']) ? $data['segment']['combine'] : 1;
+        $calculateButton = CHtml::submitButton('Calculate', array('name' => 'segment[calculate]'));
+        $combine = isset($data['segment']['combine']) 
+            ? $data['segment']['combine'] : SegmentPlugin_Operator::ALL;
         $combineList = CHtml::dropDownList(
             "segment[combine]",
             $combine,
-            array(1 => 'any', 2 => 'all')
+            array(SegmentPlugin_Operator::ONE => 'any', SegmentPlugin_Operator::ALL => 'all')
         );
 
         if (isset($data['segment']['calculate'])) {

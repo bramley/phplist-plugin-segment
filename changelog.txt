@@ -1,3 +1,8 @@
+version 2014-10-03
+      Use multi-select for select list and radio buttons
+      Select subscribers who meet any or all conditions
+      Use enum for operators
+
 version 2014-09-27
       Correct error reporting
 

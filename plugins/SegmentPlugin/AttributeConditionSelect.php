@@ -32,8 +32,8 @@ class SegmentPlugin_AttributeConditionSelect extends SegmentPlugin_AttributeCond
     public function operators()
     {
         return array(
-            'oneof' => 'is one of',
-            'noneof' => 'is none of',
+            SegmentPlugin_Operator::ONE => 'is one of',
+            SegmentPlugin_Operator::NONE => 'is none of',
         );
     }
 

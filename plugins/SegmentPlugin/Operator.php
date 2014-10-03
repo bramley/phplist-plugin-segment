@@ -26,34 +26,29 @@
  * @category  phplist
  * @package   SegmentPlugin
  */
-
-class SegmentPlugin_SubscriberConditionEmail extends SegmentPlugin_SubscriberConditionBase
+class SegmentPlugin_Operator
 {
-    public function operators()
-    {
-        return array(
-            SegmentPlugin_Operator::IS => 'is',
-            SegmentPlugin_Operator::MATCHES => 'matches',
-            SegmentPlugin_Operator::NOTMATCHES => 'does not match',
-            SegmentPlugin_Operator::REGEXP => 'REGEXP',
-            SegmentPlugin_Operator::NOTREGEXP => 'not REGEXP',
-        );
-    }
+    const IS = 1;
+    const ISNOT = 2;
+    const MATCHES = 3;
+    const NOTMATCHES = 4;
+    const REGEXP = 5;
+    const NOTREGEXP = 6;
+    const BLANK = 7;
+    const NOTBLANK = 8;
+    const BEFORE = 9;
+    const AFTER = 10;
+    const OPENED = 11;
+    const NOTOPENED = 12;
+    const ONE = 13;
+    const ALL = 14;
+    const NONE = 15;
+    const SENT = 16;
+    const NOTSENT = 17;
+    const CLICKED = 18;
+    const NOTCLICKED = 19;
 
-    public function valueEntry($value, $namePrefix)
+    private function __construct()
     {
-        return CHtml::textField(
-            $namePrefix . '[value]',
-            $value
-        );
-    }
-
-    public function subquery($op, $value)
-    {
-        if (!is_string($value)) {
-            throw new SegmentPlugin_ValueException;
-        }
-
-        return $this->dao->emailSubquery($op, $value);
     }
 }

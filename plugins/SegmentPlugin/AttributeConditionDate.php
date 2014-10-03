@@ -32,9 +32,9 @@ class SegmentPlugin_AttributeConditionDate extends SegmentPlugin_AttributeCondit
     public function operators()
     {
         return array(
-            'is' => 'is',
-            'after' => 'is after',
-            'before' => 'is before',
+            SegmentPlugin_Operator::IS => 'is',
+            SegmentPlugin_Operator::AFTER => 'is after',
+            SegmentPlugin_Operator::BEFORE => 'is before',
         );
     }
 
