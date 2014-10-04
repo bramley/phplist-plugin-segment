@@ -123,13 +123,31 @@ END;
 
     public function activitySubquery($operator, $value)
     {
-        $op = $operator == SegmentPlugin_Operator::OPENED ? 'IS NOT NULL' : 'IS NULL';
-        $sql = <<<END
-            SELECT um.userid AS id
-            FROM {$this->tables['usermessage']} um
-            WHERE um.viewed $op
-            AND um.messageid = $value
+        if ($operator == SegmentPlugin_Operator::CLICKED || $operator == SegmentPlugin_Operator::NOTCLICKED) {
+            $op = $operator == SegmentPlugin_Operator::CLICKED ? 'IS NOT NULL' : 'IS NULL';
+            $sql = <<<END
+                SELECT DISTINCT(u.id) AS id
+                FROM {$this->tables['user']} u
+                LEFT JOIN {$this->tables['linktrack_uml_click']} uml ON u.id = uml.userid AND uml.messageid = $value
+                WHERE uml.userid $op
 END;
+        } elseif ($operator == SegmentPlugin_Operator::OPENED || $operator == SegmentPlugin_Operator::NOTOPENED) {
+            $op = $operator == SegmentPlugin_Operator::OPENED ? 'IS NOT NULL' : 'IS NULL';
+            $sql = <<<END
+                SELECT um.userid AS id
+                FROM {$this->tables['usermessage']} um
+                WHERE um.viewed $op
+                AND um.messageid = $value
+END;
+        } elseif ($operator == SegmentPlugin_Operator::SENT || $operator == SegmentPlugin_Operator::NOTSENT) {
+            $op = $operator == SegmentPlugin_Operator::SENT ? 'IS NOT NULL' : 'IS NULL';
+            $sql = <<<END
+                SELECT id AS id
+                FROM {$this->tables['user']} 
+                LEFT JOIN {$this->tables['usermessage']} ON id = userid AND status = 'sent' AND messageid = $value
+                WHERE userid $op
+END;
+        }
         return $sql;
     }
     /*

@@ -1,3 +1,7 @@
+version 2014-10-04
+      Add was sent/not sent a campaign
+      Add clicked any link/did not click any link in a campaign
+
 version 2014-10-03
       Use multi-select for select list and radio buttons
       Select subscribers who meet any or all conditions

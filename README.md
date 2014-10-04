@@ -65,7 +65,6 @@ Questions and problems can be reported in the phplist user forum topic <http://f
 ## Known issues / To Do ##
 
 * Does not take account of excluded lists when calculating the number of subscribers
-* Add link clicking to Campaign Activity
 
 ## Donation ##
 This plugin is free but if you install and find it useful then a donation to support further development is greatly appreciated.
@@ -75,6 +74,7 @@ This plugin is free but if you install and find it useful then a donation to sup
 ## Version history ##
 
     version     Description
+    2014-10-04  Add sent/not sent a campaign, and clicked/did not click any link
     2014-10-03  Add any/all, multi-value for select list and radio button attributes
     2014-09-27  Correct error reporting
     2014-09-26  Pull Request #1
