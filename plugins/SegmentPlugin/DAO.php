@@ -128,7 +128,8 @@ END;
             $sql = <<<END
                 SELECT DISTINCT(u.id) AS id
                 FROM {$this->tables['user']} u
-                LEFT JOIN {$this->tables['linktrack_uml_click']} uml ON u.id = uml.userid AND uml.messageid = $value
+                JOIN {$this->tables['usermessage']} um ON u.id = um.userid AND um.status = 'sent' AND um.messageid = $value
+                LEFT JOIN {$this->tables['linktrack_uml_click']} uml ON u.id = uml.userid AND uml.messageid = um.messageid
                 WHERE uml.userid $op
 END;
         } elseif ($operator == SegmentPlugin_Operator::OPENED || $operator == SegmentPlugin_Operator::NOTOPENED) {
@@ -142,7 +143,7 @@ END;
         } elseif ($operator == SegmentPlugin_Operator::SENT || $operator == SegmentPlugin_Operator::NOTSENT) {
             $op = $operator == SegmentPlugin_Operator::SENT ? 'IS NOT NULL' : 'IS NULL';
             $sql = <<<END
-                SELECT id AS id
+                SELECT id
                 FROM {$this->tables['user']} 
                 LEFT JOIN {$this->tables['usermessage']} ON id = userid AND status = 'sent' AND messageid = $value
                 WHERE userid $op
