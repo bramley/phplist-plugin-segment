@@ -267,6 +267,28 @@ END;
 
     public function subscribers($messageId, array $subquery, $combine)
     {
+        $sql = <<<END
+            SELECT data
+            FROM {$this->tables['messagedata']}
+            WHERE name = 'excludelist' AND id = $messageId
+END;
+        $excludeSubquery = '';
+        
+        if ($data = $this->dbCommand->queryOne($sql, 'data')) {
+            $excluded = unserialize(substr($data, 4));
+
+            if (count($excluded) > 0) {
+                $inList = '(' . implode(', ', $excluded) . ')';
+                $excludeSubquery = <<<END
+                    AND u.id NOT IN (
+                        SELECT userid
+                        FROM {$this->tables['listuser']}
+                        WHERE listid IN $inList
+                    )
+END;
+            }
+        }
+
         if ($combine == SegmentPlugin_Operator::ONE) {
             $join = "JOIN (\n" . implode("\nUNION\n", $subquery) . ") AS T1 ON u.id = T1.id\n";
         } else {
@@ -285,6 +307,7 @@ END;
             $join
             WHERE confirmed = 1 AND blacklisted = 0
             AND COALESCE(um.status, 'not sent') = 'not sent'
+            $excludeSubquery
 END;
         return $this->dbCommand->queryColumn($sql, 'id');
     }
