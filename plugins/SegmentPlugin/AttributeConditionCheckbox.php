@@ -42,8 +42,8 @@ class SegmentPlugin_AttributeConditionCheckbox extends SegmentPlugin_AttributeCo
         return '';
     }
 
-    public function subquery($op, $value)
+    public function select($op, $value)
     {
-        return $this->dao->checkboxSubquery($this->attribute['id'], $op, $value);
+        return $this->dao->checkboxSelect($this->attribute['id'], $op, $value);
     }
 }

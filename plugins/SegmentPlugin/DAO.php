@@ -115,7 +115,7 @@ END
     /*
      *  Methods for each subscriber data type
      */ 
-    public function emailSubquery($operator, $value)
+    public function emailSelect($operator, $value)
     {
         $value = sql_escape($value);
 
@@ -143,7 +143,7 @@ END
         return $r;
     }
 
-    public function enteredSubquery($operator, $value)
+    public function enteredSelect($operator, $value)
     {
         $value = sql_escape($value);
         $op = $operator == SegmentPlugin_Operator::BEFORE ? '<' 
@@ -155,7 +155,7 @@ END
         return $r;
     }
 
-    public function activitySubquery($operator, $value)
+    public function activitySelect($operator, $value)
     {
         $r = new stdClass;
 
@@ -185,7 +185,7 @@ END;
     /*
      *  Methods for each type of attribute
      */ 
-    public function textSubquery($attributeId, $operator, $target)
+    public function textSelect($attributeId, $operator, $target)
     {
         $target = sql_escape($target);
 
@@ -225,7 +225,7 @@ END;
         return $r;
     }
 
-    public function selectSubquery($attributeId, $operator, $target)
+    public function selectSelect($attributeId, $operator, $target)
     {
         $in = ($operator == SegmentPlugin_Operator::ONE ? 'IN' : 'NOT IN') . ' (' . implode(', ', $target) . ')';
 
@@ -235,7 +235,7 @@ END;
         return $r;
     }
 
-    public function dateSubquery($attributeId, $operator, $target)
+    public function dateSelect($attributeId, $operator, $target)
     {
         $target = sql_escape($target);
         $op = $operator == SegmentPlugin_Operator::BEFORE ? '<' 
@@ -247,7 +247,7 @@ END;
         return $r;
     }
 
-    public function checkboxSubquery($attributeId, $operator, $target)
+    public function checkboxSelect($attributeId, $operator, $target)
     {
         $op = $operator == SegmentPlugin_Operator::IS ? '=' : '!=';
 
@@ -257,7 +257,7 @@ END;
         return $r;
     }
 
-    public function checkboxgroupSubquery($attributeId, $operator, $target)
+    public function checkboxgroupSelect($attributeId, $operator, $target)
     {
         $where = array();
 
@@ -282,36 +282,41 @@ END;
         return $r;
     }
 
-    public function subscribers($messageId, array $subquery, $combine)
+    public function subscribers($messageId, array $select, $combine)
     {
         $excludeSubquery = $this->exclude($messageId);
-        $selects = array();
+        $queries = array();
 
-        foreach ($subquery as $r) {
-            $selects[] = <<<END
+        foreach ($select as $s) {
+            $queries[] = <<<END
 SELECT DISTINCT u.id
 FROM {$this->tables['user']} u
 JOIN {$this->tables['listuser']} lu0 ON u.id = lu0.userid
 JOIN {$this->tables['listmessage']} lm0 ON lm0.listid = lu0.listid AND lm0.messageid = $messageId
 LEFT JOIN {$this->tables['usermessage']} um0 ON um0.userid = u.id AND um0.messageid = $messageId
-$r->join
+$s->join
 WHERE u.confirmed = 1 AND u.blacklisted = 0
 AND COALESCE(um0.status, 'not sent') = 'not sent'
 $excludeSubquery
-AND $r->where
+AND $s->where
 END;
         }
 
         if ($combine == SegmentPlugin_Operator::ONE) {
-            $sql = implode("\nUNION\n", $selects);
+            $sql = implode("\nUNION\n", $queries);
         } else {
-            $sql = "SELECT u.id FROM {$this->tables['user']} u ";
+            $sql = <<<END
+SELECT T0.id
+FROM (
+{$queries[0]}
+    ) AS T0
+END;
 
-            foreach ($selects as $n => $s) {
+            for ($n = 1; $n < count($queries); $n++) { 
                 $sql .= <<<END
 \nJOIN (
-$s
-    ) AS T$n ON T$n.id = u.id
+{$queries[$n]}
+    ) AS T$n ON T$n.id = T0.id
 END;
             }
         }

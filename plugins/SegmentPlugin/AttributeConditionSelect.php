@@ -51,11 +51,11 @@ class SegmentPlugin_AttributeConditionSelect extends SegmentPlugin_AttributeCond
         );
     }
 
-    public function subquery($op, $value)
+    public function select($op, $value)
     {
         if (!is_array($value) || count($value) == 0) {
             throw new SegmentPlugin_ValueException;
         }
-        return $this->dao->selectSubquery($this->attribute['id'], $op, $value);
+        return $this->dao->selectSelect($this->attribute['id'], $op, $value);
     }
 }

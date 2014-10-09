@@ -47,7 +47,7 @@ class SegmentPlugin_SubscriberConditionEntered extends SegmentPlugin_SubscriberC
         );
     }
 
-    public function subquery($op, $value)
+    public function select($op, $value)
     {
         if (!$value) {
             throw new SegmentPlugin_ValueException;
@@ -58,6 +58,6 @@ class SegmentPlugin_SubscriberConditionEntered extends SegmentPlugin_SubscriberC
         } catch (Exception $e) {
             throw new SegmentPlugin_ValueException;
         }
-        return $this->dao->enteredSubquery($op, $target->format('Y-m-d'));
+        return $this->dao->enteredSelect($op, $target->format('Y-m-d'));
     }
 }

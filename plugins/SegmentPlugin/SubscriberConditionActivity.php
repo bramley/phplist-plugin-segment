@@ -52,11 +52,11 @@ class SegmentPlugin_SubscriberConditionActivity extends SegmentPlugin_Subscriber
         );
     }
 
-    public function subquery($op, $value)
+    public function select($op, $value)
     {
         if (!ctype_digit($value)) {
             throw new SegmentPlugin_ValueException;
         }
-        return $this->dao->activitySubquery($op, $value);
+        return $this->dao->activitySelect($op, $value);
     }
 }

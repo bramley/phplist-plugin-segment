@@ -50,11 +50,11 @@ class SegmentPlugin_AttributeConditionCheckboxgroup extends SegmentPlugin_Attrib
         );
     }
 
-    public function subquery($op, $value)
+    public function select($op, $value)
     {
         if (!is_array($value) || count($value) == 0) {
             throw new SegmentPlugin_ValueException;
         }
-        return $this->dao->checkboxgroupSubquery($this->attribute['id'], $op, $value);
+        return $this->dao->checkboxgroupSelect($this->attribute['id'], $op, $value);
     }
 }

@@ -48,12 +48,12 @@ class SegmentPlugin_SubscriberConditionEmail extends SegmentPlugin_SubscriberCon
         );
     }
 
-    public function subquery($op, $value)
+    public function select($op, $value)
     {
         if (!is_string($value)) {
             throw new SegmentPlugin_ValueException;
         }
 
-        return $this->dao->emailSubquery($op, $value);
+        return $this->dao->emailSelect($op, $value);
     }
 }

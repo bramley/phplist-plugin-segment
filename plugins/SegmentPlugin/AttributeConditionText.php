@@ -51,12 +51,12 @@ class SegmentPlugin_AttributeConditionText extends SegmentPlugin_AttributeCondit
         );
     }
 
-    public function subquery($op, $value)
+    public function select($op, $value)
     {
         if (!is_string($value)) {
             throw new SegmentPlugin_ValueException;
         }
 
-        return $this->dao->textSubquery($this->attribute['id'], $op, $value);
+        return $this->dao->textSelect($this->attribute['id'], $op, $value);
     }
 }

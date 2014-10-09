@@ -88,21 +88,21 @@ class SegmentPlugin extends phplistPlugin
 
         $dao = new SegmentPlugin_DAO(new CommonPlugin_DB());
         $cf = new SegmentPlugin_ConditionFactory();
-        $subquery = array();
+        $select = array();
 
         foreach ($conditions as $i => $c) {
             $field = $c['field'];
             $condition = $cf->createCondition($field);
 
             try {
-                $subquery[] = $condition->subquery($c['op'], isset($c['value']) ? $c['value'] : '');
+                $select[] = $condition->select($c['op'], isset($c['value']) ? $c['value'] : '');
             } catch (SegmentPlugin_ValueException $e) {
                 // do nothing
             }
         }
 
-        if (count($subquery) > 0) {
-            $this->selectedSubscribers = array_flip($dao->subscribers($messageId, $subquery, $combine));
+        if (count($select) > 0) {
+            $this->selectedSubscribers = array_flip($dao->subscribers($messageId, $select, $combine));
         }
     }
 
