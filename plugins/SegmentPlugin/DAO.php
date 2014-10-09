@@ -28,7 +28,45 @@
  */
 class SegmentPlugin_DAO extends CommonPlugin_DAO
 {
+/*
+ *  Private functions
+ */
 
+    private function exclude($messageId)
+    {
+        $sql = <<<END
+SELECT data
+FROM {$this->tables['messagedata']}
+WHERE name = 'excludelist' AND id = $messageId
+END;
+        $excludeSubquery = '';
+        
+        if ($data = $this->dbCommand->queryOne($sql, 'data')) {
+            $excluded = unserialize(substr($data, 4));
+
+            if (count($excluded) > 0) {
+                $inList = '(' . implode(', ', $excluded) . ')';
+                $excludeSubquery = <<<END
+AND u.id NOT IN (
+    SELECT userid
+    FROM {$this->tables['listuser']}
+    WHERE listid IN $inList
+)
+END;
+            }
+        }
+        return $excludeSubquery;
+    }
+
+/*
+ *  Public functions
+ */
+    /**
+     * Retrieves the values for a select/radio button attribute
+     * @param array $attribute an attribute 
+     * @return Iterator
+     * @access public
+     */
     public function selectData(array $attribute)
     {
         $tableName = $this->table_prefix . 'listattr_' . $attribute['tablename'];
@@ -98,13 +136,11 @@ END
             default:
                 $op = '=';
         }
-            
-        $sql = <<<END
-            SELECT id
-            FROM {$this->tables['user']}
-            WHERE email $op '$value'
-END;
-        return $sql;
+
+        $r = new stdClass;
+        $r->join = '';
+        $r->where = "u.email $op '$value'";
+        return $r;
     }
 
     public function enteredSubquery($operator, $value)
@@ -112,44 +148,39 @@ END;
         $value = sql_escape($value);
         $op = $operator == SegmentPlugin_Operator::BEFORE ? '<' 
             : ($operator == SegmentPlugin_Operator::AFTER ? '>' : '=');
-            
-        $sql = <<<END
-            SELECT id
-            FROM {$this->tables['user']}
-            WHERE DATE(entered) $op '$value'
-END;
-        return $sql;
+
+        $r = new stdClass;
+        $r->join = '';
+        $r->where = "DATE(u.entered) $op '$value'";
+        return $r;
     }
 
     public function activitySubquery($operator, $value)
     {
+        $r = new stdClass;
+
         if ($operator == SegmentPlugin_Operator::CLICKED || $operator == SegmentPlugin_Operator::NOTCLICKED) {
             $op = $operator == SegmentPlugin_Operator::CLICKED ? 'IS NOT NULL' : 'IS NULL';
-            $sql = <<<END
-                SELECT DISTINCT(u.id) AS id
-                FROM {$this->tables['user']} u
+            $r->join = <<<END
                 JOIN {$this->tables['usermessage']} um ON u.id = um.userid AND um.status = 'sent' AND um.messageid = $value
                 LEFT JOIN {$this->tables['linktrack_uml_click']} uml ON u.id = uml.userid AND uml.messageid = um.messageid
-                WHERE uml.userid $op
 END;
+            $r->where = "uml.userid $op";
+            
         } elseif ($operator == SegmentPlugin_Operator::OPENED || $operator == SegmentPlugin_Operator::NOTOPENED) {
             $op = $operator == SegmentPlugin_Operator::OPENED ? 'IS NOT NULL' : 'IS NULL';
-            $sql = <<<END
-                SELECT um.userid AS id
-                FROM {$this->tables['usermessage']} um
-                WHERE um.viewed $op
-                AND um.messageid = $value
+            $r->join = <<<END
+                JOIN {$this->tables['usermessage']} um ON u.id = um.userid AND um.status = 'sent' AND um.messageid = $value
 END;
+            $r->where = "um.viewed $op";
         } elseif ($operator == SegmentPlugin_Operator::SENT || $operator == SegmentPlugin_Operator::NOTSENT) {
             $op = $operator == SegmentPlugin_Operator::SENT ? 'IS NOT NULL' : 'IS NULL';
-            $sql = <<<END
-                SELECT id
-                FROM {$this->tables['user']} 
-                LEFT JOIN {$this->tables['usermessage']} ON id = userid AND status = 'sent' AND messageid = $value
-                WHERE userid $op
+            $r->join = <<<END
+                LEFT JOIN {$this->tables['usermessage']} um ON u.id = um.userid AND um.status = 'sent' AND um.messageid = $value
 END;
+            $r->where = "um.userid $op";
         }
-        return $sql;
+        return $r;
     }
     /*
      *  Methods for each type of attribute
@@ -188,25 +219,20 @@ END;
                 break;
         }
             
-        $sql = <<<END
-            SELECT id
-            FROM {$this->tables['user']} u
-            LEFT JOIN {$this->tables['user_attribute']} ua ON u.id = ua.userid AND ua.attributeid = $attributeId 
-            WHERE COALESCE(value, '') $op '$target'
-END;
-        return $sql;
+        $r = new stdClass;
+        $r->join = "LEFT JOIN {$this->tables['user_attribute']} ua ON u.id = ua.userid AND ua.attributeid = $attributeId ";
+        $r->where = "COALESCE(value, '') $op '$target'";
+        return $r;
     }
 
     public function selectSubquery($attributeId, $operator, $target)
     {
         $in = ($operator == SegmentPlugin_Operator::ONE ? 'IN' : 'NOT IN') . ' (' . implode(', ', $target) . ')';
-        $sql = <<<END
-            SELECT id
-            FROM {$this->tables['user']} u
-            LEFT JOIN {$this->tables['user_attribute']} ua ON u.id = ua.userid AND ua.attributeid = $attributeId 
-            WHERE COALESCE(value, 0) $in
-END;
-        return $sql;
+
+        $r = new stdClass;
+        $r->join = "LEFT JOIN {$this->tables['user_attribute']} ua ON u.id = ua.userid AND ua.attributeid = $attributeId ";
+        $r->where = "COALESCE(value, 0) $in";
+        return $r;
     }
 
     public function dateSubquery($attributeId, $operator, $target)
@@ -214,25 +240,21 @@ END;
         $target = sql_escape($target);
         $op = $operator == SegmentPlugin_Operator::BEFORE ? '<' 
             : ($operator == SegmentPlugin_Operator::AFTER ? '>' : '=');
-        $sql = <<<END
-            SELECT id
-            FROM {$this->tables['user']} u
-            LEFT JOIN {$this->tables['user_attribute']} ua  ON u.id = ua.userid AND ua.attributeid = $attributeId 
-            WHERE COALESCE(value, '') != '' AND DATE(COALESCE(value, '')) $op '$target'
-END;
-        return $sql;
+
+        $r = new stdClass;
+        $r->join = "LEFT JOIN {$this->tables['user_attribute']} ua ON u.id = ua.userid AND ua.attributeid = $attributeId ";
+        $r->where = "COALESCE(value, '') != '' AND DATE(COALESCE(value, '')) $op '$target'";
+        return $r;
     }
 
     public function checkboxSubquery($attributeId, $operator, $target)
     {
         $op = $operator == SegmentPlugin_Operator::IS ? '=' : '!=';
-        $sql = <<<END
-            SELECT id
-            FROM {$this->tables['user']} u
-            LEFT JOIN {$this->tables['user_attribute']} ua ON u.id = ua.userid AND ua.attributeid = $attributeId 
-            WHERE COALESCE(value, '') $op 'on'
-END;
-        return $sql;
+
+        $r = new stdClass;
+        $r->join = "LEFT JOIN {$this->tables['user_attribute']} ua ON u.id = ua.userid AND ua.attributeid = $attributeId ";
+        $r->where = "COALESCE(value, '') $op 'on'";
+        return $r;
     }
 
     public function checkboxgroupSubquery($attributeId, $operator, $target)
@@ -253,62 +275,46 @@ END;
         foreach ($target as $item) {
             $where[] = "FIND_IN_SET($item, COALESCE(value, '')) $compare 0";
         }
-        $where = implode(" $boolean ", $where);
-        $where = "WHERE ($where)";
 
-        $sql = <<<END
-            SELECT id
-            FROM {$this->tables['user']} u
-            LEFT JOIN {$this->tables['user_attribute']} ua ON u.id = ua.userid AND ua.attributeid = $attributeId 
-            $where
-END;
-        return $sql;
+        $r = new stdClass;
+        $r->join = "LEFT JOIN {$this->tables['user_attribute']} ua ON u.id = ua.userid AND ua.attributeid = $attributeId ";
+        $r->where = '(' . implode(" $boolean ", $where) . ')';
+        return $r;
     }
 
     public function subscribers($messageId, array $subquery, $combine)
     {
-        $sql = <<<END
-            SELECT data
-            FROM {$this->tables['messagedata']}
-            WHERE name = 'excludelist' AND id = $messageId
-END;
-        $excludeSubquery = '';
-        
-        if ($data = $this->dbCommand->queryOne($sql, 'data')) {
-            $excluded = unserialize(substr($data, 4));
+        $excludeSubquery = $this->exclude($messageId);
+        $selects = array();
 
-            if (count($excluded) > 0) {
-                $inList = '(' . implode(', ', $excluded) . ')';
-                $excludeSubquery = <<<END
-                    AND u.id NOT IN (
-                        SELECT userid
-                        FROM {$this->tables['listuser']}
-                        WHERE listid IN $inList
-                    )
+        foreach ($subquery as $r) {
+            $selects[] = <<<END
+SELECT DISTINCT u.id
+FROM {$this->tables['user']} u
+JOIN {$this->tables['listuser']} lu0 ON u.id = lu0.userid
+JOIN {$this->tables['listmessage']} lm0 ON lm0.listid = lu0.listid AND lm0.messageid = $messageId
+LEFT JOIN {$this->tables['usermessage']} um0 ON um0.userid = u.id AND um0.messageid = $messageId
+$r->join
+WHERE u.confirmed = 1 AND u.blacklisted = 0
+AND COALESCE(um0.status, 'not sent') = 'not sent'
+$excludeSubquery
+AND $r->where
 END;
-            }
         }
 
         if ($combine == SegmentPlugin_Operator::ONE) {
-            $join = "JOIN (\n" . implode("\nUNION\n", $subquery) . ") AS T1 ON u.id = T1.id\n";
+            $sql = implode("\nUNION\n", $selects);
         } else {
-            $join = '';
+            $sql = "SELECT u.id FROM {$this->tables['user']} u ";
 
-            foreach ($subquery as $n => $s) {
-                $join .= "JOIN (\n$s) AS T$n ON u.id = T$n.id\n";
+            foreach ($selects as $n => $s) {
+                $sql .= <<<END
+\nJOIN (
+$s
+    ) AS T$n ON T$n.id = u.id
+END;
             }
         }
-        $sql = <<<END
-            SELECT DISTINCT u.id
-            FROM {$this->tables['user']} u
-            JOIN {$this->tables['listuser']} lu ON u.id = lu.userid
-            JOIN {$this->tables['listmessage']} lm ON lm.listid = lu.listid AND lm.messageid = $messageId
-            LEFT JOIN {$this->tables['usermessage']} um ON um.userid = u.id AND um.messageid = $messageId
-            $join
-            WHERE confirmed = 1 AND blacklisted = 0
-            AND COALESCE(um.status, 'not sent') = 'not sent'
-            $excludeSubquery
-END;
         return $this->dbCommand->queryColumn($sql, 'id');
     }
 }
