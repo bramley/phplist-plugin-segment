@@ -29,8 +29,18 @@
 class SegmentPlugin_DAO extends CommonPlugin_DAO
 {
 /*
+ *  Private variables
+ */
+    private $count = 0;
+
+/*
  *  Private functions
  */
+
+    private function formatInList(array $values)
+    {
+        return '(' . implode(', ', $values) . ')';
+    }
 
     private function exclude($messageId)
     {
@@ -44,8 +54,12 @@ END;
         if ($data = $this->dbCommand->queryOne($sql, 'data')) {
             $excluded = unserialize(substr($data, 4));
 
+            if (($key = array_search(-1, $excluded)) !== false) {
+                unset($excluded[$key]);
+            }
+
             if (count($excluded) > 0) {
-                $inList = '(' . implode(', ', $excluded) . ')';
+                $inList = $this->formatInList($excluded);
                 $excludeSubquery = <<<END
 AND u.id NOT IN (
     SELECT userid
@@ -61,6 +75,7 @@ END;
 /*
  *  Public functions
  */
+
     /**
      * Retrieves the values for a select/radio button attribute
      * @param array $attribute an attribute 
@@ -117,6 +132,7 @@ END
      */ 
     public function emailSelect($operator, $value)
     {
+        $this->count++;
         $value = sql_escape($value);
 
         switch ($operator) {
@@ -145,6 +161,7 @@ END
 
     public function enteredSelect($operator, $value)
     {
+        $this->count++;
         $value = sql_escape($value);
         $op = $operator == SegmentPlugin_Operator::BEFORE ? '<' 
             : ($operator == SegmentPlugin_Operator::AFTER ? '>' : '=');
@@ -157,28 +174,29 @@ END
 
     public function activitySelect($operator, $value)
     {
+        $this->count++;
         $r = new stdClass;
 
         if ($operator == SegmentPlugin_Operator::CLICKED || $operator == SegmentPlugin_Operator::NOTCLICKED) {
             $op = $operator == SegmentPlugin_Operator::CLICKED ? 'IS NOT NULL' : 'IS NULL';
             $r->join = <<<END
-                JOIN {$this->tables['usermessage']} um ON u.id = um.userid AND um.status = 'sent' AND um.messageid = $value
-                LEFT JOIN {$this->tables['linktrack_uml_click']} uml ON u.id = uml.userid AND uml.messageid = um.messageid
+                JOIN {$this->tables['usermessage']} um$this->count ON u.id = um$this->count.userid AND um$this->count.status = 'sent' AND um$this->count.messageid = $value
+                LEFT JOIN {$this->tables['linktrack_uml_click']} uml$this->count ON u.id = uml$this->count.userid AND uml$this->count.messageid = um$this->count.messageid
 END;
-            $r->where = "uml.userid $op";
+            $r->where = "uml$this->count.userid $op";
             
         } elseif ($operator == SegmentPlugin_Operator::OPENED || $operator == SegmentPlugin_Operator::NOTOPENED) {
             $op = $operator == SegmentPlugin_Operator::OPENED ? 'IS NOT NULL' : 'IS NULL';
             $r->join = <<<END
-                JOIN {$this->tables['usermessage']} um ON u.id = um.userid AND um.status = 'sent' AND um.messageid = $value
+                JOIN {$this->tables['usermessage']} um$this->count ON u.id = um$this->count.userid AND um$this->count.status = 'sent' AND um$this->count.messageid = $value
 END;
-            $r->where = "um.viewed $op";
+            $r->where = "um$this->count.viewed $op";
         } elseif ($operator == SegmentPlugin_Operator::SENT || $operator == SegmentPlugin_Operator::NOTSENT) {
             $op = $operator == SegmentPlugin_Operator::SENT ? 'IS NOT NULL' : 'IS NULL';
             $r->join = <<<END
-                LEFT JOIN {$this->tables['usermessage']} um ON u.id = um.userid AND um.status = 'sent' AND um.messageid = $value
+                LEFT JOIN {$this->tables['usermessage']} um$this->count ON u.id = um$this->count.userid AND um$this->count.status = 'sent' AND um$this->count.messageid = $value
 END;
-            $r->where = "um.userid $op";
+            $r->where = "um$this->count.userid $op";
         }
         return $r;
     }
@@ -187,6 +205,7 @@ END;
      */ 
     public function textSelect($attributeId, $operator, $target)
     {
+        $this->count++;
         $target = sql_escape($target);
 
         switch ($operator) {
@@ -220,45 +239,49 @@ END;
         }
             
         $r = new stdClass;
-        $r->join = "LEFT JOIN {$this->tables['user_attribute']} ua ON u.id = ua.userid AND ua.attributeid = $attributeId ";
-        $r->where = "COALESCE(value, '') $op '$target'";
+        $r->join = "LEFT JOIN {$this->tables['user_attribute']} ua$this->count ON u.id = ua$this->count.userid AND ua$this->count.attributeid = $attributeId ";
+        $r->where = "COALESCE(ua$this->count.value, '') $op '$target'";
         return $r;
     }
 
     public function selectSelect($attributeId, $operator, $target)
     {
-        $in = ($operator == SegmentPlugin_Operator::ONE ? 'IN' : 'NOT IN') . ' (' . implode(', ', $target) . ')';
+        $this->count++;
+        $in = ($operator == SegmentPlugin_Operator::ONE ? 'IN ' : 'NOT IN ') . $this->formatInList($target);
 
         $r = new stdClass;
-        $r->join = "LEFT JOIN {$this->tables['user_attribute']} ua ON u.id = ua.userid AND ua.attributeid = $attributeId ";
-        $r->where = "COALESCE(value, 0) $in";
+        $r->join = "LEFT JOIN {$this->tables['user_attribute']} ua$this->count ON u.id = ua$this->count.userid AND ua$this->count.attributeid = $attributeId ";
+        $r->where = "COALESCE(ua$this->count.value, 0) $in";
         return $r;
     }
 
     public function dateSelect($attributeId, $operator, $target)
     {
+        $this->count++;
         $target = sql_escape($target);
         $op = $operator == SegmentPlugin_Operator::BEFORE ? '<' 
             : ($operator == SegmentPlugin_Operator::AFTER ? '>' : '=');
 
         $r = new stdClass;
-        $r->join = "LEFT JOIN {$this->tables['user_attribute']} ua ON u.id = ua.userid AND ua.attributeid = $attributeId ";
-        $r->where = "COALESCE(value, '') != '' AND DATE(COALESCE(value, '')) $op '$target'";
+        $r->join = "LEFT JOIN {$this->tables['user_attribute']} ua$this->count ON u.id = ua$this->count.userid AND ua$this->count.attributeid = $attributeId ";
+        $r->where = "(COALESCE(ua$this->count.value, '') != '' AND DATE(COALESCE(ua$this->countvalue, '')) $op '$target')";
         return $r;
     }
 
     public function checkboxSelect($attributeId, $operator, $target)
     {
+        $this->count++;
         $op = $operator == SegmentPlugin_Operator::IS ? '=' : '!=';
 
         $r = new stdClass;
-        $r->join = "LEFT JOIN {$this->tables['user_attribute']} ua ON u.id = ua.userid AND ua.attributeid = $attributeId ";
-        $r->where = "COALESCE(value, '') $op 'on'";
+        $r->join = "LEFT JOIN {$this->tables['user_attribute']} ua$this->count ON u.id = ua$this->count.userid AND ua$this->count.attributeid = $attributeId ";
+        $r->where = "COALESCE(ua$this->count.value, '') $op 'on'";
         return $r;
     }
 
     public function checkboxgroupSelect($attributeId, $operator, $target)
     {
+        $this->count++;
         $where = array();
 
         if ($operator == SegmentPlugin_Operator::ONE) {
@@ -273,53 +296,43 @@ END;
         }
 
         foreach ($target as $item) {
-            $where[] = "FIND_IN_SET($item, COALESCE(value, '')) $compare 0";
+            $where[] = "FIND_IN_SET($item, COALESCE(ua$this->count.value, '')) $compare 0";
         }
 
         $r = new stdClass;
-        $r->join = "LEFT JOIN {$this->tables['user_attribute']} ua ON u.id = ua.userid AND ua.attributeid = $attributeId ";
+        $r->join = "LEFT JOIN {$this->tables['user_attribute']} ua$this->count ON u.id = ua$this->count.userid AND ua$this->count.attributeid = $attributeId ";
         $r->where = '(' . implode(" $boolean ", $where) . ')';
         return $r;
     }
 
     public function subscribers($messageId, array $select, $combine)
     {
-        $excludeSubquery = $this->exclude($messageId);
-        $queries = array();
+        $excludeSubquery = USE_LIST_EXCLUDE ? $this->exclude($messageId) : '';
+
+        $booleanOp = ($combine == SegmentPlugin_Operator::ONE) ? 'OR' : 'AND';
+        $extraJoin = '';
+        $extraWhere = array();
 
         foreach ($select as $s) {
-            $queries[] = <<<END
+            $extraJoin .= $s->join ? $s->join . "\n" : '';
+            $extraWhere[] = $s->where;
+        }
+        $w = implode("\n$booleanOp ", $extraWhere);
+
+        $query = <<<END
 SELECT DISTINCT u.id
 FROM {$this->tables['user']} u
 JOIN {$this->tables['listuser']} lu0 ON u.id = lu0.userid
 JOIN {$this->tables['listmessage']} lm0 ON lm0.listid = lu0.listid AND lm0.messageid = $messageId
 LEFT JOIN {$this->tables['usermessage']} um0 ON um0.userid = u.id AND um0.messageid = $messageId
-$s->join
+$extraJoin
 WHERE u.confirmed = 1 AND u.blacklisted = 0
 AND COALESCE(um0.status, 'not sent') = 'not sent'
 $excludeSubquery
-AND $s->where
+AND (
+$w
+)
 END;
-        }
-
-        if ($combine == SegmentPlugin_Operator::ONE) {
-            $sql = implode("\nUNION\n", $queries);
-        } else {
-            $sql = <<<END
-SELECT T0.id
-FROM (
-{$queries[0]}
-    ) AS T0
-END;
-
-            for ($n = 1; $n < count($queries); $n++) { 
-                $sql .= <<<END
-\nJOIN (
-{$queries[$n]}
-    ) AS T$n ON T$n.id = T0.id
-END;
-            }
-        }
-        return $this->dbCommand->queryColumn($sql, 'id');
+        return $this->dbCommand->queryColumn($query, 'id');
     }
 }

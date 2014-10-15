@@ -28,9 +28,11 @@
  */
 class SegmentPlugin_SubscriberConditionBase
 {
+    protected $field;
+    public $dao;
+
     public function __construct($field)
     {
         $this->field = $field;
-        $this->dao = new SegmentPlugin_DAO(new CommonPlugin_DB());
     }
 }

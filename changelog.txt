@@ -1,3 +1,11 @@
+version 2014-10-15
+      Correct subquery for clicked to include only those who were sent the campaign
+      Added excluded lists
+      Reorganise query structure to avoid querying all subscribers
+
+Michiel Dethmers (1):
+      remove warnings on strict standards
+
 version 2014-10-04
       Add was sent/not sent a campaign
       Add clicked any link/did not click any link in a campaign

@@ -34,6 +34,7 @@ class SegmentPlugin extends phplistPlugin
 
     private $selectedSubscribers = array();
     private $noConditions = true;
+    private $dao;
 
 /*
  *  Inherited variables
@@ -83,11 +84,7 @@ class SegmentPlugin extends phplistPlugin
 
     private function loadSubscribers($messageId, array $conditions, $combine)
     {
-        global $plugins;
-        include_once $plugins['CommonPlugin']->coderoot . 'Autoloader.php';
-
-        $dao = new SegmentPlugin_DAO(new CommonPlugin_DB());
-        $cf = new SegmentPlugin_ConditionFactory();
+        $cf = new SegmentPlugin_ConditionFactory($this->dao);
         $select = array();
 
         foreach ($conditions as $i => $c) {
@@ -102,7 +99,7 @@ class SegmentPlugin extends phplistPlugin
         }
 
         if (count($select) > 0) {
-            $this->selectedSubscribers = array_flip($dao->subscribers($messageId, $select, $combine));
+            $this->selectedSubscribers = array_flip($this->dao->subscribers($messageId, $select, $combine));
         }
     }
 
@@ -134,7 +131,8 @@ class SegmentPlugin extends phplistPlugin
 
         include_once $plugins['CommonPlugin']->coderoot . 'Autoloader.php';
 
-        $cf = new SegmentPlugin_ConditionFactory();
+        $this->dao = new SegmentPlugin_DAO(new CommonPlugin_DB());
+        $cf = new SegmentPlugin_ConditionFactory($this->dao);
 
         $conditions = (isset($data['segment']['c']))
             ? array_values($this->filterEmptyFields($data['segment']['c']))
@@ -238,6 +236,14 @@ END;
     public function messageReQueued($id)
     {
         $this->messageQueued($id);
+    }
+
+    public function processQueueStart()
+    {
+        global $plugins;
+
+        include_once $plugins['CommonPlugin']->coderoot . 'Autoloader.php';
+        $this->dao = new SegmentPlugin_DAO(new CommonPlugin_DB());
     }
 
     public function campaignStarted($messageData = array())

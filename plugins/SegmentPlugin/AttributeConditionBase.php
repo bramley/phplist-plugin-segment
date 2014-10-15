@@ -29,12 +29,11 @@
 class SegmentPlugin_AttributeConditionBase
 {
     protected $attribute;
-    protected $dao;
+    public $dao;
 
     public function __construct($attribute)
     {
         $this->attribute = $attribute;
-        $this->dao = new SegmentPlugin_DAO(new CommonPlugin_DB());
     }
 }
 
