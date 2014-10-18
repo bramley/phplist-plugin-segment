@@ -175,28 +175,30 @@ END
     public function activitySelect($operator, $value)
     {
         $this->count++;
+        $um = 'um' . $this->count;
+        $uml = 'uml' . $this->count;
         $r = new stdClass;
 
         if ($operator == SegmentPlugin_Operator::CLICKED || $operator == SegmentPlugin_Operator::NOTCLICKED) {
             $op = $operator == SegmentPlugin_Operator::CLICKED ? 'IS NOT NULL' : 'IS NULL';
             $r->join = <<<END
-                JOIN {$this->tables['usermessage']} um$this->count ON u.id = um$this->count.userid AND um$this->count.status = 'sent' AND um$this->count.messageid = $value
-                LEFT JOIN {$this->tables['linktrack_uml_click']} uml$this->count ON u.id = uml$this->count.userid AND uml$this->count.messageid = um$this->count.messageid
+                JOIN {$this->tables['usermessage']} $um ON u.id = $um.userid AND $um.status = 'sent' AND $um.messageid = $value
+                LEFT JOIN {$this->tables['linktrack_uml_click']} $uml ON u.id = $uml.userid AND $uml.messageid = $um.messageid
 END;
-            $r->where = "uml$this->count.userid $op";
+            $r->where = "$uml.userid $op";
             
         } elseif ($operator == SegmentPlugin_Operator::OPENED || $operator == SegmentPlugin_Operator::NOTOPENED) {
             $op = $operator == SegmentPlugin_Operator::OPENED ? 'IS NOT NULL' : 'IS NULL';
             $r->join = <<<END
-                JOIN {$this->tables['usermessage']} um$this->count ON u.id = um$this->count.userid AND um$this->count.status = 'sent' AND um$this->count.messageid = $value
+                JOIN {$this->tables['usermessage']} $um ON u.id = $um.userid AND $um.status = 'sent' AND $um.messageid = $value
 END;
-            $r->where = "um$this->count.viewed $op";
+            $r->where = "$um.viewed $op";
         } elseif ($operator == SegmentPlugin_Operator::SENT || $operator == SegmentPlugin_Operator::NOTSENT) {
             $op = $operator == SegmentPlugin_Operator::SENT ? 'IS NOT NULL' : 'IS NULL';
             $r->join = <<<END
-                LEFT JOIN {$this->tables['usermessage']} um$this->count ON u.id = um$this->count.userid AND um$this->count.status = 'sent' AND um$this->count.messageid = $value
+                LEFT JOIN {$this->tables['usermessage']} $um ON u.id = $um.userid AND $um.status = 'sent' AND $um.messageid = $value
 END;
-            $r->where = "um$this->count.userid $op";
+            $r->where = "$um.userid $op";
         }
         return $r;
     }
@@ -206,6 +208,7 @@ END;
     public function textSelect($attributeId, $operator, $target)
     {
         $this->count++;
+        $ua = 'ua' . $this->count;
         $target = sql_escape($target);
 
         switch ($operator) {
@@ -239,49 +242,53 @@ END;
         }
             
         $r = new stdClass;
-        $r->join = "LEFT JOIN {$this->tables['user_attribute']} ua$this->count ON u.id = ua$this->count.userid AND ua$this->count.attributeid = $attributeId ";
-        $r->where = "COALESCE(ua$this->count.value, '') $op '$target'";
+        $r->join = "LEFT JOIN {$this->tables['user_attribute']} $ua ON u.id = $ua.userid AND $ua.attributeid = $attributeId ";
+        $r->where = "COALESCE($ua.value, '') $op '$target'";
         return $r;
     }
 
     public function selectSelect($attributeId, $operator, $target)
     {
         $this->count++;
+        $ua = 'ua' . $this->count;
         $in = ($operator == SegmentPlugin_Operator::ONE ? 'IN ' : 'NOT IN ') . $this->formatInList($target);
 
         $r = new stdClass;
-        $r->join = "LEFT JOIN {$this->tables['user_attribute']} ua$this->count ON u.id = ua$this->count.userid AND ua$this->count.attributeid = $attributeId ";
-        $r->where = "COALESCE(ua$this->count.value, 0) $in";
+        $r->join = "LEFT JOIN {$this->tables['user_attribute']} $ua ON u.id = $ua.userid AND $ua.attributeid = $attributeId ";
+        $r->where = "COALESCE($ua.value, 0) $in";
         return $r;
     }
 
     public function dateSelect($attributeId, $operator, $target)
     {
         $this->count++;
+        $ua = 'ua' . $this->count;
         $target = sql_escape($target);
         $op = $operator == SegmentPlugin_Operator::BEFORE ? '<' 
             : ($operator == SegmentPlugin_Operator::AFTER ? '>' : '=');
 
         $r = new stdClass;
-        $r->join = "LEFT JOIN {$this->tables['user_attribute']} ua$this->count ON u.id = ua$this->count.userid AND ua$this->count.attributeid = $attributeId ";
-        $r->where = "(COALESCE(ua$this->count.value, '') != '' AND DATE(COALESCE(ua$this->countvalue, '')) $op '$target')";
+        $r->join = "LEFT JOIN {$this->tables['user_attribute']} $ua ON u.id = $ua.userid AND $ua.attributeid = $attributeId ";
+        $r->where = "(COALESCE($ua.value, '') != '' AND DATE(COALESCE($ua.value, '')) $op '$target')";
         return $r;
     }
 
     public function checkboxSelect($attributeId, $operator, $target)
     {
         $this->count++;
+        $ua = 'ua' . $this->count;
         $op = $operator == SegmentPlugin_Operator::IS ? '=' : '!=';
 
         $r = new stdClass;
-        $r->join = "LEFT JOIN {$this->tables['user_attribute']} ua$this->count ON u.id = ua$this->count.userid AND ua$this->count.attributeid = $attributeId ";
-        $r->where = "COALESCE(ua$this->count.value, '') $op 'on'";
+        $r->join = "LEFT JOIN {$this->tables['user_attribute']} $ua ON u.id = $ua.userid AND $ua.attributeid = $attributeId ";
+        $r->where = "COALESCE($ua.value, '') $op 'on'";
         return $r;
     }
 
     public function checkboxgroupSelect($attributeId, $operator, $target)
     {
         $this->count++;
+        $ua = 'ua' . $this->count;
         $where = array();
 
         if ($operator == SegmentPlugin_Operator::ONE) {
@@ -296,11 +303,11 @@ END;
         }
 
         foreach ($target as $item) {
-            $where[] = "FIND_IN_SET($item, COALESCE(ua$this->count.value, '')) $compare 0";
+            $where[] = "FIND_IN_SET($item, COALESCE($ua.value, '')) $compare 0";
         }
 
         $r = new stdClass;
-        $r->join = "LEFT JOIN {$this->tables['user_attribute']} ua$this->count ON u.id = ua$this->count.userid AND ua$this->count.attributeid = $attributeId ";
+        $r->join = "LEFT JOIN {$this->tables['user_attribute']} $ua ON u.id = $ua.userid AND $ua.attributeid = $attributeId ";
         $r->where = '(' . implode(" $boolean ", $where) . ')';
         return $r;
     }

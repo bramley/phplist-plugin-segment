@@ -74,6 +74,7 @@ This plugin is free but if you install and find it useful then a donation to sup
 ## Version history ##
 
     version     Description
+    2014-10-18  Fix bug in date attribute processing
     2014-10-15  Added list exclusion, internal changes
     2014-10-04  Add sent/not sent a campaign, and clicked/did not click any link
     2014-10-03  Add any/all, multi-value for select list and radio button attributes
