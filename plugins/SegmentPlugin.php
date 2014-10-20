@@ -120,7 +120,7 @@ class SegmentPlugin extends phplistPlugin
         return array();
     }
 
-    public function sendMessageTab($messageId = 0 , $data = array())
+    public function sendMessageTab($messageId = 0 , $messageData = array())
     {
         $er = error_reporting(-1);
         global $plugins, $pagefooter;
@@ -134,8 +134,8 @@ class SegmentPlugin extends phplistPlugin
         $this->dao = new SegmentPlugin_DAO(new CommonPlugin_DB());
         $cf = new SegmentPlugin_ConditionFactory($this->dao);
 
-        $conditions = (isset($data['segment']['c']))
-            ? array_values($this->filterEmptyFields($data['segment']['c']))
+        $conditions = (isset($messageData['segment']['c']))
+            ? array_values($this->filterEmptyFields($messageData['segment']['c']))
             : array();
 
         $conditions[] = array('field' => '');
@@ -160,6 +160,7 @@ class SegmentPlugin extends phplistPlugin
 
             if ($field != '') {
                 $condition = $cf->createCondition($field);
+                $condition->messageData = $messageData;
                 $operators = $condition->operators();
 
                 $op = ($field == $c['_field'] && isset($c['op']))
@@ -186,18 +187,18 @@ class SegmentPlugin extends phplistPlugin
 END;
         }
         $calculateButton = CHtml::submitButton('Calculate', array('name' => 'segment[calculate]'));
-        $combine = isset($data['segment']['combine']) 
-            ? $data['segment']['combine'] : SegmentPlugin_Operator::ALL;
+        $combine = isset($messageData['segment']['combine']) 
+            ? $messageData['segment']['combine'] : SegmentPlugin_Operator::ALL;
         $combineList = CHtml::dropDownList(
             "segment[combine]",
             $combine,
             array(SegmentPlugin_Operator::ONE => 'any', SegmentPlugin_Operator::ALL => 'all')
         );
 
-        if (isset($data['segment']['calculate'])) {
+        if (isset($messageData['segment']['calculate'])) {
             $this->loadSubscribers(
                 $messageId,
-                $this->filterIncompleteConditions($data['segment']['c']),
+                $this->filterIncompleteConditions($messageData['segment']['c']),
                 $combine
             );
             $subscribers = count($this->selectedSubscribers) . ' subscribers will be selected';

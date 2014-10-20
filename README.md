@@ -62,10 +62,6 @@ For guidance on usage see the plugin page within the phplist documentation site 
 
 Questions and problems can be reported in the phplist user forum topic <http://forums.phplist.com/viewtopic.php?f=7&t=41650>.
 
-## Known issues / To Do ##
-
-* Does not take account of excluded lists when calculating the number of subscribers
-
 ## Donation ##
 This plugin is free but if you install and find it useful then a donation to support further development is greatly appreciated.
 
@@ -74,6 +70,7 @@ This plugin is free but if you install and find it useful then a donation to sup
 ## Version history ##
 
     version     Description
+    2014-10-20  Campaign activity select list is limited to prior campaigns sent to the lists
     2014-10-18  Fix bug in date attribute processing
     2014-10-15  Added list exclusion, internal changes
     2014-10-04  Add sent/not sent a campaign, and clicked/did not click any link

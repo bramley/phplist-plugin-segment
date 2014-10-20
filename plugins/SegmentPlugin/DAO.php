@@ -99,22 +99,25 @@ END
      * Retrieves campaigns
      * @param string $loginId login id of the current admin
      * @param int $max Maximum number of campaigns to be returned
+     * @param array $lists Lists to which the campaign is to be sent
      * @return Iterator
      * @access public
      */
 
-    public function campaigns($loginId, $max)
+    public function campaigns($loginId, $max, $lists)
     {
         $owner = $loginId ? "AND m.owner = $loginId" : '';
-        $limitClause = is_null($max) ? '' : "LIMIT $max";
+        $inList = $this->formatInList($lists);
 
-        $sql = "SELECT m.id, CONCAT_WS(' - ',m.subject, DATE_FORMAT(m.sent,'%d/%m/%y')) AS subject
-            FROM {$this->tables['message']} m
-            WHERE m.status = 'sent'
-            $owner
-            ORDER BY m.sent DESC
-            $limitClause
-            ";
+        $sql = <<<END
+SELECT DISTINCT m.id, CONCAT_WS(' - ',m.subject, DATE_FORMAT(m.sent,'%d/%m/%y')) AS subject
+FROM {$this->tables['message']} m
+JOIN {$this->tables['listmessage']} lm ON m.id = lm.messageid AND lm.listid IN $inList
+WHERE m.status = 'sent'
+$owner
+ORDER BY m.sent DESC
+LIMIT $max
+END;
         return $this->dbCommand->queryAll($sql);
     }
 

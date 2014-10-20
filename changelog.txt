@@ -1,3 +1,6 @@
+version 2014-10-20
+      Show only campaigns sent to the selected lists
+
 version 2014-10-18
       Fix bug in date sql
 
