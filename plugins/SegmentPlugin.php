@@ -42,17 +42,7 @@ class SegmentPlugin extends phplistPlugin
     public $name = "Segmentation";
     public $authors = 'Duncan Cameron';
     public $description = 'Send to a subset of subscribers using custom conditions';
-    public $settings = array(
-        'segment_campaign_max' => array (
-          'description' => 'The maximum number of earlier campaigns to select from',
-          'type' => 'integer',
-          'value' => 10,
-          'allowempty' => 0,
-          'min' => 4,
-          'max' => 25,
-          'category'=> 'Segmentation',
-        )
-    );
+    public $settings;
 
 /*
  *  Private methods
@@ -112,6 +102,17 @@ class SegmentPlugin extends phplistPlugin
         $this->version = (is_file($f = $this->coderoot . self::VERSION_FILE))
             ? file_get_contents($f)
             : '';
+        $this->settings = array(
+            'segment_campaign_max' => array (
+              'description' => s('The maximum number of earlier campaigns to select from'),
+              'type' => 'integer',
+              'value' => 10,
+              'allowempty' => 0,
+              'min' => 4,
+              'max' => 25,
+              'category'=> 'Segmentation',
+            )
+        );
         parent::__construct();
     }
 
@@ -126,7 +127,7 @@ class SegmentPlugin extends phplistPlugin
         global $plugins, $pagefooter;
 
         if (!phplistPlugin::isEnabled('CommonPlugin')) {
-            return 'CommonPlugin must be installed in order to use segments';
+            return s('CommonPlugin must be installed in order to use segments');
         }
 
         include_once $plugins['CommonPlugin']->coderoot . 'Autoloader.php';
@@ -140,6 +141,7 @@ class SegmentPlugin extends phplistPlugin
 
         $conditions[] = array('field' => '');
         $conditionArea = '';
+        $selectPrompt = s('Select ...');
 
         foreach ($conditions as $i => $c) {
             $fieldList = CHtml::dropDownList(
@@ -150,7 +152,7 @@ class SegmentPlugin extends phplistPlugin
                     'Attributes' => $cf->attributeFields()
                 ),
                 array(
-                    'prompt' => 'Select ...',
+                    'prompt' => $selectPrompt,
                     'onchange' => 'this.form.submit()',
                 )
             );
@@ -186,13 +188,13 @@ class SegmentPlugin extends phplistPlugin
         </li>
 END;
         }
-        $calculateButton = CHtml::submitButton('Calculate', array('name' => 'segment[calculate]'));
+        $calculateButton = CHtml::submitButton(s('Calculate'), array('name' => 'segment[calculate]'));
         $combine = isset($messageData['segment']['combine']) 
             ? $messageData['segment']['combine'] : SegmentPlugin_Operator::ALL;
         $combineList = CHtml::dropDownList(
             "segment[combine]",
             $combine,
-            array(SegmentPlugin_Operator::ONE => 'any', SegmentPlugin_Operator::ALL => 'all')
+            array(SegmentPlugin_Operator::ONE => s('any'), SegmentPlugin_Operator::ALL => s('all'))
         );
 
         if (isset($messageData['segment']['calculate'])) {
@@ -201,19 +203,19 @@ END;
                 $this->filterIncompleteConditions($messageData['segment']['c']),
                 $combine
             );
-            $subscribers = count($this->selectedSubscribers) . ' subscribers will be selected';
+            $subscribers = s('%d subscribers will be selected', count($this->selectedSubscribers));
         } else {
             $subscribers = '';
         }
-
+        $text1 = s("Select one or more subscriber fields or attributes.
+The campaign will be sent only to those subscribers who match any or all of the conditions.
+To remove a condition, choose '%s' from the drop-down list.", $selectPrompt);
+        $text2 = s('Subscribers match %s of the following:', $combineList);
         $html = file_get_contents($this->coderoot . '/styles.css');
         $html .= <<<END
 <div class="segment">
-    <div>Select one or more subscriber fields or attributes.
-    The campaign will be sent only to those subscribers who match any or all of the conditions.
-    To remove a condition, choose 'Select ...' from the drop-down list.
-    </div>
-    <div>Subscribers match $combineList of the following:</div>
+    <div>$text1</div>
+    <div>$text2</div>
     <ul>$conditionArea
     </ul>
     <div id="recalculate">$calculateButton $subscribers</div>

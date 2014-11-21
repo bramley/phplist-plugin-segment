@@ -1,3 +1,6 @@
+version 2014-11-21
+      Use s() function to allow text to be translated
+
 version 2014-10-20
       Show only campaigns sent to the selected lists
 

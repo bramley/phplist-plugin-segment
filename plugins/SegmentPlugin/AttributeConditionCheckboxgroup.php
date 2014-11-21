@@ -32,9 +32,9 @@ class SegmentPlugin_AttributeConditionCheckboxgroup extends SegmentPlugin_Attrib
     public function operators()
     {
         return array(
-            SegmentPlugin_Operator::ONE => 'one checked',
-            SegmentPlugin_Operator::ALL => 'all checked',
-            SegmentPlugin_Operator::NONE => 'none checked',
+            SegmentPlugin_Operator::ONE => s('one checked'),
+            SegmentPlugin_Operator::ALL => s('all checked'),
+            SegmentPlugin_Operator::NONE => s('none checked'),
         );
     }
 

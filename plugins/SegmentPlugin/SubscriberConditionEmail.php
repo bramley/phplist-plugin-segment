@@ -32,11 +32,11 @@ class SegmentPlugin_SubscriberConditionEmail extends SegmentPlugin_SubscriberCon
     public function operators()
     {
         return array(
-            SegmentPlugin_Operator::IS => 'is',
-            SegmentPlugin_Operator::MATCHES => 'matches',
-            SegmentPlugin_Operator::NOTMATCHES => 'does not match',
-            SegmentPlugin_Operator::REGEXP => 'REGEXP',
-            SegmentPlugin_Operator::NOTREGEXP => 'not REGEXP',
+            SegmentPlugin_Operator::IS => s('is'),
+            SegmentPlugin_Operator::MATCHES => s('matches'),
+            SegmentPlugin_Operator::NOTMATCHES => s('does not match'),
+            SegmentPlugin_Operator::REGEXP => s('REGEXP'),
+            SegmentPlugin_Operator::NOTREGEXP => s('not REGEXP'),
         );
     }
 

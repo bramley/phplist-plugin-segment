@@ -32,14 +32,14 @@ class SegmentPlugin_AttributeConditionText extends SegmentPlugin_AttributeCondit
     public function operators()
     {
         return array(
-            SegmentPlugin_Operator::IS => 'is',
-            SegmentPlugin_Operator::ISNOT => 'is not',
-            SegmentPlugin_Operator::BLANK => 'is blank',
-            SegmentPlugin_Operator::NOTBLANK => 'is not blank',
-            SegmentPlugin_Operator::MATCHES => 'matches',
-            SegmentPlugin_Operator::NOTMATCHES => 'does not match',
-            SegmentPlugin_Operator::REGEXP => 'REGEXP',
-            SegmentPlugin_Operator::NOTREGEXP => 'not REGEXP',
+            SegmentPlugin_Operator::IS => s('is'),
+            SegmentPlugin_Operator::ISNOT => s('is not'),
+            SegmentPlugin_Operator::BLANK => s('is blank'),
+            SegmentPlugin_Operator::NOTBLANK => s('is not blank'),
+            SegmentPlugin_Operator::MATCHES => s('matches'),
+            SegmentPlugin_Operator::NOTMATCHES => s('does not match'),
+            SegmentPlugin_Operator::REGEXP => s('REGEXP'),
+            SegmentPlugin_Operator::NOTREGEXP => s('not REGEXP'),
         );
     }
 

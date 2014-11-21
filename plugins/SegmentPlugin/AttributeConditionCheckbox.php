@@ -32,8 +32,8 @@ class SegmentPlugin_AttributeConditionCheckbox extends SegmentPlugin_AttributeCo
     public function operators()
     {
         return array(
-            SegmentPlugin_Operator::IS => 'is checked',
-            SegmentPlugin_Operator::ISNOT => 'is not checked',
+            SegmentPlugin_Operator::IS => s('is checked'),
+            SegmentPlugin_Operator::ISNOT => s('is not checked'),
         );
     }
 

@@ -70,6 +70,7 @@ This plugin is free but if you install and find it useful then a donation to sup
 ## Version history ##
 
     version     Description
+    2014-11-21  Allow text to be translated
     2014-10-20  Campaign activity select list is limited to prior campaigns sent to the lists
     2014-10-18  Fix bug in date attribute processing
     2014-10-15  Added list exclusion, internal changes

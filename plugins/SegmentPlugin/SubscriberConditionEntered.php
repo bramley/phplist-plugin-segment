@@ -32,9 +32,9 @@ class SegmentPlugin_SubscriberConditionEntered extends SegmentPlugin_SubscriberC
     public function operators()
     {
         return array(
-            SegmentPlugin_Operator::IS => 'is',
-            SegmentPlugin_Operator::AFTER => 'is after',
-            SegmentPlugin_Operator::BEFORE => 'is before',
+            SegmentPlugin_Operator::IS => s('is'),
+            SegmentPlugin_Operator::AFTER => s('is after'),
+            SegmentPlugin_Operator::BEFORE => s('is before'),
         );
     }
 
