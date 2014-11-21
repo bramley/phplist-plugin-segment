@@ -43,7 +43,7 @@ class SegmentPlugin_SubscriberConditionActivity extends SegmentPlugin_Subscriber
 
     public function valueEntry($value, $namePrefix)
     {
-        if (count($this->messageData['targetlist']) > 0) {
+        if (is_array($this->messageData['targetlist']) && count($this->messageData['targetlist']) > 0) {
             $selectData = CHtml::listData(
                 $this->dao->campaigns(null, getConfig('segment_campaign_max'), array_keys($this->messageData['targetlist'])),
                 'id', 'subject'
