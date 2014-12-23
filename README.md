@@ -12,7 +12,7 @@ These subscriber fields and attributes are supported for fields:
 * each subscriber attribute
 * the subscriber email address
 * the subscriber Entered date
-* subscriber campaign activity - whether the subscriber opened a specific prior campaign
+* subscriber campaign activity - whether the subscriber was sent, opened, or clicked a link in a specific prior campaign
 
 Each condition has a set of operators, specific to each field, such as 'is', 'is not', 'matches', 'is before', 'opened', etc.
 
@@ -27,8 +27,9 @@ Requires php version 5.3 or later.
 Requires the Common Plugin to be installed. See <https://github.com/bramley/phplist-plugin-common>
 
 ### Set the plugin directory ###
-The default plugin directory is `/lists/admin/plugins` but you can use a directory outside of the web root by
-changing the definition of `PLUGIN_ROOTDIR` in config.php.
+The default plugin directory is `plugins` within the admin directory.
+
+You can use a directory outside of the web root by changing the definition of `PLUGIN_ROOTDIR` in config.php.
 The benefit of this is that plugins will not be affected when you upgrade phplist.
 
 ### Install through phplist ###
