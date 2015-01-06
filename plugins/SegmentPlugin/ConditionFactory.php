@@ -31,7 +31,7 @@ class SegmentPlugin_ConditionFactory
     public function __construct($dao)
     {
         $this->dao = $dao;
-        $daoAttr = new CommonPlugin_DAO_Attribute(new CommonPlugin_DB());
+        $daoAttr = new CommonPlugin_DAO_Attribute(new CommonPlugin_DB(), 20, 0);
         $this->attributes = iterator_to_array($daoAttr->attributes());
         $this->attributesById = $daoAttr->attributesById();
     }
