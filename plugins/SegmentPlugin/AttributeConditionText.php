@@ -27,7 +27,7 @@
  * @package   SegmentPlugin
  */
 
-class SegmentPlugin_AttributeConditionText extends SegmentPlugin_AttributeConditionBase
+class SegmentPlugin_AttributeConditionText extends SegmentPlugin_Condition
 {
     public function operators()
     {
@@ -43,7 +43,7 @@ class SegmentPlugin_AttributeConditionText extends SegmentPlugin_AttributeCondit
         );
     }
 
-    public function valueEntry($value, $namePrefix)
+    public function valueEntry($op, $value, $namePrefix)
     {
         return CHtml::textField(
             $namePrefix . '[value]',
@@ -57,6 +57,6 @@ class SegmentPlugin_AttributeConditionText extends SegmentPlugin_AttributeCondit
             throw new SegmentPlugin_ValueException;
         }
 
-        return $this->dao->textSelect($this->attribute['id'], $op, $value);
+        return $this->dao->textSelect($this->field['id'], $op, $value);
     }
 }

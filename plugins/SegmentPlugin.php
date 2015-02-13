@@ -175,7 +175,7 @@ class SegmentPlugin extends phplistPlugin
 
                 $value = ($field == $c['_field'] && isset($c['value']))
                     ? $c['value'] : '';
-                $valueInput = $condition->valueEntry($value, "segment[c][$i]");
+                $valueInput = $condition->valueEntry($op, $value, "segment[c][$i]");
             } else {
                 $operatorList = '';
                 $valueInput = '';

@@ -27,7 +27,7 @@
  * @package   SegmentPlugin
  */
 
-class SegmentPlugin_SubscriberConditionActivity extends SegmentPlugin_SubscriberConditionBase
+class SegmentPlugin_SubscriberConditionActivity extends SegmentPlugin_Condition
 {
     public function operators()
     {
@@ -41,7 +41,7 @@ class SegmentPlugin_SubscriberConditionActivity extends SegmentPlugin_Subscriber
         );
     }
 
-    public function valueEntry($value, $namePrefix)
+    public function valueEntry($op, $value, $namePrefix)
     {
         if (is_array($this->messageData['targetlist']) && count($this->messageData['targetlist']) > 0) {
             $selectData = CHtml::listData(

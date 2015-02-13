@@ -27,7 +27,7 @@
  * @package   SegmentPlugin
  */
 
-class SegmentPlugin_AttributeConditionSelect extends SegmentPlugin_AttributeConditionBase
+class SegmentPlugin_AttributeConditionSelect extends SegmentPlugin_Condition
 {
     public function operators()
     {
@@ -37,7 +37,7 @@ class SegmentPlugin_AttributeConditionSelect extends SegmentPlugin_AttributeCond
         );
     }
 
-    public function valueEntry($value, $namePrefix)
+    public function valueEntry($op, $value, $namePrefix)
     {
         $selectData = CHtml::listData($this->dao->selectData($this->attribute), 'id', 'name');
 
@@ -56,6 +56,6 @@ class SegmentPlugin_AttributeConditionSelect extends SegmentPlugin_AttributeCond
         if (!is_array($value) || count($value) == 0) {
             throw new SegmentPlugin_ValueException;
         }
-        return $this->dao->selectSelect($this->attribute['id'], $op, $value);
+        return $this->dao->selectSelect($this->field['id'], $op, $value);
     }
 }

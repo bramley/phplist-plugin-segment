@@ -27,7 +27,7 @@
  * @package   SegmentPlugin
  */
 
-class SegmentPlugin_AttributeConditionCheckbox extends SegmentPlugin_AttributeConditionBase
+class SegmentPlugin_AttributeConditionCheckbox extends SegmentPlugin_Condition
 {
     public function operators()
     {
@@ -37,13 +37,13 @@ class SegmentPlugin_AttributeConditionCheckbox extends SegmentPlugin_AttributeCo
         );
     }
 
-    public function valueEntry($value, $namePrefix)
+    public function valueEntry($op, $value, $namePrefix)
     {
         return '';
     }
 
     public function select($op, $value)
     {
-        return $this->dao->checkboxSelect($this->attribute['id'], $op, $value);
+        return $this->dao->checkboxSelect($this->field['id'], $op, $value);
     }
 }

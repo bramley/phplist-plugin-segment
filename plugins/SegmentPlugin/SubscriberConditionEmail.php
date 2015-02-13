@@ -27,7 +27,7 @@
  * @package   SegmentPlugin
  */
 
-class SegmentPlugin_SubscriberConditionEmail extends SegmentPlugin_SubscriberConditionBase
+class SegmentPlugin_SubscriberConditionEmail extends SegmentPlugin_Condition
 {
     public function operators()
     {
@@ -40,7 +40,7 @@ class SegmentPlugin_SubscriberConditionEmail extends SegmentPlugin_SubscriberCon
         );
     }
 
-    public function valueEntry($value, $namePrefix)
+    public function valueEntry($op, $value, $namePrefix)
     {
         return CHtml::textField(
             $namePrefix . '[value]',

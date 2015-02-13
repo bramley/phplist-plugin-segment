@@ -26,7 +26,7 @@
  * @category  phplist
  * @package   SegmentPlugin
  */
-class SegmentPlugin_SubscriberConditionBase
+abstract class SegmentPlugin_Condition
 {
     protected $field;
     public $dao;
@@ -35,4 +35,11 @@ class SegmentPlugin_SubscriberConditionBase
     {
         $this->field = $field;
     }
+
+    abstract public function operators();
+
+    abstract public function valueEntry($op, $value, $namePrefix);
+
+    abstract public function select($op, $value);
 }
+

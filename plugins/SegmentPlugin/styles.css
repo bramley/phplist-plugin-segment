@@ -19,5 +19,9 @@ ul {
 input[type="text"] {
     display: inline;
 }
+input[type="text"].datepicker {
+    width: 8em !important;
+}
+
 </style>
 

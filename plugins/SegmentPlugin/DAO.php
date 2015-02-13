@@ -162,16 +162,21 @@ END;
         return $r;
     }
 
-    public function enteredSelect($operator, $value)
+    public function enteredSelect($operator, $value1, $value2)
     {
         $this->count++;
-        $value = sql_escape($value);
-        $op = $operator == SegmentPlugin_Operator::BEFORE ? '<' 
-            : ($operator == SegmentPlugin_Operator::AFTER ? '>' : '=');
-
+        $value1 = sql_escape($value1);
         $r = new stdClass;
         $r->join = '';
-        $r->where = "DATE(u.entered) $op '$value'";
+
+        if ($operator == SegmentPlugin_Operator::BETWEEN) {
+            $value2 = sql_escape($value2);
+            $r->where = "DATE(u.entered) BETWEEN '$value1' AND '$value2'";
+        } else {
+            $op = $operator == SegmentPlugin_Operator::BEFORE ? '<' 
+                : ($operator == SegmentPlugin_Operator::AFTER ? '>' : '=');
+            $r->where = "DATE(u.entered) $op '$value1'";
+        }
         return $r;
     }
 
@@ -262,17 +267,22 @@ END;
         return $r;
     }
 
-    public function dateSelect($attributeId, $operator, $target)
+    public function dateSelect($attributeId, $operator, $value1, $value2)
     {
         $this->count++;
         $ua = 'ua' . $this->count;
-        $target = sql_escape($target);
-        $op = $operator == SegmentPlugin_Operator::BEFORE ? '<' 
-            : ($operator == SegmentPlugin_Operator::AFTER ? '>' : '=');
-
+        $value1 = sql_escape($value1);
         $r = new stdClass;
         $r->join = "LEFT JOIN {$this->tables['user_attribute']} $ua ON u.id = $ua.userid AND $ua.attributeid = $attributeId ";
-        $r->where = "(COALESCE($ua.value, '') != '' AND DATE(COALESCE($ua.value, '')) $op '$target')";
+
+        if ($operator == SegmentPlugin_Operator::BETWEEN) {
+            $value2 = sql_escape($value2);
+            $r->where = "(COALESCE($ua.value, '') != '' AND DATE(COALESCE($ua.value, '')) BETWEEN '$value1' AND '$value2')";
+        } else {
+            $op = $operator == SegmentPlugin_Operator::BEFORE ? '<' 
+                : ($operator == SegmentPlugin_Operator::AFTER ? '>' : '=');
+            $r->where = "(COALESCE($ua.value, '') != '' AND DATE(COALESCE($ua.value, '')) $op '$value1')";
+        }
         return $r;
     }
 

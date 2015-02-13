@@ -27,7 +27,7 @@
  * @package   SegmentPlugin
  */
 
-class SegmentPlugin_AttributeConditionCheckboxgroup extends SegmentPlugin_AttributeConditionBase
+class SegmentPlugin_AttributeConditionCheckboxgroup extends SegmentPlugin_Condition
 {
     public function operators()
     {
@@ -38,7 +38,7 @@ class SegmentPlugin_AttributeConditionCheckboxgroup extends SegmentPlugin_Attrib
         );
     }
 
-    public function valueEntry($value, $namePrefix)
+    public function valueEntry($op, $value, $namePrefix)
     {
         $selectData = CHtml::listData($this->dao->selectData($this->attribute), 'id', 'name');
 
@@ -55,6 +55,6 @@ class SegmentPlugin_AttributeConditionCheckboxgroup extends SegmentPlugin_Attrib
         if (!is_array($value) || count($value) == 0) {
             throw new SegmentPlugin_ValueException;
         }
-        return $this->dao->checkboxgroupSelect($this->attribute['id'], $op, $value);
+        return $this->dao->checkboxgroupSelect($this->field['id'], $op, $value);
     }
 }

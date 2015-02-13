@@ -71,6 +71,7 @@ This plugin is free but if you install and find it useful then a donation to sup
 ## Version history ##
 
     version     Description
+    2015-02-13  Add "is between" operator for date fields
     2015-01-06  Remove limit of 15 attributes
     2014-11-21  Allow text to be translated
     2014-10-20  Campaign activity select list is limited to prior campaigns sent to the lists

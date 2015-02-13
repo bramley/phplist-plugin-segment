@@ -27,37 +27,11 @@
  * @package   SegmentPlugin
  */
 
-class SegmentPlugin_SubscriberConditionEntered extends SegmentPlugin_SubscriberConditionBase
+class SegmentPlugin_SubscriberConditionEntered extends SegmentPlugin_DateConditionBase
 {
-    public function operators()
-    {
-        return array(
-            SegmentPlugin_Operator::IS => s('is'),
-            SegmentPlugin_Operator::AFTER => s('is after'),
-            SegmentPlugin_Operator::BEFORE => s('is before'),
-        );
-    }
-
-    public function valueEntry($value, $namePrefix)
-    {
-        return CHtml::textField(
-            $namePrefix . '[value]',
-            $value,
-            array('class' => 'datepicker')
-        );
-    }
-
     public function select($op, $value)
     {
-        if (!$value) {
-            throw new SegmentPlugin_ValueException;
-        }
-
-        try {
-            $target = new DateTime($value);
-        } catch (Exception $e) {
-            throw new SegmentPlugin_ValueException;
-        }
-        return $this->dao->enteredSelect($op, $target->format('Y-m-d'));
+        list($target1, $target2) = $this->validateDates($op, $value);
+        return $this->dao->enteredSelect($op, $target1, $target2);
     }
 }
