@@ -1,3 +1,7 @@
+version 2015-02-16
+      Refactoring
+      Change licence year
+
 version 2015-02-13
       Add "is between" operator for date fields
 
