@@ -37,9 +37,9 @@ class SegmentPlugin_AttributeConditionSelect extends SegmentPlugin_Condition
         );
     }
 
-    public function valueEntry($op, $value, $namePrefix)
+    public function display($op, $value, $namePrefix)
     {
-        $selectData = CHtml::listData($this->dao->selectData($this->attribute), 'id', 'name');
+        $selectData = CHtml::listData($this->dao->selectData($this->field), 'id', 'name');
 
         return CHtml::listBox(
             $namePrefix . '[value]',
@@ -51,11 +51,17 @@ class SegmentPlugin_AttributeConditionSelect extends SegmentPlugin_Condition
         );
     }
 
-    public function select($op, $value)
+    public function joinQuery($operator, $value)
     {
         if (!is_array($value) || count($value) == 0) {
             throw new SegmentPlugin_ValueException;
         }
-        return $this->dao->selectSelect($this->field['id'], $op, $value);
+        $ua = 'ua' .  $this->id;
+        $in = ($operator == SegmentPlugin_Operator::ONE ? 'IN ' : 'NOT IN ') . $this->formatInList($value);
+
+        $r = new stdClass;
+        $r->join = "LEFT JOIN {$this->tables['user_attribute']} $ua ON u.id = $ua.userid AND $ua.attributeid = {$this->field['id']} ";
+        $r->where = "COALESCE($ua.value, 0) $in";
+        return $r;
     }
 }

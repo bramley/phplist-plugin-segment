@@ -38,9 +38,9 @@ class SegmentPlugin_AttributeConditionCheckboxgroup extends SegmentPlugin_Condit
         );
     }
 
-    public function valueEntry($op, $value, $namePrefix)
+    public function display($op, $value, $namePrefix)
     {
-        $selectData = CHtml::listData($this->dao->selectData($this->attribute), 'id', 'name');
+        $selectData = CHtml::listData($this->dao->selectData($this->field), 'id', 'name');
 
         return CHtml::listBox(
             $namePrefix . '[value]',
@@ -50,11 +50,33 @@ class SegmentPlugin_AttributeConditionCheckboxgroup extends SegmentPlugin_Condit
         );
     }
 
-    public function select($op, $value)
+    public function joinQuery($operator, $value)
     {
         if (!is_array($value) || count($value) == 0) {
             throw new SegmentPlugin_ValueException;
         }
-        return $this->dao->checkboxgroupSelect($this->field['id'], $op, $value);
+
+        $ua = 'ua' . $this->id;
+        $where = array();
+
+        if ($operator == SegmentPlugin_Operator::ONE) {
+            $compare = '>';
+            $boolean = 'OR';
+        } elseif ($operator == SegmentPlugin_Operator::ALL) {
+            $compare = '>';
+            $boolean = 'AND';
+        } else  {
+            $compare = '=';
+            $boolean = 'AND';
+        }
+
+        foreach ($value as $item) {
+            $where[] = "FIND_IN_SET($item, COALESCE($ua.value, '')) $compare 0";
+        }
+
+        $r = new stdClass;
+        $r->join = "LEFT JOIN {$this->tables['user_attribute']} $ua ON u.id = $ua.userid AND $ua.attributeid = {$this->field['id']} ";
+        $r->where = '(' . implode(" $boolean ", $where) . ')';
+        return $r;
     }
 }

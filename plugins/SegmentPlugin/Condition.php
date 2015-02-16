@@ -28,18 +28,35 @@
  */
 abstract class SegmentPlugin_Condition
 {
+    static private $count = 0;
+
     protected $field;
+    protected $id;
+    protected $tables;
+    protected $table_prefix;
+
     public $dao;
+
+    protected function formatInList(array $values)
+    {
+        return '(' . implode(', ', $values) . ')';
+    }
 
     public function __construct($field)
     {
+        global $tables;
+        global $table_prefix;
+
+        $this->id = ++self::$count;
+        $this->tables = $tables;
+        $this->table_prefix = $table_prefix;
         $this->field = $field;
     }
 
     abstract public function operators();
 
-    abstract public function valueEntry($op, $value, $namePrefix);
+    abstract public function display($op, $value, $namePrefix);
 
-    abstract public function select($op, $value);
+    abstract public function joinQuery($op, $value);
 }
 

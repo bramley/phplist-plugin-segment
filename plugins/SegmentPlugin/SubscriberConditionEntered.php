@@ -29,9 +29,22 @@
 
 class SegmentPlugin_SubscriberConditionEntered extends SegmentPlugin_DateConditionBase
 {
-    public function select($op, $value)
+    public function joinQuery($operator, $value)
     {
-        list($target1, $target2) = $this->validateDates($op, $value);
-        return $this->dao->enteredSelect($op, $target1, $target2);
+        list($value1, $value2) = $this->validateDates($operator, $value);
+
+        $value1 = sql_escape($value1);
+        $r = new stdClass;
+        $r->join = '';
+
+        if ($operator == SegmentPlugin_Operator::BETWEEN) {
+            $value2 = sql_escape($value2);
+            $r->where = "DATE(u.entered) BETWEEN '$value1' AND '$value2'";
+        } else {
+            $op = $operator == SegmentPlugin_Operator::BEFORE ? '<' 
+                : ($operator == SegmentPlugin_Operator::AFTER ? '>' : '=');
+            $r->where = "DATE(u.entered) $op '$value1'";
+        }
+        return $r;
     }
 }

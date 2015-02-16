@@ -43,7 +43,7 @@ class SegmentPlugin_AttributeConditionText extends SegmentPlugin_Condition
         );
     }
 
-    public function valueEntry($op, $value, $namePrefix)
+    public function display($op, $value, $namePrefix)
     {
         return CHtml::textField(
             $namePrefix . '[value]',
@@ -51,12 +51,48 @@ class SegmentPlugin_AttributeConditionText extends SegmentPlugin_Condition
         );
     }
 
-    public function select($op, $value)
+    public function joinQuery($operator, $value)
     {
         if (!is_string($value)) {
             throw new SegmentPlugin_ValueException;
         }
 
-        return $this->dao->textSelect($this->field['id'], $op, $value);
+        $ua = 'ua' . $this->id;
+        $value = sql_escape($value);
+
+        switch ($operator) {
+            case SegmentPlugin_Operator::ISNOT:
+                $op = '!=';
+                break;
+            case SegmentPlugin_Operator::BLANK:
+                $op = '=';
+                $value = '';
+                break;
+            case SegmentPlugin_Operator::NOTBLANK:
+                $op = '!=';
+                $value = '';
+                break;
+            case SegmentPlugin_Operator::MATCHES:
+                $op = 'LIKE';
+                break;
+            case SegmentPlugin_Operator::NOTMATCHES:
+                $op = 'NOT LIKE';
+                break;
+            case SegmentPlugin_Operator::REGEXP:
+                $op = 'REGEXP';
+                break;
+            case SegmentPlugin_Operator::NOTREGEXP:
+                $op = 'NOT REGEXP';
+                break;
+            case SegmentPlugin_Operator::IS:
+            default:
+                $op = '=';
+                break;
+        }
+            
+        $r = new stdClass;
+        $r->join = "LEFT JOIN {$this->tables['user_attribute']} $ua ON u.id = $ua.userid AND $ua.attributeid = {$this->field['id']} ";
+        $r->where = "COALESCE($ua.value, '') $op '$value'";
+        return $r;
     }
 }

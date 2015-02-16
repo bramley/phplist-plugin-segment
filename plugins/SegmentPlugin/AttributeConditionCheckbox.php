@@ -37,13 +37,19 @@ class SegmentPlugin_AttributeConditionCheckbox extends SegmentPlugin_Condition
         );
     }
 
-    public function valueEntry($op, $value, $namePrefix)
+    public function display($op, $value, $namePrefix)
     {
         return '';
     }
 
-    public function select($op, $value)
+    public function joinQuery($operator, $value)
     {
-        return $this->dao->checkboxSelect($this->field['id'], $op, $value);
+        $ua = 'ua' . $this->id;
+        $op = $operator == SegmentPlugin_Operator::IS ? '=' : '!=';
+
+        $r = new stdClass;
+        $r->join = "LEFT JOIN {$this->tables['user_attribute']} $ua ON u.id = $ua.userid AND $ua.attributeid = {$this->field['id']} ";
+        $r->where = "COALESCE($ua.value, '') $op 'on'";
+        return $r;
     }
 }

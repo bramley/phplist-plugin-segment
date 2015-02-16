@@ -41,7 +41,7 @@ class SegmentPlugin_SubscriberConditionActivity extends SegmentPlugin_Condition
         );
     }
 
-    public function valueEntry($op, $value, $namePrefix)
+    public function display($op, $value, $namePrefix)
     {
         if (is_array($this->messageData['targetlist']) && count($this->messageData['targetlist']) > 0) {
             $selectData = CHtml::listData(
@@ -59,11 +59,37 @@ class SegmentPlugin_SubscriberConditionActivity extends SegmentPlugin_Condition
         );
     }
 
-    public function select($op, $value)
+    public function joinQuery($operator, $value)
     {
         if (!ctype_digit($value)) {
             throw new SegmentPlugin_ValueException;
         }
-        return $this->dao->activitySelect($op, $value);
+
+        $um = 'um' . $this->id;
+        $uml = 'uml' . $this->id;
+        $r = new stdClass;
+
+        if ($operator == SegmentPlugin_Operator::CLICKED || $operator == SegmentPlugin_Operator::NOTCLICKED) {
+            $op = $operator == SegmentPlugin_Operator::CLICKED ? 'IS NOT NULL' : 'IS NULL';
+            $r->join = <<<END
+                JOIN {$this->tables['usermessage']} $um ON u.id = $um.userid AND $um.status = 'sent' AND $um.messageid = $value
+                LEFT JOIN {$this->tables['linktrack_uml_click']} $uml ON u.id = $uml.userid AND $uml.messageid = $um.messageid
+END;
+            $r->where = "$uml.userid $op";
+            
+        } elseif ($operator == SegmentPlugin_Operator::OPENED || $operator == SegmentPlugin_Operator::NOTOPENED) {
+            $op = $operator == SegmentPlugin_Operator::OPENED ? 'IS NOT NULL' : 'IS NULL';
+            $r->join = <<<END
+                JOIN {$this->tables['usermessage']} $um ON u.id = $um.userid AND $um.status = 'sent' AND $um.messageid = $value
+END;
+            $r->where = "$um.viewed $op";
+        } elseif ($operator == SegmentPlugin_Operator::SENT || $operator == SegmentPlugin_Operator::NOTSENT) {
+            $op = $operator == SegmentPlugin_Operator::SENT ? 'IS NOT NULL' : 'IS NULL';
+            $r->join = <<<END
+                LEFT JOIN {$this->tables['usermessage']} $um ON u.id = $um.userid AND $um.status = 'sent' AND $um.messageid = $value
+END;
+            $r->where = "$um.userid $op";
+        }
+        return $r;
     }
 }

@@ -75,21 +75,21 @@ class SegmentPlugin extends phplistPlugin
     private function loadSubscribers($messageId, array $conditions, $combine)
     {
         $cf = new SegmentPlugin_ConditionFactory($this->dao);
-        $select = array();
+        $query = array();
 
         foreach ($conditions as $i => $c) {
             $field = $c['field'];
             $condition = $cf->createCondition($field);
 
             try {
-                $select[] = $condition->select($c['op'], isset($c['value']) ? $c['value'] : '');
+                $query[] = $condition->joinQuery($c['op'], isset($c['value']) ? $c['value'] : '');
             } catch (SegmentPlugin_ValueException $e) {
                 // do nothing
             }
         }
 
-        if (count($select) > 0) {
-            $this->selectedSubscribers = array_flip($this->dao->subscribers($messageId, $select, $combine));
+        if (count($query) > 0) {
+            $this->selectedSubscribers = array_flip($this->dao->subscribers($messageId, $query, $combine));
         }
     }
 
@@ -175,7 +175,7 @@ class SegmentPlugin extends phplistPlugin
 
                 $value = ($field == $c['_field'] && isset($c['value']))
                     ? $c['value'] : '';
-                $valueInput = $condition->valueEntry($op, $value, "segment[c][$i]");
+                $valueInput = $condition->display($op, $value, "segment[c][$i]");
             } else {
                 $operatorList = '';
                 $valueInput = '';

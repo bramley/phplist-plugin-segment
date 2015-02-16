@@ -29,9 +29,23 @@
 
 class SegmentPlugin_AttributeConditionDate extends SegmentPlugin_DateConditionBase
 {
-    public function select($op, $value)
+    public function joinQuery($operator, $value)
     {
-        list($target1, $target2) = $this->validateDates($op, $value);
-        return $this->dao->dateSelect($this->field['id'], $op, $target1, $target2);
+        list($value1, $value2) = $this->validateDates($operator, $value);
+
+        $value1 = sql_escape($value1);
+        $ua = 'ua' . $this->id;
+        $r = new stdClass;
+        $r->join = "LEFT JOIN {$this->tables['user_attribute']} $ua ON u.id = $ua.userid AND $ua.attributeid = {$this->field['id']} ";
+
+        if ($operator == SegmentPlugin_Operator::BETWEEN) {
+            $value2 = sql_escape($value2);
+            $r->where = "(COALESCE($ua.value, '') != '' AND DATE(COALESCE($ua.value, '')) BETWEEN '$value1' AND '$value2')";
+        } else {
+            $op = $operator == SegmentPlugin_Operator::BEFORE ? '<' 
+                : ($operator == SegmentPlugin_Operator::AFTER ? '>' : '=');
+            $r->where = "(COALESCE($ua.value, '') != '' AND DATE(COALESCE($ua.value, '')) $op '$value1')";
+        }
+        return $r;
     }
 }

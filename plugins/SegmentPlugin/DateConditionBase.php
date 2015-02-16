@@ -68,7 +68,7 @@ abstract class SegmentPlugin_DateConditionBase extends SegmentPlugin_Condition
         );
     }
 
-    public function valueEntry($op, $value, $namePrefix)
+    public function display($op, $value, $namePrefix)
     {
         $value = (array)$value;
         $html = CHtml::textField(

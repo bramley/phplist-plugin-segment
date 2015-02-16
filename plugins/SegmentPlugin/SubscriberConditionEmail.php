@@ -40,7 +40,7 @@ class SegmentPlugin_SubscriberConditionEmail extends SegmentPlugin_Condition
         );
     }
 
-    public function valueEntry($op, $value, $namePrefix)
+    public function display($op, $value, $namePrefix)
     {
         return CHtml::textField(
             $namePrefix . '[value]',
@@ -48,12 +48,35 @@ class SegmentPlugin_SubscriberConditionEmail extends SegmentPlugin_Condition
         );
     }
 
-    public function select($op, $value)
+    public function joinQuery($operator, $value)
     {
         if (!is_string($value)) {
             throw new SegmentPlugin_ValueException;
         }
 
-        return $this->dao->emailSelect($op, $value);
+        $value = sql_escape($value);
+
+        switch ($operator) {
+            case SegmentPlugin_Operator::MATCHES:
+                $op = 'LIKE';
+                break;
+            case SegmentPlugin_Operator::NOTMATCHES:
+                $op = 'NOT LIKE';
+                break;
+            case SegmentPlugin_Operator::REGEXP:
+                $op = 'REGEXP';
+                break;
+            case SegmentPlugin_Operator::NOTREGEXP:
+                $op = 'NOT REGEXP';
+                break;
+            case SegmentPlugin_Operator::IS:
+            default:
+                $op = '=';
+        }
+
+        $r = new stdClass;
+        $r->join = '';
+        $r->where = "u.email $op '$value'";
+        return $r;
     }
 }
