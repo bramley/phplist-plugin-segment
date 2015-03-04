@@ -74,6 +74,12 @@ class SegmentPlugin_ConditionFactory
                 case 'email':
                     $r = new SegmentPlugin_SubscriberConditionEmail($field);
                     break;
+                case 'id':
+                    $r = new SegmentPlugin_SubscriberConditionId($field);
+                    break;
+                case 'uniqid':
+                    $r = new SegmentPlugin_SubscriberConditionUniqid($field);
+                    break;
                 default:
                     throw new Exception("unrecognised field $field");
             }
@@ -93,6 +99,8 @@ class SegmentPlugin_ConditionFactory
             'activity' => 'Campaign activity',
             'entered' => 'Entered date',
             'email' => 'email address',
+            'id' => 'subscriber id',
+            'uniqid' => 'subscriber unique id',
         );
     }
 }

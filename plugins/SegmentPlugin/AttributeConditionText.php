@@ -57,6 +57,10 @@ class SegmentPlugin_AttributeConditionText extends SegmentPlugin_Condition
             throw new SegmentPlugin_ValueException;
         }
 
+        if ($operator != SegmentPlugin_Operator::BLANK && $operator != SegmentPlugin_Operator::NOTBLANK && !$value) {
+            throw new SegmentPlugin_ValueException;
+        }
+
         $ua = 'ua' . $this->id;
         $value = sql_escape($value);
 

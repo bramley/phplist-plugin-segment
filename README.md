@@ -12,6 +12,8 @@ These subscriber fields and attributes are supported for fields:
 * each subscriber attribute
 * the subscriber email address
 * the subscriber Entered date
+* the subscriber id
+* the subscriber unique id
 * subscriber campaign activity - whether the subscriber was sent, opened, or clicked a link in a specific prior campaign
 
 Each condition has a set of operators, specific to each field, such as 'is', 'is not', 'matches', 'is before', 'opened', etc.
@@ -71,6 +73,7 @@ This plugin is free but if you install and find it useful then a donation to sup
 ## Version history ##
 
     version     Description
+    2015-03-04  Add subscriber id and uniqid as subscriber data fields
     2015-02-13  Add "is between" operator for date fields
     2015-01-06  Remove limit of 15 attributes
     2014-11-21  Allow text to be translated

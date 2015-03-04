@@ -27,14 +27,13 @@
  * @package   SegmentPlugin
  */
 
-class SegmentPlugin_SubscriberConditionEmail extends SegmentPlugin_Condition
+abstract class SegmentPlugin_IdConditionBase extends SegmentPlugin_Condition
 {
+    protected $column;
+
     public function operators()
     {
         return array(
-            SegmentPlugin_Operator::IS => s('is'),
-            SegmentPlugin_Operator::MATCHES => s('matches'),
-            SegmentPlugin_Operator::NOTMATCHES => s('does not match'),
             SegmentPlugin_Operator::REGEXP => s('REGEXP'),
             SegmentPlugin_Operator::NOTREGEXP => s('not REGEXP'),
         );
@@ -57,26 +56,17 @@ class SegmentPlugin_SubscriberConditionEmail extends SegmentPlugin_Condition
         $value = sql_escape($value);
 
         switch ($operator) {
-            case SegmentPlugin_Operator::MATCHES:
-                $op = 'LIKE';
-                break;
-            case SegmentPlugin_Operator::NOTMATCHES:
-                $op = 'NOT LIKE';
-                break;
-            case SegmentPlugin_Operator::REGEXP:
-                $op = 'REGEXP';
-                break;
             case SegmentPlugin_Operator::NOTREGEXP:
                 $op = 'NOT REGEXP';
                 break;
-            case SegmentPlugin_Operator::IS:
+            case SegmentPlugin_Operator::REGEXP:
             default:
-                $op = '=';
+                $op = 'REGEXP';
         }
 
         $r = new stdClass;
         $r->join = '';
-        $r->where = "u.email $op '$value'";
+        $r->where = "u.$this->column $op '$value'";
         return $r;
     }
 }
