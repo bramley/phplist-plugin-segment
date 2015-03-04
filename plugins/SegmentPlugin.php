@@ -93,6 +93,14 @@ class SegmentPlugin extends phplistPlugin
         }
     }
 
+    private function render($params)
+    {
+        extract($params);
+        ob_start();
+        require($this->coderoot . 'view.tpl.php');
+        return ob_get_clean();
+    }
+
 /*
  *  Public methods
  */
@@ -140,24 +148,21 @@ class SegmentPlugin extends phplistPlugin
             : array();
 
         $conditions[] = array('field' => '');
-        $conditionArea = '';
         $selectPrompt = s('Select ...');
+        $params = array();
+        $params['condition'] = array();
+        $params['selectPrompt'] = $selectPrompt;
 
         foreach ($conditions as $i => $c) {
-            $fieldList = CHtml::dropDownList(
+            $s = new stdClass;
+            $s->fieldList = CHtml::dropDownList(
                 "segment[c][$i][field]",
                 $c['field'],
-                array(
-                    'Subscriber Data' => $cf->subscriberFields(),
-                    'Attributes' => $cf->attributeFields()
-                ),
-                array(
-                    'prompt' => $selectPrompt,
-                    'onchange' => 'this.form.submit()',
-                )
+                array('Subscriber Data' => $cf->subscriberFields(), 'Attributes' => $cf->attributeFields()),
+                array('prompt' => $selectPrompt, 'onchange' => 'this.form.submit()')
             );
             // hidden input to detect when field changes
-            $hiddenField = CHtml::hiddenField("segment[c][$i][_field]", $c['field']);
+            $s->hiddenField = CHtml::hiddenField("segment[c][$i][_field]", $c['field']);
             $field = $c['field'];
 
             if ($field != '') {
@@ -165,33 +170,26 @@ class SegmentPlugin extends phplistPlugin
                 $condition->messageData = $messageData;
                 $operators = $condition->operators();
 
-                $op = ($field == $c['_field'] && isset($c['op']))
-                    ? $c['op'] : key($operators);
-                $operatorList = CHtml::dropDownList(
+                $op = ($field == $c['_field'] && isset($c['op'])) ? $c['op'] : key($operators);
+                $s->operatorList = CHtml::dropDownList(
                     "segment[c][$i][op]",
                     $op,
                     $operators
                 );
 
-                $value = ($field == $c['_field'] && isset($c['value']))
-                    ? $c['value'] : '';
-                $valueInput = $condition->display($op, $value, "segment[c][$i]");
+                $value = ($field == $c['_field'] && isset($c['value'])) ? $c['value'] : '';
+                $s->display = $condition->display($op, $value, "segment[c][$i]");
             } else {
-                $operatorList = '';
-                $valueInput = '';
+                $s->operatorList = '';
+                $s->display = '';
             }
-            $conditionArea .= <<<END
-        <li class="selfclear">
-        <div class="segment-block">$fieldList$hiddenField</div>
-        <div class="segment-block">$operatorList</div>
-        <div class="segment-block">$valueInput</div>
-        </li>
-END;
+            $params['condition'][] = $s;
         }
-        $calculateButton = CHtml::submitButton(s('Calculate'), array('name' => 'segment[calculate]'));
+
+        $params['calculateButton'] = CHtml::submitButton(s('Calculate'), array('name' => 'segment[calculate]'));
         $combine = isset($messageData['segment']['combine']) 
             ? $messageData['segment']['combine'] : SegmentPlugin_Operator::ALL;
-        $combineList = CHtml::dropDownList(
+        $params['combineList'] = CHtml::dropDownList(
             "segment[combine]",
             $combine,
             array(SegmentPlugin_Operator::ONE => s('any'), SegmentPlugin_Operator::ALL => s('all'))
@@ -203,25 +201,10 @@ END;
                 $this->filterIncompleteConditions($messageData['segment']['c']),
                 $combine
             );
-            $subscribers = s('%d subscribers will be selected', count($this->selectedSubscribers));
-        } else {
-            $subscribers = '';
+            $params['totalSubscribers'] = count($this->selectedSubscribers);
         }
-        $text1 = s("Select one or more subscriber fields or attributes.
-The campaign will be sent only to those subscribers who match any or all of the conditions.
-To remove a condition, choose '%s' from the drop-down list.", $selectPrompt);
-        $text2 = s('Subscribers match %s of the following:', $combineList);
-        $html = file_get_contents($this->coderoot . '/styles.css');
-        $html .= <<<END
-<div class="segment">
-    <div>$text1</div>
-    <div>$text2</div>
-    <ul>$conditionArea
-    </ul>
-    <div id="recalculate">$calculateButton $subscribers</div>
-</div>
-END;
-        $pagefooter[basename(__FILE__)] = file_get_contents($this->coderoot . '/date.js');
+        $html = $this->render($params);
+        $pagefooter[basename(__FILE__)] = file_get_contents($this->coderoot . 'date.js');
         error_reporting($er);
         return $html;
     }
