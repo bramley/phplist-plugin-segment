@@ -26,7 +26,9 @@ The target value, also specific to each field, can be a text value, a select val
 
 Requires php version 5.3 or later. 
 
-Requires the Common Plugin to be installed. See <https://github.com/bramley/phplist-plugin-common>
+Requires the Common Plugin version 2015-03-23 or later to be installed. You should install or upgrade to the latest version.
+
+See <https://github.com/bramley/phplist-plugin-common>
 
 ### Set the plugin directory ###
 The default plugin directory is `plugins` within the admin directory.
@@ -73,6 +75,7 @@ This plugin is free but if you install and find it useful then a donation to sup
 ## Version history ##
 
     version     Description
+    2015-03-23  Change to autoload approach
     2015-03-04  Add subscriber id and uniqid as subscriber data fields
     2015-02-13  Add "is between" operator for date fields
     2015-01-06  Remove limit of 15 attributes

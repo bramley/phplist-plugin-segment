@@ -65,11 +65,7 @@ class SegmentPlugin extends phplistPlugin
 
     private function deleteNotSent($campaign)
     {
-        global $plugins;
-        include_once $plugins['CommonPlugin']->coderoot . 'Autoloader.php';
-
-        $dao = new SegmentPlugin_DAO(new CommonPlugin_DB());
-        $dao->deleteNotSent($campaign);
+        $this->dao->deleteNotSent($campaign);
     }
 
     private function loadSubscribers($messageId, array $conditions, $combine)
@@ -124,6 +120,20 @@ class SegmentPlugin extends phplistPlugin
         parent::__construct();
     }
 
+/*
+ *  Use this method as a hook to create the dao
+ *  Need to create autoloader because of the unpredictable order in which plugins are called
+ * 
+ */
+    public function sendFormats()
+    {
+        global $plugins;
+
+        require_once $plugins['CommonPlugin']->coderoot . 'Autoloader.php';
+        $this->dao = new SegmentPlugin_DAO(new CommonPlugin_DB());
+        return null;
+    }
+
     public function adminmenu()
     {
         return array();
@@ -137,10 +147,6 @@ class SegmentPlugin extends phplistPlugin
         if (!phplistPlugin::isEnabled('CommonPlugin')) {
             return s('CommonPlugin must be installed in order to use segments');
         }
-
-        include_once $plugins['CommonPlugin']->coderoot . 'Autoloader.php';
-
-        $this->dao = new SegmentPlugin_DAO(new CommonPlugin_DB());
         $cf = new SegmentPlugin_ConditionFactory($this->dao);
 
         $conditions = (isset($messageData['segment']['c']))
@@ -222,14 +228,6 @@ class SegmentPlugin extends phplistPlugin
     public function messageReQueued($id)
     {
         $this->messageQueued($id);
-    }
-
-    public function processQueueStart()
-    {
-        global $plugins;
-
-        include_once $plugins['CommonPlugin']->coderoot . 'Autoloader.php';
-        $this->dao = new SegmentPlugin_DAO(new CommonPlugin_DB());
     }
 
     public function campaignStarted($messageData = array())
