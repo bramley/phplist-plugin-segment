@@ -1,3 +1,6 @@
+version 2015-04-04
+      Refactoring to improve memory usage
+
 version 2015-03-23
       Change to autoload approach
       Create dao after plugin activation

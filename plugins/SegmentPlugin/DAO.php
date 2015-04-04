@@ -72,6 +72,37 @@ END;
         return $excludeSubquery;
     }
 
+    private function buildSubscriberQuery($select, $messageId, array $joins, $combine)
+    {
+        $excludeSubquery = USE_LIST_EXCLUDE ? $this->exclude($messageId) : '';
+
+        $booleanOp = ($combine == SegmentPlugin_Operator::ONE) ? 'OR' : 'AND';
+        $extraJoin = '';
+        $extraWhere = array();
+
+        foreach ($joins as $p) {
+            $extraJoin .= $p->join ? $p->join . "\n" : '';
+            $extraWhere[] = $p->where;
+        }
+        $w = implode("\n$booleanOp ", $extraWhere);
+
+        $query = <<<END
+SELECT $select
+FROM {$this->tables['user']} u
+JOIN {$this->tables['listuser']} lu0 ON u.id = lu0.userid
+JOIN {$this->tables['listmessage']} lm0 ON lm0.listid = lu0.listid AND lm0.messageid = $messageId
+LEFT JOIN {$this->tables['usermessage']} um0 ON um0.userid = u.id AND um0.messageid = $messageId
+$extraJoin
+WHERE u.confirmed = 1 AND u.blacklisted = 0
+AND COALESCE(um0.status, 'not sent') = 'not sent'
+$excludeSubquery
+AND (
+$w
+)
+END;
+        return $query;
+    }
+
 /*
  *  Public functions
  */
@@ -131,34 +162,31 @@ END;
         return $this->dbCommand->queryAffectedRows($sql);
     }
 
-    public function subscribers($messageId, array $query, $combine)
+    /**
+     * Queries the subscribers
+     * @param int $messageId message id
+     * @param array $joins 
+     * @param int $combine whether to AND or OR conditions
+     * @return Iterator
+     * @access public
+     */
+    public function subscribers($messageId, array $joins, $combine)
     {
-        $excludeSubquery = USE_LIST_EXCLUDE ? $this->exclude($messageId) : '';
+        $query = $this->buildSubscriberQuery('DISTINCT u.id', $messageId, $joins, $combine);
+        return $this->dbCommand->queryAll($query);
+    }
 
-        $booleanOp = ($combine == SegmentPlugin_Operator::ONE) ? 'OR' : 'AND';
-        $extraJoin = '';
-        $extraWhere = array();
-
-        foreach ($query as $s) {
-            $extraJoin .= $s->join ? $s->join . "\n" : '';
-            $extraWhere[] = $s->where;
-        }
-        $w = implode("\n$booleanOp ", $extraWhere);
-
-        $query = <<<END
-SELECT DISTINCT u.id
-FROM {$this->tables['user']} u
-JOIN {$this->tables['listuser']} lu0 ON u.id = lu0.userid
-JOIN {$this->tables['listmessage']} lm0 ON lm0.listid = lu0.listid AND lm0.messageid = $messageId
-LEFT JOIN {$this->tables['usermessage']} um0 ON um0.userid = u.id AND um0.messageid = $messageId
-$extraJoin
-WHERE u.confirmed = 1 AND u.blacklisted = 0
-AND COALESCE(um0.status, 'not sent') = 'not sent'
-$excludeSubquery
-AND (
-$w
-)
-END;
-        return $this->dbCommand->queryColumn($query, 'id');
+    /**
+     * Calculates the number of subscribers
+     * @param int $messageId message id
+     * @param array $joins 
+     * @param int $combine whether to AND or OR conditions
+     * @return int number of subscribers
+     * @access public
+     */
+    public function calculateSubscribers($messageId, array $joins, $combine)
+    {
+        $query = $this->buildSubscriberQuery('COUNT(DISTINCT u.id) AS t', $messageId, $joins, $combine);
+        return $this->dbCommand->queryOne($query, 't');
     }
 }

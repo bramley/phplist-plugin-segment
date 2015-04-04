@@ -68,25 +68,52 @@ class SegmentPlugin extends phplistPlugin
         $this->dao->deleteNotSent($campaign);
     }
 
-    private function loadSubscribers($messageId, array $conditions, $combine)
+    private function selectionQueryJoins($messageId, array $conditions, $combine)
     {
         $cf = new SegmentPlugin_ConditionFactory($this->dao);
-        $query = array();
+        $joins = array();
 
         foreach ($conditions as $i => $c) {
             $field = $c['field'];
             $condition = $cf->createCondition($field);
 
             try {
-                $query[] = $condition->joinQuery($c['op'], isset($c['value']) ? $c['value'] : '');
+                $joins[] = $condition->joinQuery($c['op'], isset($c['value']) ? $c['value'] : '');
             } catch (SegmentPlugin_ValueException $e) {
                 // do nothing
             }
         }
+        return $joins;
+    }
 
-        if (count($query) > 0) {
-            $this->selectedSubscribers = array_flip($this->dao->subscribers($messageId, $query, $combine));
+    private function loadSubscribers($messageId, array $conditions, $combine)
+    {
+        $joins = $this->selectionQueryJoins($messageId, $conditions, $combine);
+        $this->selectedSubscribers = array();
+
+        if (count($joins) > 0) {
+            foreach ($this->dao->subscribers($messageId, $joins, $combine) as $row) {
+                $this->selectedSubscribers[$row['id']] = 1;
+            }
         }
+    }
+
+    private function calculateSubscribers($messageId, array $conditions, $combine)
+    {
+        $this->logger->debug(sprintf(
+            "Prior usage %s\nPrior peak usage %s\nPrior peak real usage %s",
+            memory_get_usage(), memory_get_peak_usage(), memory_get_peak_usage(true)
+        ));
+        $joins = $this->selectionQueryJoins($messageId, $conditions, $combine);
+
+        $count = (count($joins) > 0)
+            ? $this->dao->calculateSubscribers($messageId, $joins, $combine)
+            : 0;
+        $this->logger->debug(sprintf(
+            "Post usage %s\nPost peak usage %s\nPost peak real usage %s",
+            memory_get_usage(), memory_get_peak_usage(), memory_get_peak_usage(true)
+        ));
+        return $count;
     }
 
     private function render($params)
@@ -131,6 +158,7 @@ class SegmentPlugin extends phplistPlugin
 
         require_once $plugins['CommonPlugin']->coderoot . 'Autoloader.php';
         $this->dao = new SegmentPlugin_DAO(new CommonPlugin_DB());
+        $this->logger = CommonPlugin_Logger::instance();
         return null;
     }
 
@@ -202,12 +230,11 @@ class SegmentPlugin extends phplistPlugin
         );
 
         if (isset($messageData['segment']['calculate'])) {
-            $this->loadSubscribers(
+            $params['totalSubscribers'] = $this->calculateSubscribers(
                 $messageId,
                 $this->filterIncompleteConditions($messageData['segment']['c']),
                 $combine
             );
-            $params['totalSubscribers'] = count($this->selectedSubscribers);
         }
         $html = $this->render($params);
         $pagefooter[basename(__FILE__)] = file_get_contents($this->coderoot . 'date.js');
