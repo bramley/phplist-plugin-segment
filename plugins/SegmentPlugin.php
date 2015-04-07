@@ -68,7 +68,7 @@ class SegmentPlugin extends phplistPlugin
         $this->dao->deleteNotSent($campaign);
     }
 
-    private function selectionQueryJoins($messageId, array $conditions, $combine)
+    private function selectionQueryJoins(array $conditions)
     {
         $cf = new SegmentPlugin_ConditionFactory($this->dao);
         $joins = array();
@@ -88,7 +88,7 @@ class SegmentPlugin extends phplistPlugin
 
     private function loadSubscribers($messageId, array $conditions, $combine)
     {
-        $joins = $this->selectionQueryJoins($messageId, $conditions, $combine);
+        $joins = $this->selectionQueryJoins($conditions);
         $this->selectedSubscribers = array();
 
         if (count($joins) > 0) {
@@ -104,7 +104,7 @@ class SegmentPlugin extends phplistPlugin
             "Prior usage %s\nPrior peak usage %s\nPrior peak real usage %s",
             memory_get_usage(), memory_get_peak_usage(), memory_get_peak_usage(true)
         ));
-        $joins = $this->selectionQueryJoins($messageId, $conditions, $combine);
+        $joins = $this->selectionQueryJoins($conditions);
 
         $count = (count($joins) > 0)
             ? $this->dao->calculateSubscribers($messageId, $joins, $combine)
