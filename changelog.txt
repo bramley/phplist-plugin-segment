@@ -1,3 +1,6 @@
+version 2015-05-06
+      Add dependency checks
+
 version 2015-04-04
       Refactoring to improve memory usage
 

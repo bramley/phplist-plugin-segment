@@ -24,11 +24,9 @@ The target value, also specific to each field, can be a text value, a select val
 
 ### Dependencies ###
 
-Requires php version 5.3 or later. 
+Requires php version 5.3.0 or later. Please check your php version before installing the plugin, otherwise phplist will fail (probably a white page).
 
-Requires the Common Plugin version 2015-03-23 or later to be installed. You should install or upgrade to the latest version.
-
-See <https://github.com/bramley/phplist-plugin-common>
+Requires the Common Plugin version 2015-03-23 or later to be installed. You should install or upgrade to the latest version. See <https://github.com/bramley/phplist-plugin-common>
 
 ### Set the plugin directory ###
 The default plugin directory is `plugins` within the admin directory.
@@ -75,6 +73,7 @@ This plugin is free but if you install and find it useful then a donation to sup
 ## Version history ##
 
     version     Description
+    2015-05-06  Add dependency checks
     2015-04-04  Internal changes to improve memory usage
     2015-03-23  Change to autoload approach
     2015-03-04  Add subscriber id and uniqid as subscriber data fields
