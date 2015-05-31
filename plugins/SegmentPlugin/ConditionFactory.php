@@ -28,9 +28,10 @@
  */
 class SegmentPlugin_ConditionFactory
 {
-    public function __construct($dao)
+    public function __construct($dao, $i18n)
     {
         $this->dao = $dao;
+        $this->i18n = $i18n;
         $daoAttr = new CommonPlugin_DAO_Attribute(new CommonPlugin_DB(), 20, 0);
         $this->attributes = iterator_to_array($daoAttr->attributes());
         $this->attributesById = $daoAttr->attributesById();
@@ -44,21 +45,21 @@ class SegmentPlugin_ConditionFactory
             switch ($attr['type']) {
                 case 'select':
                 case 'radio':
-                    $r = new SegmentPlugin_AttributeConditionSelect($attr);
+                    $r = new SegmentPlugin_AttributeConditionSelect($attr, $this->i18n);
                     break;
                 case 'checkbox':
-                    $r = new SegmentPlugin_AttributeConditionCheckbox($attr);
+                    $r = new SegmentPlugin_AttributeConditionCheckbox($attr, $this->i18n);
                     break;
                 case 'checkboxgroup':
-                    $r = new SegmentPlugin_AttributeConditionCheckboxgroup($attr);
+                    $r = new SegmentPlugin_AttributeConditionCheckboxgroup($attr, $this->i18n);
                     break;
                 case 'textline':
                 case 'textarea':
                 case 'hidden':
-                    $r = new SegmentPlugin_AttributeConditionText($attr);
+                    $r = new SegmentPlugin_AttributeConditionText($attr, $this->i18n);
                     break;
                 case 'date':
-                    $r = new SegmentPlugin_AttributeConditionDate($attr);
+                    $r = new SegmentPlugin_AttributeConditionDate($attr, $this->i18n);
                     break;
                 default:
                     throw new Exception("unrecognised type {$attr['type']}");
@@ -66,19 +67,19 @@ class SegmentPlugin_ConditionFactory
         } else {
             switch ($field) {
                 case 'activity':
-                    $r = new SegmentPlugin_SubscriberConditionActivity($field);
+                    $r = new SegmentPlugin_SubscriberConditionActivity($field, $this->i18n);
                     break;
                 case 'entered':
-                    $r = new SegmentPlugin_SubscriberConditionEntered($field);
+                    $r = new SegmentPlugin_SubscriberConditionEntered($field, $this->i18n);
                     break;
                 case 'email':
-                    $r = new SegmentPlugin_SubscriberConditionEmail($field);
+                    $r = new SegmentPlugin_SubscriberConditionEmail($field, $this->i18n);
                     break;
                 case 'id':
-                    $r = new SegmentPlugin_SubscriberConditionId($field);
+                    $r = new SegmentPlugin_SubscriberConditionId($field, $this->i18n);
                     break;
                 case 'uniqid':
-                    $r = new SegmentPlugin_SubscriberConditionUniqid($field);
+                    $r = new SegmentPlugin_SubscriberConditionUniqid($field, $this->i18n);
                     break;
                 default:
                     throw new Exception("unrecognised field $field");
@@ -96,11 +97,11 @@ class SegmentPlugin_ConditionFactory
     public function subscriberFields()
     {
         return array(
-            'activity' => 'Campaign activity',
-            'entered' => 'Entered date',
-            'email' => 'email address',
-            'id' => 'subscriber id',
-            'uniqid' => 'subscriber unique id',
+            'activity' => $this->i18n->get('campaign_activity'),
+            'entered' => $this->i18n->get('entered_date'),
+            'email' => $this->i18n->get('email_address'),
+            'id' => $this->i18n->get('subscriber_id'),
+            'uniqid' => $this->i18n->get('subscriber_unique_id'),
         );
     }
 }

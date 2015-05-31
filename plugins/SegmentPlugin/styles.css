@@ -1,4 +1,12 @@
 <style type="text/css">
+
+.instructions {
+    margin-bottom: 20px;
+    font-style: italic;
+}
+.bold {
+    font-weight: bold;
+}
 .segment select {
     width: auto;
 }
@@ -6,6 +14,9 @@
     display: inline-block;
     margin: 0px 15px 15px 0px;
     vertical-align: top;
+}
+.ui-datepicker {
+    z-index: 2 !important;
 }
 select {
     display: inline-block;

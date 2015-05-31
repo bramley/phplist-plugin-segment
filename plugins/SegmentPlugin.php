@@ -70,7 +70,7 @@ class SegmentPlugin extends phplistPlugin
 
     private function selectionQueryJoins(array $conditions)
     {
-        $cf = new SegmentPlugin_ConditionFactory($this->dao);
+        $cf = new SegmentPlugin_ConditionFactory($this->dao, $this->i18n);
         $joins = array();
 
         foreach ($conditions as $i => $c) {
@@ -129,13 +129,16 @@ class SegmentPlugin extends phplistPlugin
  */
     public function __construct()
     {
+        global $plugins;
         $this->coderoot = dirname(__FILE__) . '/' . __CLASS__ . '/';
+        require_once $plugins['CommonPlugin']->coderoot . 'Autoloader.php';
+        $this->i18n = new CommonPlugin_I18N($this);
         $this->version = (is_file($f = $this->coderoot . self::VERSION_FILE))
             ? file_get_contents($f)
             : '';
         $this->settings = array(
             'segment_campaign_max' => array (
-              'description' => s('The maximum number of earlier campaigns to select from'),
+              'description' => s($this->i18n->get('max_number_campaigns')),
               'type' => 'integer',
               'value' => 10,
               'allowempty' => 0,
@@ -166,9 +169,6 @@ class SegmentPlugin extends phplistPlugin
  */
     public function sendFormats()
     {
-        global $plugins;
-
-        require_once $plugins['CommonPlugin']->coderoot . 'Autoloader.php';
         $this->dao = new SegmentPlugin_DAO(new CommonPlugin_DB());
         $this->logger = CommonPlugin_Logger::instance();
         return null;
@@ -185,16 +185,16 @@ class SegmentPlugin extends phplistPlugin
         global $plugins, $pagefooter;
 
         if (!phplistPlugin::isEnabled('CommonPlugin')) {
-            return s('CommonPlugin must be installed in order to use segments');
+            return s($this->i18n->get('commonplugin_required'));
         }
-        $cf = new SegmentPlugin_ConditionFactory($this->dao);
+        $cf = new SegmentPlugin_ConditionFactory($this->dao, $this->i18n);
 
         $conditions = (isset($messageData['segment']['c']))
             ? array_values($this->filterEmptyFields($messageData['segment']['c']))
             : array();
 
         $conditions[] = array('field' => '');
-        $selectPrompt = s('Select ...');
+        $selectPrompt = s($this->i18n->get('select_prompt'));
         $params = array();
         $params['condition'] = array();
         $params['selectPrompt'] = $selectPrompt;
@@ -204,7 +204,7 @@ class SegmentPlugin extends phplistPlugin
             $s->fieldList = CHtml::dropDownList(
                 "segment[c][$i][field]",
                 $c['field'],
-                array('Subscriber Data' => $cf->subscriberFields(), 'Attributes' => $cf->attributeFields()),
+                array($this->i18n->get('subscriber_data') => $cf->subscriberFields(), $this->i18n->get('attributes') => $cf->attributeFields()),
                 array('prompt' => $selectPrompt, 'onchange' => 'this.form.submit()')
             );
             // hidden input to detect when field changes
@@ -232,13 +232,13 @@ class SegmentPlugin extends phplistPlugin
             $params['condition'][] = $s;
         }
 
-        $params['calculateButton'] = CHtml::submitButton(s('Calculate'), array('name' => 'segment[calculate]'));
+        $params['calculateButton'] = CHtml::submitButton(s($this->i18n->get('calculate')), array('name' => 'segment[calculate]'));
         $combine = isset($messageData['segment']['combine']) 
             ? $messageData['segment']['combine'] : SegmentPlugin_Operator::ALL;
         $params['combineList'] = CHtml::dropDownList(
             "segment[combine]",
             $combine,
-            array(SegmentPlugin_Operator::ONE => s('any'), SegmentPlugin_Operator::ALL => s('all'))
+            array(SegmentPlugin_Operator::ONE => s($this->i18n->get('any')), SegmentPlugin_Operator::ALL => s($this->i18n->get('all')))
         );
 
         if (isset($messageData['segment']['calculate'])) {

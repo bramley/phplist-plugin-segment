@@ -30,12 +30,10 @@
 <?php echo file_get_contents($this->coderoot . 'styles.css'); ?>
 
 <div class="segment">
-    <div>
-        <?php echo s("Select one or more subscriber fields or attributes.
-The campaign will be sent only to those subscribers who match any or all of the conditions.
-To remove a condition, choose '%s' from the drop-down list.", $selectPrompt); ?>
+    <div class="instructions">
+    <?php echo s($this->i18n->get('instructions'), $selectPrompt); ?>
     </div>
-    <div><?php echo s('Subscribers match %s of the following:', $combineList); ?></div>
+    <div class="bold"><?php echo s($this->i18n->get('match_%s_criteria'), $combineList); ?></div>
     <ul>
     <?php foreach ($condition as $c) : ?>
         <li class="selfclear">
@@ -47,6 +45,6 @@ To remove a condition, choose '%s' from the drop-down list.", $selectPrompt); ?>
     </ul>
     <div id="recalculate">
         <?php echo $calculateButton ?>
-        <?php if (isset($totalSubscribers)) echo s('%d subscribers will be selected', $totalSubscribers); ?>
+        <?php if (isset($totalSubscribers)) echo s($this->i18n->get('%d_subscribers_selected'), $totalSubscribers); ?>
     </div>
 </div>

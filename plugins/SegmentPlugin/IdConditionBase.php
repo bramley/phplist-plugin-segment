@@ -34,8 +34,8 @@ abstract class SegmentPlugin_IdConditionBase extends SegmentPlugin_Condition
     public function operators()
     {
         return array(
-            SegmentPlugin_Operator::REGEXP => s('REGEXP'),
-            SegmentPlugin_Operator::NOTREGEXP => s('not REGEXP'),
+            SegmentPlugin_Operator::REGEXP => s($this->i18n->get('REGEXP')),
+            SegmentPlugin_Operator::NOTREGEXP => s($this->i18n->get('not_REGEXP')),
         );
     }
 
