@@ -144,7 +144,7 @@ class SegmentPlugin extends phplistPlugin
               'allowempty' => 0,
               'min' => 4,
               'max' => 25,
-              'category'=> 'Segmentation',
+              'category'=> $this->i18n->get('segmentation'),
             )
         );
         parent::__construct();
@@ -256,7 +256,7 @@ class SegmentPlugin extends phplistPlugin
 
     public function sendMessageTabTitle($messageid = 0)
     {
-        return s('Segment');
+        return s($this->i18n->get('segment'));
     }
 
     public function messageQueued($id)
