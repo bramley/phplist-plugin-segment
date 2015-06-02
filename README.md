@@ -73,6 +73,7 @@ This plugin is free but if you install and find it useful then a donation to sup
 ## Version history ##
 
     version     Description
+    2015-06-02  Handle attribute not existing
     2015-05-06  Add dependency checks
     2015-04-04  Internal changes to improve memory usage
     2015-03-23  Change to autoload approach

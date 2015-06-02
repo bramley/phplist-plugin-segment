@@ -75,11 +75,13 @@ class SegmentPlugin extends phplistPlugin
 
         foreach ($conditions as $i => $c) {
             $field = $c['field'];
-            $condition = $cf->createCondition($field);
 
             try {
+                $condition = $cf->createCondition($field);
                 $joins[] = $condition->joinQuery($c['op'], isset($c['value']) ? $c['value'] : '');
             } catch (SegmentPlugin_ValueException $e) {
+                // do nothing
+            } catch (SegmentPlugin_ConditionException $e) {
                 // do nothing
             }
         }
@@ -212,7 +214,11 @@ class SegmentPlugin extends phplistPlugin
             $field = $c['field'];
 
             if ($field != '') {
-                $condition = $cf->createCondition($field);
+                try {
+                    $condition = $cf->createCondition($field);
+                } catch (SegmentPlugin_ConditionException $e) {
+                    continue;
+                }
                 $condition->messageData = $messageData;
                 $operators = $condition->operators();
 

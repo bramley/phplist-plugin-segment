@@ -1,3 +1,6 @@
+version 2015-06-02
+      Handle attribute now not existing
+
 version 2015-05-06
       Add dependency checks
 
