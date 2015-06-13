@@ -63,7 +63,7 @@ For guidance on usage see the plugin page within the phplist documentation site 
 
 ##Support##
 
-Questions and problems can be reported in the phplist user forum topic <http://forums.phplist.com/viewtopic.php?f=7&t=41650>.
+Please raise any questions or problems in the user forum <https://discuss.phplist.org/>.
 
 ## Donation ##
 This plugin is free but if you install and find it useful then a donation to support further development is greatly appreciated.
