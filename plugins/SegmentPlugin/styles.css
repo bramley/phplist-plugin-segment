@@ -6,6 +6,7 @@
     display: inline-block;
     margin: 0px 15px 15px 0px;
     vertical-align: top;
+    white-space: nowrap;
 }
 select {
     display: inline-block;
@@ -16,7 +17,7 @@ selfclear:after {
 ul {
     list-style: none outside none;
 }
-input[type="text"] {
+input[type="text"], input[type="submit"] {
     display: inline;
 }
 input[type="text"].datepicker {

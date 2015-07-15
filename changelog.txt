@@ -1,3 +1,6 @@
+version 2015-07-16
+      Add functionality to save and re-use segment conditions
+
 version 2015-06-02
       Handle attribute now not existing
 

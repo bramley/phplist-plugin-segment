@@ -144,7 +144,14 @@ class SegmentPlugin extends phplistPlugin
               'min' => 4,
               'max' => 25,
               'category'=> 'Segmentation',
-            )
+            ),
+            'segment_saved_summary' => array (
+              'description' => s('Summary of saved segments'),
+              'type' => 'textarea',
+              'value' => '',
+              'allowempty' => true,
+              'category'=> 'Segmentation',
+            ),
         );
         parent::__construct();
     }
@@ -181,7 +188,7 @@ class SegmentPlugin extends phplistPlugin
         return array();
     }
 
-    public function sendMessageTab($messageId = 0 , $messageData = array())
+    public function sendMessageTab($messageId = 0, $messageData = array())
     {
         $er = error_reporting(-1);
         global $plugins, $pagefooter;
@@ -189,71 +196,118 @@ class SegmentPlugin extends phplistPlugin
         if (!phplistPlugin::isEnabled('CommonPlugin')) {
             return s('CommonPlugin must be installed in order to use segments');
         }
-        $cf = new SegmentPlugin_ConditionFactory($this->dao);
-
-        $conditions = (isset($messageData['segment']['c']))
-            ? array_values($this->filterEmptyFields($messageData['segment']['c']))
+        $segment = isset($messageData['segment']) ? $messageData['segment'] : array();
+        $conditions = (isset($segment['c']))
+            ? array_values($this->filterEmptyFields($segment['c']))
             : array();
 
+        $combine = isset($segment['combine']) 
+            ? $segment['combine'] : SegmentPlugin_Operator::ALL;
+
+        $saved = new SegmentPlugin_SavedSegments;
+
+        if (isset($segment['save']) && $segment['savename'] != '') {
+            $saved->addSegment($segment['savename'], $combine, $this->filterIncompleteConditions($conditions));
+            $segment['savename'] = '';
+            setMessageData($messageId, 'segment', $segment);
+        }
+
+        if (isset($segment['usesaved']) && $segment['usesaved'] !== '') {
+            try {
+                list($combine, $conditions) = $saved->segmentById($segment['usesaved']);
+            } catch (Exception $e) {
+                // do nothing
+            }
+        }
         $conditions[] = array('field' => '');
         $selectPrompt = s('Select ...');
         $params = array();
         $params['condition'] = array();
         $params['selectPrompt'] = $selectPrompt;
+        $cf = new SegmentPlugin_ConditionFactory($this->dao);
 
         foreach ($conditions as $i => $c) {
             $s = new stdClass;
+            $params['condition'][] = $s;
+
+            // display field selection drop-down list
             $s->fieldList = CHtml::dropDownList(
                 "segment[c][$i][field]",
                 $c['field'],
                 array('Subscriber Data' => $cf->subscriberFields(), 'Attributes' => $cf->attributeFields()),
                 array('prompt' => $selectPrompt, 'onchange' => 'this.form.submit()')
             );
-            // hidden input to detect when field changes
+
+            // display hidden input to detect when field changes
             $s->hiddenField = CHtml::hiddenField("segment[c][$i][_field]", $c['field']);
             $field = $c['field'];
 
-            if ($field != '') {
-                try {
-                    $condition = $cf->createCondition($field);
-                } catch (SegmentPlugin_ConditionException $e) {
-                    continue;
-                }
-                $condition->messageData = $messageData;
-                $operators = $condition->operators();
-
-                $op = ($field == $c['_field'] && isset($c['op'])) ? $c['op'] : key($operators);
-                $s->operatorList = CHtml::dropDownList(
-                    "segment[c][$i][op]",
-                    $op,
-                    $operators
-                );
-
-                $value = ($field == $c['_field'] && isset($c['value'])) ? $c['value'] : '';
-                $s->display = $condition->display($op, $value, "segment[c][$i]");
-            } else {
-                $s->operatorList = '';
-                $s->display = '';
+            if ($field == '') {
+                continue;
             }
-            $params['condition'][] = $s;
+
+            try {
+                $condition = $cf->createCondition($field);
+            } catch (SegmentPlugin_ConditionException $e) {
+                echo $e->getMessage();
+                continue;
+            }
+            $condition->messageData = $messageData;
+
+            // display operators drop-down list
+            $operators = $condition->operators();
+
+            $op = ($field == $c['_field'] && isset($c['op'])) ? $c['op'] : key($operators);
+            $s->operatorList = CHtml::dropDownList(
+                "segment[c][$i][op]",
+                $op,
+                $operators
+            );
+
+            // display value field
+            $value = ($field == $c['_field'] && isset($c['value'])) ? $c['value'] : '';
+            $s->display = $condition->display($op, $value, "segment[c][$i]");
         }
 
+        // display drop-down list of saved segments
+        $params['savedList'] = CHtml::dropDownList(
+            "segment[usesaved]",
+            '',
+            $saved->selectListData(),
+            array('prompt' => $selectPrompt, 'onchange' => 'this.form.submit()')
+        );
+
+        // display calculate button
         $params['calculateButton'] = CHtml::submitButton(s('Calculate'), array('name' => 'segment[calculate]'));
-        $combine = isset($messageData['segment']['combine']) 
-            ? $messageData['segment']['combine'] : SegmentPlugin_Operator::ALL;
+
+        // display combine drop-down list
         $params['combineList'] = CHtml::dropDownList(
             "segment[combine]",
             $combine,
             array(SegmentPlugin_Operator::ONE => s('any'), SegmentPlugin_Operator::ALL => s('all'))
         );
 
-        if (isset($messageData['segment']['calculate'])) {
+        // display calculated number of subscribers
+        if (isset($segment['calculate'])) {
             $params['totalSubscribers'] = $this->calculateSubscribers(
                 $messageId,
-                $this->filterIncompleteConditions($messageData['segment']['c']),
+                $this->filterIncompleteConditions($segment['c']),
                 $combine
             );
         }
+
+        // display save button and input field
+        if (count($conditions) > 1) {
+            $params['saveButton'] = CHtml::submitButton(s('Save segment'), array('name' => 'segment[save]'));
+            $params['saveName'] = CHtml::textField("segment[savename]", '', array('size' => 20));
+        }
+
+        // display link to Settings page
+        $params['settings'] = new CommonPlugin_PageLink(
+            new CommonPlugin_PageURL('configure', array(), 'segmentation'),
+            'Edit saved segments',
+            array('target' => '_blank')
+        );
         $html = $this->render($params);
         $pagefooter[basename(__FILE__)] = file_get_contents($this->coderoot . 'date.js');
         error_reporting($er);
