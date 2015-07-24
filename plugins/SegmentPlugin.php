@@ -42,6 +42,7 @@ class SegmentPlugin extends phplistPlugin
     public $name = "Segmentation";
     public $authors = 'Duncan Cameron';
     public $description = 'Send to a subset of subscribers using custom conditions';
+    public $documentationUrl = 'https://resources.phplist.com/plugin/segment';
     public $settings;
 
 /*
@@ -118,17 +119,19 @@ class SegmentPlugin extends phplistPlugin
         return $count;
     }
 
-    private function render($params)
+    private function render($template, $params)
     {
         extract($params);
         ob_start();
-        require($this->coderoot . 'view.tpl.php');
+        require($this->coderoot . $template);
         return ob_get_clean();
     }
 
-/*
- *  Public methods
- */
+    /**
+     * Constructor
+     *
+     * @access  public
+     */
     public function __construct()
     {
         $this->coderoot = dirname(__FILE__) . '/' . __CLASS__ . '/';
@@ -156,23 +159,32 @@ class SegmentPlugin extends phplistPlugin
         parent::__construct();
     }
 
+    /**
+     * Provide the dependencies for enabling this plugin
+     *
+     * @access  public
+     * @return  array
+     */
     public function dependencyCheck()
     {
         global $plugins;
 
         return array(
-            'Common plugin installed' =>
-                phpListPlugin::isEnabled('CommonPlugin') && 
-                (strpos($plugins['CommonPlugin']->version, 'Git') === 0 || $plugins['CommonPlugin']->version >= '2015-03-23'),
+            'Common plugin v3 installed' =>
+                phpListPlugin::isEnabled('CommonPlugin')
+                    && preg_match('/\d+\.\d+\.\d+/', $plugins['CommonPlugin']->version, $matches)
+                    && version_compare($matches[0], '3') > 0,
             'PHP version 5.3.0 or greater' => version_compare(PHP_VERSION, '5.3') > 0,
         );
     }
 
-/*
- *  Use this method as a hook to create the dao
- *  Need to create autoloader because of the unpredictable order in which plugins are called
- * 
- */
+    /**
+     * Use this method as a hook to create the dao
+     * Need to create autoloader because of the unpredictable order in which plugins are called
+     *
+     * @access  public
+     * @return  null
+     */
     public function sendFormats()
     {
         global $plugins;
@@ -183,11 +195,25 @@ class SegmentPlugin extends phplistPlugin
         return null;
     }
 
+    /**
+     * List of items to add to menu
+     *
+     * @access  public
+     * @return  array
+     */
     public function adminmenu()
     {
         return array();
     }
 
+    /**
+     * Build contents of additional tab
+     *
+     * @access  public
+     * @param   int  $messageId 
+     * @param   array  $messageData 
+     * @return  string the html for the tab
+     */
     public function sendMessageTab($messageId = 0, $messageData = array())
     {
         $er = error_reporting(-1);
@@ -308,27 +334,58 @@ class SegmentPlugin extends phplistPlugin
             'Edit saved segments',
             array('target' => '_blank')
         );
-        $html = $this->render($params);
+        $html = $this->render('sendtab.tpl.php', $params);
         $pagefooter[basename(__FILE__)] = file_get_contents($this->coderoot . 'date.js');
         error_reporting($er);
         return $html;
     }
 
+    /**
+     * The title of the additional tab
+     *
+     * @access  public
+     * @param   int  $messageId 
+     * @return  string the title
+     */
     public function sendMessageTabTitle($messageid = 0)
     {
         return s('Segment');
     }
 
+    /**
+     * Use this hook to delete the 'not sent' rows from the usermessage table 
+     * so that they will be re-evaluated
+     *
+     * @access  public
+     * @param   int  $id the message id
+     * @return  none
+     */
     public function messageQueued($id)
     {
         $this->deleteNotSent($id);
     }
 
+    /**
+     * The same processing as when queueing a message
+     *
+     * @access  public
+     * @param   int  $id the message id
+     * @return  none
+     */
     public function messageReQueued($id)
     {
         $this->messageQueued($id);
     }
 
+    /**
+     * Use this hook to select the subscribers who meet the segment conditions 
+     * $noConditions indicates whether there are any conditions
+     * $selectedSubscribers contains the selected subscribers
+     *
+     * @access  public
+     * @param   array  $messageData the message data
+     * @return  none
+     */
     public function campaignStarted($messageData = array())
     {
         $er = error_reporting(-1);
@@ -346,6 +403,14 @@ class SegmentPlugin extends phplistPlugin
         error_reporting($er);
     }
 
+    /**
+     * Determine whether the campaign should be sent to a specific user
+     *
+     * @access  public
+     * @param   array  $messageData the message data
+     * @param   array  $userData the user data
+     * @return  boolean
+     */
     public function canSend($messageData, $userData)
     {
         if ($this->noConditions) {
@@ -353,5 +418,78 @@ class SegmentPlugin extends phplistPlugin
         }
 
         return isset($this->selectedSubscribers[$userData['id']]);
+    }
+
+    /**
+     * Build the html to be added to the view message page
+     *
+     * @access  public
+     * @param   int  $messageId the message id
+     * @param   array  $messageData the message data
+     * @return  string the html to be added
+     */
+    public function viewMessage($messageId, $messageData)
+    {
+        global $plugins;
+
+        $er = error_reporting(-1);
+
+        if (!phplistPlugin::isEnabled('CommonPlugin')) {
+            return s('CommonPlugin must be installed in order to use segments');
+        }
+
+        if (!isset($messageData['segment'])) {
+            return false;
+        }
+        $segment = $messageData['segment'];
+
+        if (!isset($segment['c'])) {
+            return false;
+        }
+        $conditions = array_values($this->filterEmptyFields($segment['c']));
+
+        if (count($conditions) == 0) {
+            return false;
+        }
+        $combine = isset($segment['combine'])
+            ? $segment['combine'] : SegmentPlugin_Operator::ALL;
+
+        $params = array();
+        $params['condition'] = array();
+        $cf = new SegmentPlugin_ConditionFactory($this->dao);
+
+        foreach ($conditions as $i => $c) {
+            $s = new stdClass;
+            $params['condition'][] = $s;
+            $field = $c['field'];
+
+            // display field selection
+            $fields = $cf->subscriberFields() + $cf->attributeFields();
+            $s->field = $fields[$field];
+
+            try {
+                $condition = $cf->createCondition($field);
+            } catch (SegmentPlugin_ConditionException $e) {
+                echo $e->getMessage();
+                continue;
+            }
+            $condition->messageData = $messageData;
+
+            // display operator
+            $operators = $condition->operators();
+            $s->operator = $operators[$c['op']];
+
+            // display value field
+            $value = isset($c['value']) ? $c['value'] : '';
+            $s->display = $condition->display($c['op'], $value, "segment[c][$i]");
+        }
+
+        // display combine
+        $combineOps = array(SegmentPlugin_Operator::ONE => s('any'), SegmentPlugin_Operator::ALL => s('all'));
+        $params['combine'] = $combineOps[$combine];
+
+        $html = $this->render('viewmessage.tpl.php', $params);
+        error_reporting($er);
+        return array('Segment conditions', $html);
     }
  }

@@ -72,22 +72,23 @@ This plugin is free but if you install and find it useful then a donation to sup
 
 ## Version history ##
 
-    version     Description
-    2015-07-16  Can now save and re-use segments
-    2015-06-02  Handle attribute not existing
-    2015-05-06  Add dependency checks
-    2015-04-04  Internal changes to improve memory usage
-    2015-03-23  Change to autoload approach
-    2015-03-04  Add subscriber id and uniqid as subscriber data fields
-    2015-02-13  Add "is between" operator for date fields
-    2015-01-06  Remove limit of 15 attributes
-    2014-11-21  Allow text to be translated
-    2014-10-20  Campaign activity select list is limited to prior campaigns sent to the lists
-    2014-10-18  Fix bug in date attribute processing
-    2014-10-15  Added list exclusion, internal changes
-    2014-10-04  Add sent/not sent a campaign, and clicked/did not click any link
-    2014-10-03  Add any/all, multi-value for select list and radio button attributes
-    2014-09-27  Correct error reporting
-    2014-09-26  Pull Request #1
-    2014-09-25  Add regexp matching
-    2014-09-24  Release to GitHub
+    version         Description
+    2.0.0+20150811  Display segment conditions on view message page
+    2015-07-16      Can now save and re-use segments
+    2015-06-02      Handle attribute not existing
+    2015-05-06      Add dependency checks
+    2015-04-04      Internal changes to improve memory usage
+    2015-03-23      Change to autoload approach
+    2015-03-04      Add subscriber id and uniqid as subscriber data fields
+    2015-02-13      Add "is between" operator for date fields
+    2015-01-06      Remove limit of 15 attributes
+    2014-11-21      Allow text to be translated
+    2014-10-20      Campaign activity select list is limited to prior campaigns sent to the lists
+    2014-10-18      Fix bug in date attribute processing
+    2014-10-15      Added list exclusion, internal changes
+    2014-10-04      Add sent/not sent a campaign, and clicked/did not click any link
+    2014-10-03      Add any/all, multi-value for select list and radio button attributes
+    2014-09-27      Correct error reporting
+    2014-09-26      Pull Request #1
+    2014-09-25      Add regexp matching
+    2014-09-24      Release to GitHub
