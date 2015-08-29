@@ -76,12 +76,15 @@ abstract class SegmentPlugin_DateConditionBase extends SegmentPlugin_Condition
             $value[0],
             array('class' => 'datepicker')
         );
-        $html .= '&nbsp;';
-        $html .= CHtml::textField(
-            $namePrefix . '[value][1]',
-            $op == SegmentPlugin_Operator::BETWEEN && isset($value[1]) ? $value[1] : '',
-            array('class' => 'datepicker')
-        );
+
+        if ($op == SegmentPlugin_Operator::BETWEEN) {
+            $html .= '&nbsp;';
+            $html .= CHtml::textField(
+                $namePrefix . '[value][1]',
+                isset($value[1]) ? $value[1] : '',
+                array('class' => 'datepicker')
+            );
+        }
         return $html;
     }
 }
