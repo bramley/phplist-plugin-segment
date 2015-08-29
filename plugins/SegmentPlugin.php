@@ -261,7 +261,7 @@ class SegmentPlugin extends phplistPlugin
                 "segment[c][$i][field]",
                 $c['field'],
                 array('Subscriber Data' => $cf->subscriberFields(), 'Attributes' => $cf->attributeFields()),
-                array('prompt' => $selectPrompt, 'onchange' => 'this.form.submit()')
+                array('prompt' => $selectPrompt, 'class' => 'autosubmit')
             );
 
             // display hidden input to detect when field changes
@@ -287,7 +287,8 @@ class SegmentPlugin extends phplistPlugin
             $s->operatorList = CHtml::dropDownList(
                 "segment[c][$i][op]",
                 $op,
-                $operators
+                $operators,
+                array('class' => 'autosubmit')
             );
 
             // display value field
