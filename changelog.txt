@@ -1,3 +1,9 @@
+version 2.1.0+20150903
+      Autosubmit form when operator is changed
+      Display second field only for between operator
+      Handle condition invalid by displaying warning or logging to event log
+      New operator for date fields to send after interval
+
 version 2.0.0+20150811
       Display segment conditions on view message page
       Add documentation url for plugin page

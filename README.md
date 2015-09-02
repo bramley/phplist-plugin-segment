@@ -26,7 +26,7 @@ The target value, also specific to each field, can be a text value, a select val
 
 Requires php version 5.3.0 or later. Please check your php version before installing the plugin, otherwise phplist will fail (probably a white page).
 
-Requires the Common Plugin version 2015-03-23 or later to be installed. You should install or upgrade to the latest version. See <https://github.com/bramley/phplist-plugin-common>
+Requires the Common Plugin version 3 to be installed. You should install, or upgrade to, the latest version. See <https://github.com/bramley/phplist-plugin-common>
 
 ### Set the plugin directory ###
 The default plugin directory is `plugins` within the admin directory.
@@ -73,6 +73,8 @@ This plugin is free but if you install and find it useful then a donation to sup
 ## Version history ##
 
     version         Description
+    2.1.0+20150903  Added "after interval" operator for date fields
+                    Improve validation and warning of invalid conditions
     2.0.0+20150811  Display segment conditions on view message page
     2015-07-16      Can now save and re-use segments
     2015-06-02      Handle attribute not existing
