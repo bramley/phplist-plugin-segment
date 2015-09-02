@@ -51,6 +51,7 @@ To remove a condition, choose '%s' from the drop-down list.", $selectPrompt); ?>
     <div id="recalculate">
         <?php echo $calculateButton ?>
         <?php if (isset($totalSubscribers)) echo s('%d subscribers will be selected', $totalSubscribers); ?>
+        <?php if (isset($warning)): ?> <span class="error"><?php echo $warning;?></span><?php endif; ?>
     </div>
     <?php if (isset($saveButton)): ?>
     <div>Save the current segment (set of conditions).</div>

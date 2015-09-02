@@ -80,8 +80,6 @@ class SegmentPlugin extends phplistPlugin
             try {
                 $condition = $cf->createCondition($field);
                 $joins[] = $condition->joinQuery($c['op'], isset($c['value']) ? $c['value'] : '');
-            } catch (SegmentPlugin_ValueException $e) {
-                // do nothing
             } catch (SegmentPlugin_ConditionException $e) {
                 // do nothing
             }
@@ -301,7 +299,7 @@ class SegmentPlugin extends phplistPlugin
             "segment[usesaved]",
             '',
             $saved->selectListData(),
-            array('prompt' => $selectPrompt, 'onchange' => 'this.form.submit()')
+            array('prompt' => $selectPrompt, 'class' => 'autosubmit')
         );
 
         // display calculate button
@@ -316,11 +314,15 @@ class SegmentPlugin extends phplistPlugin
 
         // display calculated number of subscribers
         if (isset($segment['calculate'])) {
-            $params['totalSubscribers'] = $this->calculateSubscribers(
-                $messageId,
-                $this->filterIncompleteConditions($segment['c']),
-                $combine
-            );
+            try {
+                $params['totalSubscribers'] = $this->calculateSubscribers(
+                    $messageId,
+                    $this->filterIncompleteConditions($segment['c']),
+                    $combine
+                );
+            } catch (SegmentPlugin_ValueException $e) {
+                $params['warning'] = 'one of the conditions has an invalid target value';
+            }
         }
 
         // display save button and input field
@@ -398,7 +400,12 @@ class SegmentPlugin extends phplistPlugin
 
             if (count($conditions) > 0) {
                 $this->noConditions = false;
-                $this->loadSubscribers($messageData['id'], $conditions, $messageData['segment']['combine']);
+
+                try {
+                    $this->loadSubscribers($messageData['id'], $conditions, $messageData['segment']['combine']);
+                } catch (SegmentPlugin_ValueException $e) {
+                    logEvent("Invalid segment condition, message {$messageData['id']}");
+                }
             }
         }
         error_reporting($er);
