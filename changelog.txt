@@ -1,3 +1,6 @@
+version 2.1.1+20150912
+      Handle change of field when viewing
+
 version 2.1.0+20150903
       Autosubmit form when operator is changed
       Display second field only for between operator

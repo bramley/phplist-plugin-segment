@@ -73,6 +73,7 @@ This plugin is free but if you install and find it useful then a donation to sup
 ## Version history ##
 
     version         Description
+    2.1.1+20150912  Fix problem when viewing message
     2.1.0+20150903  Added "after interval" operator for date fields
                     Improve validation and warning of invalid conditions
     2.0.0+20150811  Display segment conditions on view message page

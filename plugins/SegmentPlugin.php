@@ -485,11 +485,12 @@ class SegmentPlugin extends phplistPlugin
 
             // display operator
             $operators = $condition->operators();
-            $s->operator = $operators[$c['op']];
+            $op = ($field == $c['_field'] && isset($c['op'])) ? $c['op'] : key($operators);
+            $s->operator = $operators[$op];
 
             // display value field
-            $value = isset($c['value']) ? $c['value'] : '';
-            $s->display = $condition->display($c['op'], $value, "segment[c][$i]");
+            $value = ($field == $c['_field'] && isset($c['value'])) ? $c['value'] : '';
+            $s->display = $condition->display($op, $value, "segment[c][$i]");
         }
 
         // display combine
