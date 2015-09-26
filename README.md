@@ -26,7 +26,9 @@ The target value, also specific to each field, can be a text value, a select val
 
 Requires php version 5.3.0 or later. Please check your php version before installing the plugin, otherwise phplist will fail (probably a white page).
 
-Requires the Common Plugin version 3 to be installed. You should install, or upgrade to, the latest version. See <https://github.com/bramley/phplist-plugin-common>
+This plugin requires the Common Plugin v3 to also be installed, and will not work without that.
+**You must install that plugin or upgrade to the latest version if it is already installed**.
+See <https://github.com/bramley/phplist-plugin-common>
 
 ### Set the plugin directory ###
 The default plugin directory is `plugins` within the admin directory.
