@@ -436,7 +436,7 @@ class SegmentPlugin extends phplistPlugin
      * @param   array  $messageData the message data
      * @return  string the html to be added
      */
-    public function viewMessage($messageId, $messageData)
+    public function viewMessage($messageId, array $messageData)
     {
         global $plugins;
 

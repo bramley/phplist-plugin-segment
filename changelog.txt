@@ -1,3 +1,6 @@
+version 2.1.2+20151019
+      Add typehint
+
 version 2.1.1+20150912
       Handle change of field when viewing
 
