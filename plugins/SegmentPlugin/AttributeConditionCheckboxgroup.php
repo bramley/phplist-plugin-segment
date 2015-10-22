@@ -65,7 +65,7 @@ class SegmentPlugin_AttributeConditionCheckboxgroup extends SegmentPlugin_Condit
         } elseif ($operator == SegmentPlugin_Operator::ALL) {
             $compare = '>';
             $boolean = 'AND';
-        } else  {
+        } else {
             $compare = '=';
             $boolean = 'AND';
         }

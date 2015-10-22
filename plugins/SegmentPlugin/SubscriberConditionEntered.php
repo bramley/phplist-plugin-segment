@@ -45,7 +45,7 @@ class SegmentPlugin_SubscriberConditionEntered extends SegmentPlugin_DateConditi
                 $value2 = sql_escape($value2);
                 $r->where = "DATE(u.entered) BETWEEN '$value1' AND '$value2'";
             } else {
-                $op = $operator == SegmentPlugin_Operator::BEFORE ? '<' 
+                $op = $operator == SegmentPlugin_Operator::BEFORE ? '<'
                     : ($operator == SegmentPlugin_Operator::AFTER ? '>' : '=');
                 $r->where = "DATE(u.entered) $op '$value1'";
             }

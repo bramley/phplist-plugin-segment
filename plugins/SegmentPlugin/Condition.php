@@ -28,7 +28,7 @@
  */
 abstract class SegmentPlugin_Condition
 {
-    static private $count = 0;
+    private static $count = 0;
 
     protected $field;
     protected $id;

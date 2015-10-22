@@ -44,7 +44,7 @@ class SegmentPlugin_SavedSegments
         $this->summary = array_values(
             array_filter(
                 $this->summary,
-                function($value) use($names) {
+                function ($value) use ($names) {
                     return isset($names[$value]);
                 }
             )
@@ -119,7 +119,6 @@ class SegmentPlugin_SavedSegments
      */
     public function addSegment($name, $combine, array $conditions)
     {
-
         $position = array_search($name, $this->summary, true);
 
         if ($position === false) {

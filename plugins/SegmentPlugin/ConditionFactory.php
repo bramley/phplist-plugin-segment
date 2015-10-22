@@ -41,7 +41,7 @@ class SegmentPlugin_ConditionFactory
         if (ctype_digit($field)) {
             if (!isset($this->attributesById[$field])) {
                 throw new SegmentPlugin_ConditionException("unrecognised attribute id $field");
-            }                
+            }
             $attr = $this->attributesById[$field];
 
             switch ($attr['type']) {

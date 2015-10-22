@@ -52,7 +52,7 @@ class SegmentPlugin extends phplistPlugin
     {
         return array_filter(
             $conditions,
-            function($c) {return $c['field'] !== '';}
+            function ($c) {return $c['field'] !== '';}
         );
     }
 
@@ -60,7 +60,7 @@ class SegmentPlugin extends phplistPlugin
     {
         return array_filter(
             $conditions,
-            function($c) {return $c['field'] !== '' && isset($c['op']);}
+            function ($c) {return $c['field'] !== '' && isset($c['op']);}
         );
     }
 
@@ -225,7 +225,7 @@ class SegmentPlugin extends phplistPlugin
             ? array_values($this->filterEmptyFields($segment['c']))
             : array();
 
-        $combine = isset($segment['combine']) 
+        $combine = isset($segment['combine'])
             ? $segment['combine'] : SegmentPlugin_Operator::ALL;
 
         $saved = new SegmentPlugin_SavedSegments;
@@ -502,4 +502,4 @@ class SegmentPlugin extends phplistPlugin
         error_reporting($er);
         return array('Segment conditions', $html);
     }
- }
+}

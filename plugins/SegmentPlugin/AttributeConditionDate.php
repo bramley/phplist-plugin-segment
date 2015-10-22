@@ -48,7 +48,7 @@ class SegmentPlugin_AttributeConditionDate extends SegmentPlugin_DateConditionBa
                 $value2 = sql_escape($value2);
                 $r->where = "(COALESCE($ua.value, '') != '' AND DATE(COALESCE($ua.value, '')) BETWEEN '$value1' AND '$value2')";
             } else {
-                $op = $operator == SegmentPlugin_Operator::BEFORE ? '<' 
+                $op = $operator == SegmentPlugin_Operator::BEFORE ? '<'
                     : ($operator == SegmentPlugin_Operator::AFTER ? '>' : '=');
                 $r->where = "(COALESCE($ua.value, '') != '' AND DATE(COALESCE($ua.value, '')) $op '$value1')";
             }

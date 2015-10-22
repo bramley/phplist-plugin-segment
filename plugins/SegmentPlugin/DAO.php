@@ -28,15 +28,6 @@
  */
 class SegmentPlugin_DAO extends CommonPlugin_DAO
 {
-/*
- *  Private variables
- */
-    private $count = 0;
-
-/*
- *  Private functions
- */
-
     private function formatInList(array $values)
     {
         return '(' . implode(', ', $values) . ')';
@@ -153,7 +144,6 @@ END;
     }
 
     public function deleteNotSent($campaign)
-
     {
         $sql = "DELETE FROM {$this->tables['usermessage']}
             WHERE status = 'not sent'

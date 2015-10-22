@@ -76,7 +76,6 @@ class SegmentPlugin_SubscriberConditionActivity extends SegmentPlugin_Condition
                 LEFT JOIN {$this->tables['linktrack_uml_click']} $uml ON u.id = $uml.userid AND $uml.messageid = $um.messageid
 END;
             $r->where = "$uml.userid $op";
-            
         } elseif ($operator == SegmentPlugin_Operator::OPENED || $operator == SegmentPlugin_Operator::NOTOPENED) {
             $op = $operator == SegmentPlugin_Operator::OPENED ? 'IS NOT NULL' : 'IS NULL';
             $r->join = <<<END

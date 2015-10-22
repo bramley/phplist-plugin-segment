@@ -41,8 +41,12 @@ To remove a condition, choose '%s' from the drop-down list.", $selectPrompt); ?>
         <li class="selfclear">
         <?php if (isset($c->caption)): ?><div ><b><?php echo $c->caption; ?></b></div><?php endif; ?>
         <div class="segment-block"><?php echo $c->fieldList, $c->hiddenField; ?></div>
-        <div class="segment-block"><?php if (isset($c->operatorList)) echo $c->operatorList; ?></div>
-        <div class="segment-block"><?php if (isset($c->display)) echo $c->display; ?></div>
+        <div class="segment-block"><?php if (isset($c->operatorList)) {
+    echo $c->operatorList;
+} ?></div>
+        <div class="segment-block"><?php if (isset($c->display)) {
+    echo $c->display;
+} ?></div>
         </li>
     <?php endforeach; ?>
     </ul>
@@ -50,7 +54,9 @@ To remove a condition, choose '%s' from the drop-down list.", $selectPrompt); ?>
     <?php echo $savedList; ?>
     <div id="recalculate">
         <?php echo $calculateButton ?>
-        <?php if (isset($totalSubscribers)) echo s('%d subscribers will be selected', $totalSubscribers); ?>
+        <?php if (isset($totalSubscribers)) {
+    echo s('%d subscribers will be selected', $totalSubscribers);
+} ?>
         <?php if (isset($warning)): ?> <span class="error"><?php echo $warning;?></span><?php endif; ?>
     </div>
     <?php if (isset($saveButton)): ?>
