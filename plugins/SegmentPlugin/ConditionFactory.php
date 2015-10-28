@@ -78,10 +78,10 @@ class SegmentPlugin_ConditionFactory
                     $r = new SegmentPlugin_SubscriberConditionEmail($field);
                     break;
                 case 'id':
-                    $r = new SegmentPlugin_SubscriberConditionId($field);
+                    $r = new SegmentPlugin_SubscriberConditionIdentity($field);
                     break;
                 case 'uniqid':
-                    $r = new SegmentPlugin_SubscriberConditionUniqid($field);
+                    $r = new SegmentPlugin_SubscriberConditionIdentity($field);
                     break;
                 default:
                     throw new SegmentPlugin_ConditionException("unrecognised subscriber field $field");
