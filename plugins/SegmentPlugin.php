@@ -147,14 +147,14 @@ class SegmentPlugin extends phplistPlugin
               'allowempty' => 0,
               'min' => 4,
               'max' => 25,
-              'category'=> $this->i18n->get('segmentation'),
-            )
+              'category' => $this->i18n->get('segmentation'),
+            ),
             'segment_saved_summary' => array (
               'description' => s($this->i18n->get('summary_saved_segments')),
               'type' => 'textarea',
               'value' => '',
               'allowempty' => true,
-              'category'=> $this->i18n->get('segmentation'),
+              'category' => $this->i18n->get('segmentation'),
             ),
         );
         parent::__construct();
