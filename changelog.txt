@@ -1,3 +1,32 @@
+version 2.1.4+20151117
+      Refactoring of id and uniqid
+
+version 2.1.3+20151024
+      Revised docblock
+      Coding standards changes
+
+version 2.1.2+20151019
+      Add typehint
+
+version 2.1.1+20150912
+      Handle change of field when viewing
+
+version 2.1.0+20150903
+      Autosubmit form when operator is changed
+      Display second field only for between operator
+      Handle condition invalid by displaying warning or logging to event log
+      New operator for date fields to send after interval
+
+version 2.0.0+20150811
+      Display segment conditions on view message page
+      Add documentation url for plugin page
+
+version 2015-07-16
+      Add functionality to save and re-use segment conditions
+
+version 2015-06-02
+      Handle attribute now not existing
+
 version 2015-05-06
       Add dependency checks
 

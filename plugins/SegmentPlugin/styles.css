@@ -12,12 +12,14 @@
 }
 .segment-block {
     display: inline-block;
-    margin: 0px 15px 15px 0px;
+    margin: 0px 15px 0px 0px;
     vertical-align: top;
+    white-space: nowrap;
 }
-.ui-datepicker {
-    z-index: 2 !important;
+.segment-block, .segment-block fieldset {
+    margin-bottom: 0px;
 }
+
 select {
     display: inline-block;
 }
@@ -27,8 +29,12 @@ selfclear:after {
 ul {
     list-style: none outside none;
 }
-input[type="text"] {
+input[type="text"], input[type="submit"] {
     display: inline;
+    margin-bottom: 0px;
+}
+.ui-datepicker {
+    z-index: 2 !important;
 }
 input[type="text"].datepicker {
     width: 8em !important;

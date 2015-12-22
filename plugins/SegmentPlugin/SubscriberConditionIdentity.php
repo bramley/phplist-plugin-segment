@@ -27,10 +27,8 @@
  * @package   SegmentPlugin
  */
 
-abstract class SegmentPlugin_IdConditionBase extends SegmentPlugin_Condition
+class SegmentPlugin_SubscriberConditionIdentity extends SegmentPlugin_Condition
 {
-    protected $column;
-
     public function operators()
     {
         return array(
@@ -66,7 +64,7 @@ abstract class SegmentPlugin_IdConditionBase extends SegmentPlugin_Condition
 
         $r = new stdClass;
         $r->join = '';
-        $r->where = "u.$this->column $op '$value'";
+        $r->where = "u.$this->field $op '$value'";
         return $r;
     }
 }

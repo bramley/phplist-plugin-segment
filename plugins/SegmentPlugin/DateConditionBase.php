@@ -29,6 +29,14 @@
 
 abstract class SegmentPlugin_DateConditionBase extends SegmentPlugin_Condition
 {
+    protected function validateInterval($interval)
+    {
+        if (!preg_match('/^([+-]?\d+\s+(day|week|month|quarter|year))s?$/i', $interval, $matches)) {
+            throw new SegmentPlugin_ValueException;
+        }
+        return $matches[1];
+    }
+
     protected function validateDates($op, $value)
     {
         if (!(is_array($value) && $value[0])) {
@@ -64,24 +72,34 @@ abstract class SegmentPlugin_DateConditionBase extends SegmentPlugin_Condition
             SegmentPlugin_Operator::IS => s($this->i18n->get('is')),
             SegmentPlugin_Operator::AFTER => s($this->i18n->get('is_after')),
             SegmentPlugin_Operator::BEFORE => s($this->i18n->get('is_before')),
-            SegmentPlugin_Operator::BETWEEN => s($this->i18n->get('is_between'))
+            SegmentPlugin_Operator::BETWEEN => s($this->i18n->get('is_between')),
+            SegmentPlugin_Operator::AFTERINTERVAL => s($this->i18n->get('after_interval'))
         );
     }
 
     public function display($op, $value, $namePrefix)
     {
         $value = (array)$value;
+        $htmlOptions = array();
+
+        if ($op != SegmentPlugin_Operator::AFTERINTERVAL) {
+            $htmlOptions['class'] = 'datepicker';
+        }
+
         $html = CHtml::textField(
             $namePrefix . '[value][0]',
             $value[0],
-            array('class' => 'datepicker')
+            $htmlOptions
         );
-        $html .= '&nbsp;';
-        $html .= CHtml::textField(
-            $namePrefix . '[value][1]',
-            $op == SegmentPlugin_Operator::BETWEEN && isset($value[1]) ? $value[1] : '',
-            array('class' => 'datepicker')
-        );
+
+        if ($op == SegmentPlugin_Operator::BETWEEN) {
+            $html .= '&nbsp;';
+            $html .= CHtml::textField(
+                $namePrefix . '[value][1]',
+                isset($value[1]) ? $value[1] : '',
+                $htmlOptions
+            );
+        }
         return $html;
     }
 }

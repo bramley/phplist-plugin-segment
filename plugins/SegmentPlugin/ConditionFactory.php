@@ -40,6 +40,9 @@ class SegmentPlugin_ConditionFactory
     public function createCondition($field)
     {
         if (ctype_digit($field)) {
+            if (!isset($this->attributesById[$field])) {
+                throw new SegmentPlugin_ConditionException("unrecognised attribute id $field");
+            }
             $attr = $this->attributesById[$field];
 
             switch ($attr['type']) {
@@ -62,7 +65,7 @@ class SegmentPlugin_ConditionFactory
                     $r = new SegmentPlugin_AttributeConditionDate($attr, $this->i18n);
                     break;
                 default:
-                    throw new Exception("unrecognised type {$attr['type']}");
+                    throw new SegmentPlugin_ConditionException("unrecognised attribute type {$attr['type']}");
             }
         } else {
             switch ($field) {
@@ -76,13 +79,13 @@ class SegmentPlugin_ConditionFactory
                     $r = new SegmentPlugin_SubscriberConditionEmail($field, $this->i18n);
                     break;
                 case 'id':
-                    $r = new SegmentPlugin_SubscriberConditionId($field, $this->i18n);
+                    $r = new SegmentPlugin_SubscriberConditionIdentity($field, $this->i18n);
                     break;
                 case 'uniqid':
-                    $r = new SegmentPlugin_SubscriberConditionUniqid($field, $this->i18n);
+                    $r = new SegmentPlugin_SubscriberConditionIdentity($field, $this->i18n);
                     break;
                 default:
-                    throw new Exception("unrecognised field $field");
+                    throw new SegmentPlugin_ConditionException("unrecognised subscriber field $field");
             }
         }
         $r->dao = $this->dao;

@@ -48,6 +48,7 @@ class SegmentPlugin_Operator
     const CLICKED = 18;
     const NOTCLICKED = 19;
     const BETWEEN = 20;
+    const AFTERINTERVAL = 21;
 
     private function __construct()
     {

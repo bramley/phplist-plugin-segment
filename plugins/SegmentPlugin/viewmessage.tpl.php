@@ -8,7 +8,7 @@
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- * CriteriaPlugin is distributed in the hope that it will be useful,
+ * SegmentPlugin is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
@@ -21,13 +21,25 @@
  */
 
 /**
- * 
+ * Plugin class
  * 
  * @category  phplist
  * @package   SegmentPlugin
  */
+?>
+<?php echo file_get_contents($this->coderoot . 'styles.css'); ?>
 
-class SegmentPlugin_SubscriberConditionUniqid extends SegmentPlugin_IdConditionBase
-{
-    protected $column = 'uniqid';
-}
+<div class="segment">
+    <div class="bold"><?php echo s($this->i18n->get('match_%s_criteria'), $combine); ?></div>
+    <ul>
+    <?php foreach ($condition as $c) : ?>
+        <li class="selfclear">
+            <div class="segment-block"><?php echo $c->field ?></div>
+            <div class="segment-block"><?php echo $c->operator; ?></div>
+            <div class="segment-block">
+                <fieldset disabled><?php echo $c->display; ?></fieldset>
+            </div>
+        </li>
+    <?php endforeach; ?>
+    </ul>
+</div>

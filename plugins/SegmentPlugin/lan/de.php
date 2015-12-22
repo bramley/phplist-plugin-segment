@@ -40,6 +40,7 @@ $lan = array(
     "is_after" => "liegt nach",
     "is_before" => "liegt vor",
     "is_between" => "liegt zwischen",
+    "after_interval" => "nach Intervall",
     //SegmentPlugin.php
     "max_number_campaigns" => "Die maximale Anzahl auswählbarer vorheriger Nachrichten",
     "segmentation" => "Segmentation",
@@ -50,7 +51,7 @@ $lan = array(
     "calculate" => "Berechne",
     "any" => "eines",
     "all" => "alle",
-    "sgement" => "Segment",
+    "segment" => "Segment",
     // SubscriberConditionActivity.php
     "was_sent" => "wurde zugesendet",
     "was_not_sent" => "wurde nicht zugesendet",
@@ -61,5 +62,7 @@ $lan = array(
     //view.tpl.php
     "instructions" => "Wählen Sie eines oder mehrere Abonnenten-Felder oder Attribute aus. Die Nachricht wird nur an jene Abonnenten gesendet, die - je nach Einstellung - eine der/alle Bedingungen erfüllen. Um eine Bedingung zu entfernen, wählen Sie in der Drop-down-Liste '%s' aus.",
     "match_%s_criteria" => "Abonnenten erfüllen %s der folgenden Kriterien:",
+"use_saved_segment" => "Verwende gespeichertes Segment. Dies wird jegliche bereits eingegebene Bedingungen ersetzen.",
     "%d_subscribers_selected" => "%d Abonnenten werden ausgewählt",
+    "save_current_segment" => "Speichere das gegenwärtige Segment (Kombination aus Bedingungen).",
 );

@@ -26,7 +26,9 @@ The target value, also specific to each field, can be a text value, a select val
 
 Requires php version 5.3.0 or later. Please check your php version before installing the plugin, otherwise phplist will fail (probably a white page).
 
-Requires the Common Plugin version 2015-03-23 or later to be installed. You should install or upgrade to the latest version. See <https://github.com/bramley/phplist-plugin-common>
+This plugin requires the Common Plugin v3 to also be installed, and will not work without that.
+**You must install that plugin or upgrade to the latest version if it is already installed**.
+See <https://github.com/bramley/phplist-plugin-common>
 
 ### Set the plugin directory ###
 The default plugin directory is `plugins` within the admin directory.
@@ -63,7 +65,7 @@ For guidance on usage see the plugin page within the phplist documentation site 
 
 ##Support##
 
-Questions and problems can be reported in the phplist user forum topic <http://forums.phplist.com/viewtopic.php?f=7&t=41650>.
+Please raise any questions or problems in the user forum <https://discuss.phplist.org/>.
 
 ## Donation ##
 This plugin is free but if you install and find it useful then a donation to support further development is greatly appreciated.
@@ -72,20 +74,29 @@ This plugin is free but if you install and find it useful then a donation to sup
 
 ## Version history ##
 
-    version     Description
-    2015-05-06  Add dependency checks
-    2015-04-04  Internal changes to improve memory usage
-    2015-03-23  Change to autoload approach
-    2015-03-04  Add subscriber id and uniqid as subscriber data fields
-    2015-02-13  Add "is between" operator for date fields
-    2015-01-06  Remove limit of 15 attributes
-    2014-11-21  Allow text to be translated
-    2014-10-20  Campaign activity select list is limited to prior campaigns sent to the lists
-    2014-10-18  Fix bug in date attribute processing
-    2014-10-15  Added list exclusion, internal changes
-    2014-10-04  Add sent/not sent a campaign, and clicked/did not click any link
-    2014-10-03  Add any/all, multi-value for select list and radio button attributes
-    2014-09-27  Correct error reporting
-    2014-09-26  Pull Request #1
-    2014-09-25  Add regexp matching
-    2014-09-24  Release to GitHub
+    version         Description
+    2.1.4+20151117  Internal code refactoring
+    2.1.3+20151024  Internal changes to meet coding standards
+    2.1.2+20151019  Fix php warning
+    2.1.1+20150912  Fix problem when viewing message
+    2.1.0+20150903  Added "after interval" operator for date fields
+                    Improve validation and warning of invalid conditions
+    2.0.0+20150811  Display segment conditions on view message page
+    2015-07-16      Can now save and re-use segments
+    2015-06-02      Handle attribute not existing
+    2015-05-06      Add dependency checks
+    2015-04-04      Internal changes to improve memory usage
+    2015-03-23      Change to autoload approach
+    2015-03-04      Add subscriber id and uniqid as subscriber data fields
+    2015-02-13      Add "is between" operator for date fields
+    2015-01-06      Remove limit of 15 attributes
+    2014-11-21      Allow text to be translated
+    2014-10-20      Campaign activity select list is limited to prior campaigns sent to the lists
+    2014-10-18      Fix bug in date attribute processing
+    2014-10-15      Added list exclusion, internal changes
+    2014-10-04      Add sent/not sent a campaign, and clicked/did not click any link
+    2014-10-03      Add any/all, multi-value for select list and radio button attributes
+    2014-09-27      Correct error reporting
+    2014-09-26      Pull Request #1
+    2014-09-25      Add regexp matching
+    2014-09-24      Release to GitHub

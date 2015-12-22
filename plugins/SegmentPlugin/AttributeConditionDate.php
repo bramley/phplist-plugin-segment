@@ -31,20 +31,27 @@ class SegmentPlugin_AttributeConditionDate extends SegmentPlugin_DateConditionBa
 {
     public function joinQuery($operator, $value)
     {
-        list($value1, $value2) = $this->validateDates($operator, $value);
-
-        $value1 = sql_escape($value1);
         $ua = 'ua' . $this->id;
         $r = new stdClass;
         $r->join = "LEFT JOIN {$this->tables['user_attribute']} $ua ON u.id = $ua.userid AND $ua.attributeid = {$this->field['id']} ";
 
-        if ($operator == SegmentPlugin_Operator::BETWEEN) {
-            $value2 = sql_escape($value2);
-            $r->where = "(COALESCE($ua.value, '') != '' AND DATE(COALESCE($ua.value, '')) BETWEEN '$value1' AND '$value2')";
+        if ($operator == SegmentPlugin_Operator::AFTERINTERVAL) {
+            $value1 = $this->validateInterval($value[0]);
+            $r->where =
+                "COALESCE($ua.value, '') != ''
+                AND CURDATE() = DATE($ua.value) + INTERVAL $value1";
         } else {
-            $op = $operator == SegmentPlugin_Operator::BEFORE ? '<' 
-                : ($operator == SegmentPlugin_Operator::AFTER ? '>' : '=');
-            $r->where = "(COALESCE($ua.value, '') != '' AND DATE(COALESCE($ua.value, '')) $op '$value1')";
+            list($value1, $value2) = $this->validateDates($operator, $value);
+            $value1 = sql_escape($value1);
+
+            if ($operator == SegmentPlugin_Operator::BETWEEN) {
+                $value2 = sql_escape($value2);
+                $r->where = "(COALESCE($ua.value, '') != '' AND DATE(COALESCE($ua.value, '')) BETWEEN '$value1' AND '$value2')";
+            } else {
+                $op = $operator == SegmentPlugin_Operator::BEFORE ? '<'
+                    : ($operator == SegmentPlugin_Operator::AFTER ? '>' : '=');
+                $r->where = "(COALESCE($ua.value, '') != '' AND DATE(COALESCE($ua.value, '')) $op '$value1')";
+            }
         }
         return $r;
     }

@@ -1,4 +1,4 @@
-<?php
+<?php 
 /**
  * SegmentPlugin for phplist
  * 
@@ -26,25 +26,7 @@
  * @category  phplist
  * @package   SegmentPlugin
  */
-?>
-<?php echo file_get_contents($this->coderoot . 'styles.css'); ?>
-
-<div class="segment">
-    <div class="instructions">
-    <?php echo s($this->i18n->get('instructions'), $selectPrompt); ?>
-    </div>
-    <div class="bold"><?php echo s($this->i18n->get('match_%s_criteria'), $combineList); ?></div>
-    <ul>
-    <?php foreach ($condition as $c) : ?>
-        <li class="selfclear">
-        <div class="segment-block"><?php echo $c->fieldList, $c->hiddenField; ?></div>
-        <div class="segment-block"><?php echo $c->operatorList; ?></div>
-        <div class="segment-block"><?php echo $c->display; ?></div>
-        </li>
-    <?php endforeach; ?>
-    </ul>
-    <div id="recalculate">
-        <?php echo $calculateButton ?>
-        <?php if (isset($totalSubscribers)) echo s($this->i18n->get('%d_subscribers_selected'), $totalSubscribers); ?>
-    </div>
-</div>
+ 
+class SegmentPlugin_ConditionException extends Exception
+{
+}

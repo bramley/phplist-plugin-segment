@@ -40,9 +40,11 @@ $lan = array(
     "is_after" => "is after",
     "is_before" => "is before",
     "is_between" => "is between",
+    "after_interval" => "after interval",
     //SegmentPlugin.php
     "max_number_campaigns" => "The maximum number of earlier campaigns to select from",
     "segmentation" => "Segmentation",
+    "summary_saved_segments" => "Summary of saved segments",
     "commonplugin_required" => "CommonPlugin must be installed in order to use segments",
     "select_prompt" => "Select...",
     "subscriber_data" => "Subscriber Data",
@@ -58,8 +60,10 @@ $lan = array(
     "did_not_open" => "did not open",
     "clicked" => "clicked",
     "did_not_click" => "did not click",
-    //view.tpl.php
+    //sendtab.tpl.php, viewmessage.tpl.php
     "instructions" => "Select one or more subscriber fields or attributes. The campaign will be sent only to those subscribers who match any or all of the conditions. To remove a condition, choose '%s' from the drop-down list.",
     "match_%s_criteria" => "Subscribers match %s of the following:",
-    "%d_subscribers_selected" => "%d subscribers will be selected",    
+    "use_saved_segment" => "Use a saved segment. This will replace any conditions already entered.",
+    "%d_subscribers_selected" => "%d subscribers will be selected",
+    "save_current_segment" => "Save the current segment (set of conditions).",
 );
