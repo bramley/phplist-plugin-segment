@@ -43,15 +43,18 @@ $lan = array(
     "after_interval" => "nach Intervall",
     //SegmentPlugin.php
     "max_number_campaigns" => "Die maximale Anzahl auswählbarer vorheriger Nachrichten",
-    "segmentation" => "Segmentation",
+    "segmentation" => "Segmente",
+    "summary_saved_segments" => "Gespeicherte Segmente",
     "commonplugin_required" => "CommonPlugin muss installiert sein, um Segmente nutzen zu können",
     "select_prompt" => "Auswählen...",
     "subscriber_data" => "Abonnenten-Daten",
     "attributes" => "Attribute",
-    "calculate" => "Berechne",
+    "calculate" => "Zahl der Abonnenten berechnen",
     "any" => "eines",
     "all" => "alle",
+    "save_segment" => "Segment speichern",    
     "segment" => "Segment",
+    "segment_conditions" => "Segment-Bedingungen",
     // SubscriberConditionActivity.php
     "was_sent" => "wurde zugesendet",
     "was_not_sent" => "wurde nicht zugesendet",
@@ -64,5 +67,6 @@ $lan = array(
     "match_%s_criteria" => "Abonnenten erfüllen %s der folgenden Kriterien:",
 "use_saved_segment" => "Verwende gespeichertes Segment. Dies wird jegliche bereits eingegebene Bedingungen ersetzen.",
     "%d_subscribers_selected" => "%d Abonnenten werden ausgewählt",
-    "save_current_segment" => "Speichere das gegenwärtige Segment (Kombination aus Bedingungen).",
+    "save_current_segment" => "Speichere gegenwärtiges Segment (Kombination aus Bedingungen)",
+    "usage_guidance" => "Anleitung zur Nutzung",
 );

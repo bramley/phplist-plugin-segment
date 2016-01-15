@@ -52,7 +52,9 @@ $lan = array(
     "calculate" => "Calculate",
     "any" => "any",
     "all" => "all",
+    "save_segment" => "Save segment",
     "segment" => "segment",
+    "segment_conditions" => "Segment conditions",
     // SubscriberConditionActivity.php
     "was_sent" => "was sent",
     "was_not_sent" => "was not sent",
@@ -66,4 +68,5 @@ $lan = array(
     "use_saved_segment" => "Use a saved segment. This will replace any conditions already entered.",
     "%d_subscribers_selected" => "%d subscribers will be selected",
     "save_current_segment" => "Save the current segment (set of conditions).",
+    "usage_guidance" => "Guidance on usage",
 );

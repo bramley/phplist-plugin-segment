@@ -327,7 +327,7 @@ class SegmentPlugin extends phplistPlugin
 
         // display save button and input field
         if (count($conditions) > 1) {
-            $params['saveButton'] = CHtml::submitButton(s('Save segment'), array('name' => 'segment[save]'));
+            $params['saveButton'] = CHtml::submitButton(s($this->i18n->get('save_segment')), array('name' => 'segment[save]'));
             $params['saveName'] = CHtml::textField("segment[savename]", '', array('size' => 20));
         }
 
@@ -495,11 +495,12 @@ class SegmentPlugin extends phplistPlugin
         }
 
         // display combine
-        $combineOps = array(SegmentPlugin_Operator::ONE => s('any'), SegmentPlugin_Operator::ALL => s('all'));
+        $combineOps = array(SegmentPlugin_Operator::ONE => s($this->i18n->get('any')), SegmentPlugin_Operator::ALL => s($this->i18n->get('all')));
+        
         $params['combine'] = $combineOps[$combine];
 
         $html = $this->render('viewmessage.tpl.php', $params);
         error_reporting($er);
-        return array('Segment conditions', $html);
+        return array(s($this->i18n->get('segment_conditions')), $html);
     }
 }
