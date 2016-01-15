@@ -33,7 +33,12 @@
     <div class="instructions">
         <?php echo s($this->i18n->get('instructions'), $selectPrompt); ?>
     </div>
-    <div><?php echo s($this->i18n->get('match_%s_criteria'), $combineList); ?></div>
+    <div class="segment-help">
+        <a href="https://resources.phplist.com/plugin/segment#add_segment_conditions" target="_blank">
+            <?php echo s($this->i18n->get('usage_guidance')); ?>
+        </a>
+    </div>    
+    <div class="bold"><?php echo s($this->i18n->get('match_%s_criteria'), $combineList); ?></div>
     <ul>
     <?php foreach ($condition as $c) : ?>
         <li class="selfclear">
@@ -48,7 +53,7 @@
         </li>
     <?php endforeach; ?>
     </ul>
-    <div><?php echo s($this->i18n->get('use_saved_segment')); ?></div>
+    <div class="segment-subheading"><?php echo s($this->i18n->get('use_saved_segment')); ?></div>
     <?php echo $savedList; ?>
     <div id="recalculate">
         <?php echo $calculateButton ?>
@@ -58,7 +63,7 @@
         <?php if (isset($warning)): ?> <span class="error"><?php echo $warning;?></span><?php endif; ?>
     </div>
     <?php if (isset($saveButton)): ?>
-    <div><?php echo s($this->i18n->get('save_current_segment')); ?> </div>
+    <div class="segment-subheading"><?php echo s($this->i18n->get('save_current_segment')); ?> </div>
     <div class="segment-block">
         <?php echo $saveName; ?>
     </div>
@@ -67,7 +72,6 @@
     </div>
     <?php endif; ?>
     <div class="segment-block">
-        <?php echo $settings; ?>
-        <a href="https://resources.phplist.com/plugin/segment#add_segment_conditions" target="_blank">Guidance on usage</a>
+        <div class="edit-segments"><?php echo $settings; ?></div>
     </div>
 </div>
