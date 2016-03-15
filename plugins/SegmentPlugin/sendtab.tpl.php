@@ -31,45 +31,62 @@
 
 <div class="segment">
     <div>
-        <?php echo s("Select one or more subscriber fields or attributes.
+<?php
+    echo s("Select one or more subscriber fields or attributes.
 The campaign will be sent only to those subscribers who match any or all of the conditions.
-To remove a condition, choose '%s' from the drop-down list.", $selectPrompt); ?>
+To remove a condition, choose '%s' from the drop-down list.", $selectPrompt);
+?>
     </div>
     <div><?php echo s('Subscribers match %s of the following:', $combineList); ?></div>
     <ul>
-    <?php foreach ($condition as $c) : ?>
+<?php foreach ($condition as $c) : ?>
         <li class="selfclear">
-        <?php if (isset($c->caption)): ?><div ><b><?php echo $c->caption; ?></b></div><?php endif; ?>
-        <div class="segment-block"><?php echo $c->fieldList, $c->hiddenField; ?></div>
-        <div class="segment-block"><?php if (isset($c->operatorList)) {
-    echo $c->operatorList;
-} ?></div>
-        <div class="segment-block"><?php if (isset($c->display)) {
-    echo $c->display;
-} ?></div>
+    <?php if (isset($c->error)): ?>
+            <div class="note"><?php echo $c->error; ?></div>
+    <?php else: ?>
+        <?php if (isset($c->caption)): ?>
+            <div>
+                <b><?php echo $c->caption; ?></b>
+            </div>
+        <?php endif; ?>
+            <div class="segment-block"><?php echo $c->fieldList, $c->hiddenField; ?></div>
+            <div class="segment-block">
+        <?php
+            if (isset($c->operatorList)):
+                echo $c->operatorList;
+            endif; ?>
+            </div>
+            <div class="segment-block">
+        <?php if (isset($c->display)): ?>
+            <?php echo $c->display; ?>
+        <?php endif; ?>
+            </div>
+    <?php endif; ?>
         </li>
-    <?php endforeach; ?>
+<?php endforeach; ?>
     </ul>
-    <div><?php echo s("Use a saved segment. This will replace any conditions already entered."); ?></div>
-    <?php echo $savedList; ?>
-    <div id="recalculate">
-        <?php echo $calculateButton ?>
-        <?php if (isset($totalSubscribers)) {
-    echo s('%d subscribers will be selected', $totalSubscribers);
-} ?>
-        <?php if (isset($warning)): ?> <span class="error"><?php echo $warning;?></span><?php endif; ?>
+    <div>
+<?php echo s("Use a saved segment. This will replace any conditions already entered."); ?>
     </div>
-    <?php if (isset($saveButton)): ?>
+<?php echo $savedList; ?>
+    <div id="recalculate">
+<?php echo $calculateButton ?>
+<?php if (isset($totalSubscribers)):
+    echo s('%d subscribers will be selected', $totalSubscribers);
+endif; ?>
+<?php if (isset($warning)): ?> <span class="error"><?php echo $warning;?></span><?php endif; ?>
+    </div>
+<?php if (isset($saveButton)): ?>
     <div>Save the current segment (set of conditions).</div>
     <div class="segment-block">
-        <?php echo $saveName; ?>
+    <?php echo $saveName; ?>
     </div>
     <div class="segment-block">
-        <?php echo $saveButton; ?>
+    <?php echo $saveButton; ?>
     </div>
-    <?php endif; ?>
+<?php endif; ?>
     <div class="segment-block">
-        <?php echo $settings; ?>
+<?php echo $settings; ?>
         <a href="https://resources.phplist.com/plugin/segment#add_segment_conditions" target="_blank">Guidance on usage</a>
     </div>
 </div>

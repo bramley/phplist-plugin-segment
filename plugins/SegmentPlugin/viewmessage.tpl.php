@@ -32,14 +32,18 @@
 <div class="segment">
     <div><?php echo s('Subscribers match %s of the following:', $combine); ?></div>
     <ul>
-    <?php foreach ($condition as $c) : ?>
+<?php foreach ($condition as $c) : ?>
         <li class="selfclear">
+    <?php if (isset($c->error)): ?>
+            <div class="note"><?php echo $c->error; ?></div>
+    <?php else: ?>
             <div class="segment-block"><?php echo $c->field ?></div>
             <div class="segment-block"><?php echo $c->operator; ?></div>
             <div class="segment-block">
                 <fieldset disabled><?php echo $c->display; ?></fieldset>
             </div>
+    <?php endif; ?>
         </li>
-    <?php endforeach; ?>
+<?php endforeach; ?>
     </ul>
 </div>

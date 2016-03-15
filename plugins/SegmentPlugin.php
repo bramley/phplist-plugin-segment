@@ -273,7 +273,7 @@ class SegmentPlugin extends phplistPlugin
             try {
                 $condition = $cf->createCondition($field);
             } catch (SegmentPlugin_ConditionException $e) {
-                echo $e->getMessage();
+                $s->error = sprintf('Unable to display condition: %s', $e->getMessage());
                 continue;
             }
             $condition->messageData = $messageData;
@@ -472,17 +472,17 @@ class SegmentPlugin extends phplistPlugin
             $params['condition'][] = $s;
             $field = $c['field'];
 
-            // display field selection
-            $fields = $cf->subscriberFields() + $cf->attributeFields();
-            $s->field = $fields[$field];
-
             try {
                 $condition = $cf->createCondition($field);
             } catch (SegmentPlugin_ConditionException $e) {
-                echo $e->getMessage();
+                $s->error = sprintf('Unable to display condition: %s', $e->getMessage());
                 continue;
             }
             $condition->messageData = $messageData;
+
+            // display field selection
+            $fields = $cf->subscriberFields() + $cf->attributeFields();
+            $s->field = $fields[$field];
 
             // display operator
             $operators = $condition->operators();
