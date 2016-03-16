@@ -1,6 +1,7 @@
-<?php 
+<?php
+
 /**
- * SegmentPlugin for phplist
+ * SegmentPlugin for phplist.
  * 
  * This file is a part of SegmentPlugin.
  *
@@ -14,19 +15,18 @@
  * GNU General Public License for more details.
  * 
  * @category  phplist
- * @package   SegmentPlugin
+ *
  * @author    Duncan Cameron
- * @copyright 2014-2015 Duncan Cameron
+ * @copyright 2014-2016 Duncan Cameron
  * @license   http://www.gnu.org/licenses/gpl.html GNU General Public License, Version 3
  */
 
 /**
- * Plugin class
+ * Plugin class.
  * 
  * @category  phplist
- * @package   SegmentPlugin
  */
- 
+
 class SegmentPlugin_ValueException extends Exception
 {
     /*
