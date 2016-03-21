@@ -75,6 +75,7 @@ This plugin is free but if you install and find it useful then a donation to sup
 ## Version history ##
 
     version         Description
+    2.1.5+20160316  Handle condition for an attribute that no longer exists
     2.1.4+20151117  Internal code refactoring
     2.1.3+20151024  Internal changes to meet coding standards
     2.1.2+20151019  Fix php warning

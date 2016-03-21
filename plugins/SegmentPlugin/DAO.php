@@ -1,6 +1,6 @@
 <?php
 /**
- * CriteriaPlugin for phplist
+ * CriteriaPlugin for phplist.
  * 
  * This file is a part of CriteriaPlugin.
  *
@@ -14,17 +14,16 @@
  * GNU General Public License for more details.
  * 
  * @category  phplist
- * @package   CriteriaPlugin
+ *
  * @author    Duncan Cameron
- * @copyright 2014-2015 Duncan Cameron
+ * @copyright 2014-2016 Duncan Cameron
  * @license   http://www.gnu.org/licenses/gpl.html GNU General Public License, Version 3
  */
 
 /**
- * DAO class that encapsulates the database access
+ * DAO class that encapsulates the database access.
  * 
  * @category  phplist
- * @package   CriteriaPlugin
  */
 class SegmentPlugin_DAO extends CommonPlugin_DAO
 {
@@ -41,7 +40,7 @@ FROM {$this->tables['messagedata']}
 WHERE name = 'excludelist' AND id = $messageId
 END;
         $excludeSubquery = '';
-        
+
         if ($data = $this->dbCommand->queryOne($sql, 'data')) {
             $excluded = unserialize(substr($data, 4));
 
@@ -60,6 +59,7 @@ AND u.id NOT IN (
 END;
             }
         }
+
         return $excludeSubquery;
     }
 
@@ -91,6 +91,7 @@ AND (
 $w
 )
 END;
+
         return $query;
     }
 
@@ -99,10 +100,11 @@ END;
  */
 
     /**
-     * Retrieves the values for a select/radio button attribute
+     * Retrieves the values for a select/radio button attribute.
+     *
      * @param array $attribute an attribute 
+     *
      * @return Iterator
-     * @access public
      */
     public function selectData(array $attribute)
     {
@@ -114,18 +116,19 @@ END;
             ORDER BY listorder, id
 END
         );
+
         return $this->dbCommand->queryAll($sql);
     }
 
     /**
-     * Retrieves campaigns
+     * Retrieves campaigns.
+     *
      * @param string $loginId login id of the current admin
-     * @param int $max Maximum number of campaigns to be returned
-     * @param array $lists Lists to which the campaign is to be sent
+     * @param int    $max     Maximum number of campaigns to be returned
+     * @param array  $lists   Lists to which the campaign is to be sent
+     *
      * @return Iterator
-     * @access public
      */
-
     public function campaigns($loginId, $max, $lists)
     {
         $owner = $loginId ? "AND m.owner = $loginId" : '';
@@ -140,6 +143,7 @@ $owner
 ORDER BY m.sent DESC
 LIMIT $max
 END;
+
         return $this->dbCommand->queryAll($sql);
     }
 
@@ -149,34 +153,39 @@ END;
             WHERE status = 'not sent'
             AND messageid = $campaign
         ";
+
         return $this->dbCommand->queryAffectedRows($sql);
     }
 
     /**
-     * Queries the subscribers
-     * @param int $messageId message id
-     * @param array $joins 
-     * @param int $combine whether to AND or OR conditions
+     * Queries the subscribers.
+     *
+     * @param int   $messageId message id
+     * @param array $joins
+     * @param int   $combine   whether to AND or OR conditions
+     *
      * @return Iterator
-     * @access public
      */
     public function subscribers($messageId, array $joins, $combine)
     {
         $query = $this->buildSubscriberQuery('DISTINCT u.id', $messageId, $joins, $combine);
+
         return $this->dbCommand->queryAll($query);
     }
 
     /**
-     * Calculates the number of subscribers
-     * @param int $messageId message id
-     * @param array $joins 
-     * @param int $combine whether to AND or OR conditions
+     * Calculates the number of subscribers.
+     *
+     * @param int   $messageId message id
+     * @param array $joins
+     * @param int   $combine   whether to AND or OR conditions
+     *
      * @return int number of subscribers
-     * @access public
      */
     public function calculateSubscribers($messageId, array $joins, $combine)
     {
         $query = $this->buildSubscriberQuery('COUNT(DISTINCT u.id) AS t', $messageId, $joins, $combine);
+
         return $this->dbCommand->queryOne($query, 't');
     }
 }

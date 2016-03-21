@@ -1,6 +1,6 @@
 <?php
 /**
- * SegmentPlugin for phplist
+ * SegmentPlugin for phplist.
  * 
  * This file is a part of SegmentPlugin.
  *
@@ -14,28 +14,22 @@
  * GNU General Public License for more details.
  * 
  * @category  phplist
- * @package   SegmentPlugin
+ *
  * @author    Duncan Cameron
- * @copyright 2014-2015 Duncan Cameron
+ * @copyright 2014-2016 Duncan Cameron
  * @license   http://www.gnu.org/licenses/gpl.html GNU General Public License, Version 3
  */
 
 /**
- * 
- * 
  * @category  phplist
- * @package   SegmentPlugin
  */
-
 class SegmentPlugin_SavedSegments
 {
     private $segments = array();
     private $summary = array();
 
     /**
-     * Synchronise the summary and saved segments so that they contain the same entries
-     *
-     * @access  private
+     * Synchronise the summary and saved segments so that they contain the same entries.
      */
     private function synchronise()
     {
@@ -66,10 +60,9 @@ class SegmentPlugin_SavedSegments
     }
 
     /**
-     * Convert the summary array to text for displaying on the Settings page
+     * Convert the summary array to text for displaying on the Settings page.
      *
-     * @access  private
-     * @return  string  the summary array converted to a string
+     * @return string the summary array converted to a string
      */
     private function stringify()
     {
@@ -77,11 +70,11 @@ class SegmentPlugin_SavedSegments
     }
 
     /**
-     * Convert the summary text to an array by splitting into an array of lines
+     * Convert the summary text to an array by splitting into an array of lines.
      *
-     * @access  private
-     * @param   string  $summary 
-     * @return  string  the summary array converted to a string
+     * @param string $summary
+     *
+     * @return string the summary array converted to a string
      */
     private function unstringify($summary)
     {
@@ -89,9 +82,7 @@ class SegmentPlugin_SavedSegments
     }
 
     /**
-     * Constructor
-     *
-     * @access  public
+     * Constructor.
      */
     public function __construct()
     {
@@ -110,12 +101,11 @@ class SegmentPlugin_SavedSegments
 
     /**
      * Add a segment to the summary and saved segments
-     * If the segment name already exists then the current segment is replaced
+     * If the segment name already exists then the current segment is replaced.
      *
-     * @access  public
-     * @param   string  $name the segment name 
-     * @param   string  $combine the segment combine operator 
-     * @param   array  $conditions array of conditions
+     * @param string $name       the segment name 
+     * @param string $combine    the segment combine operator 
+     * @param array  $conditions array of conditions
      */
     public function addSegment($name, $combine, array $conditions)
     {
@@ -127,7 +117,7 @@ class SegmentPlugin_SavedSegments
         $this->segments[$position] = array(
             'name' => $name,
             'combine' => $combine,
-            'conditions' => $conditions
+            'conditions' => $conditions,
         );
         $this->summary[$position] = $name;
 
@@ -136,25 +126,25 @@ class SegmentPlugin_SavedSegments
     }
 
     /**
-     * Return a saved segment
+     * Return a saved segment.
      *
-     * @access  public
-     * @param   int  $id the segment id 
-     * @return  array the segment's combine operator and conditions
+     * @param int $id the segment id 
+     *
+     * @return array the segment's combine operator and conditions
      */
     public function segmentById($id)
     {
         if (!isset($this->segments[$id])) {
             throw new Exception("Invalid segment id $id");
         }
+
         return array($this->segments[$id]['combine'], $this->segments[$id]['conditions']);
     }
 
     /**
-     * Provides the data to populate a select list
+     * Provides the data to populate a select list.
      *
-     * @access  public
-     * @return  array data for select list options - value => display
+     * @return array data for select list options - value => display
      */
     public function selectListData()
     {

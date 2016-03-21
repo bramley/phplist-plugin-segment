@@ -1,6 +1,6 @@
 <?php
 /**
- * SegmentPlugin for phplist
+ * SegmentPlugin for phplist.
  * 
  * This file is a part of SegmentPlugin.
  *
@@ -14,17 +14,16 @@
  * GNU General Public License for more details.
  * 
  * @category  phplist
- * @package   SegmentPlugin
+ *
  * @author    Duncan Cameron
- * @copyright 2014-2015 Duncan Cameron
+ * @copyright 2014-2016 Duncan Cameron
  * @license   http://www.gnu.org/licenses/gpl.html GNU General Public License, Version 3
  */
 
 /**
- * Plugin class
+ * Plugin class.
  * 
  * @category  phplist
- * @package   SegmentPlugin
  */
 ?>
 <?php echo file_get_contents($this->coderoot . 'styles.css'); ?>
@@ -32,14 +31,18 @@
 <div class="segment">
     <div class="bold"><?php echo s($this->i18n->get('match_%s_criteria'), $combine); ?></div>
     <ul>
-    <?php foreach ($condition as $c) : ?>
+<?php foreach ($condition as $c) : ?>
         <li class="selfclear">
+    <?php if (isset($c->error)): ?>
+            <div class="note"><?php echo $c->error; ?></div>
+    <?php else: ?>
             <div class="segment-block"><?php echo $c->field ?></div>
             <div class="segment-block"><?php echo $c->operator; ?></div>
             <div class="segment-block">
                 <fieldset disabled><?php echo $c->display; ?></fieldset>
             </div>
+    <?php endif; ?>
         </li>
-    <?php endforeach; ?>
+<?php endforeach; ?>
     </ul>
 </div>

@@ -1,6 +1,6 @@
 <?php
 /**
- * SegmentPlugin for phplist
+ * SegmentPlugin for phplist.
  * 
  * This file is a part of SegmentPlugin.
  *
@@ -14,17 +14,16 @@
  * GNU General Public License for more details.
  * 
  * @category  phplist
- * @package   SegmentPlugin
+ *
  * @author    Duncan Cameron
- * @copyright 2014-2015 Duncan Cameron
+ * @copyright 2014-2016 Duncan Cameron
  * @license   http://www.gnu.org/licenses/gpl.html GNU General Public License, Version 3
  */
 
 /**
- * Plugin class
+ * Plugin class.
  * 
  * @category  phplist
- * @package   SegmentPlugin
  */
 ?>
 <?php echo file_get_contents($this->coderoot . 'styles.css'); ?>
@@ -40,18 +39,31 @@
     </div>    
     <div class="bold"><?php echo s($this->i18n->get('match_%s_criteria'), $combineList); ?></div>
     <ul>
-    <?php foreach ($condition as $c) : ?>
+<?php foreach ($condition as $c) : ?>
         <li class="selfclear">
-        <?php if (isset($c->caption)): ?><div ><b><?php echo $c->caption; ?></b></div><?php endif; ?>
-        <div class="segment-block"><?php echo $c->fieldList, $c->hiddenField; ?></div>
-        <div class="segment-block"><?php if (isset($c->operatorList)) {
-    echo $c->operatorList;
-} ?></div>
-        <div class="segment-block"><?php if (isset($c->display)) {
-    echo $c->display;
-} ?></div>
+    <?php if (isset($c->error)): ?>
+            <div class="note"><?php echo $c->error; ?></div>
+    <?php else: ?>
+        <?php if (isset($c->caption)): ?>
+            <div>
+                <b><?php echo $c->caption; ?></b>
+            </div>
+        <?php endif; ?>
+            <div class="segment-block"><?php echo $c->fieldList, $c->hiddenField; ?></div>
+            <div class="segment-block">
+        <?php
+            if (isset($c->operatorList)):
+                echo $c->operatorList;
+            endif; ?>
+            </div>
+            <div class="segment-block">
+        <?php if (isset($c->display)): ?>
+            <?php echo $c->display; ?>
+        <?php endif; ?>
+            </div>
+    <?php endif; ?>
         </li>
-    <?php endforeach; ?>
+<?php endforeach; ?>
     </ul>
     <div class="segment-subheading"><?php echo s($this->i18n->get('use_saved_segment')); ?></div>
     <?php echo $savedList; ?>
@@ -65,12 +77,12 @@
     <?php if (isset($saveButton)): ?>
     <div class="segment-subheading"><?php echo s($this->i18n->get('save_current_segment')); ?> </div>
     <div class="segment-block">
-        <?php echo $saveName; ?>
+    <?php echo $saveName; ?>
     </div>
     <div class="segment-block">
-        <?php echo $saveButton; ?>
+    <?php echo $saveButton; ?>
     </div>
-    <?php endif; ?>
+<?php endif; ?>
     <div class="segment-block">
         <div class="edit-segments"><?php echo $settings; ?></div>
     </div>

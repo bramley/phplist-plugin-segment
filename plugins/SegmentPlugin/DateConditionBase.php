@@ -1,6 +1,6 @@
 <?php
 /**
- * SegmentPlugin for phplist
+ * SegmentPlugin for phplist.
  * 
  * This file is a part of SegmentPlugin.
  *
@@ -14,55 +14,53 @@
  * GNU General Public License for more details.
  * 
  * @category  phplist
- * @package   SegmentPlugin
+ *
  * @author    Duncan Cameron
- * @copyright 2014-2015 Duncan Cameron
+ * @copyright 2014-2016 Duncan Cameron
  * @license   http://www.gnu.org/licenses/gpl.html GNU General Public License, Version 3
  */
 
 /**
- * 
- * 
  * @category  phplist
- * @package   SegmentPlugin
  */
-
 abstract class SegmentPlugin_DateConditionBase extends SegmentPlugin_Condition
 {
     protected function validateInterval($interval)
     {
         if (!preg_match('/^([+-]?\d+\s+(day|week|month|quarter|year))s?$/i', $interval, $matches)) {
-            throw new SegmentPlugin_ValueException;
+            throw new SegmentPlugin_ValueException();
         }
+
         return $matches[1];
     }
 
     protected function validateDates($op, $value)
     {
         if (!(is_array($value) && $value[0])) {
-            throw new SegmentPlugin_ValueException;
+            throw new SegmentPlugin_ValueException();
         }
 
         try {
             $target1 = new DateTime($value[0]);
             $target1 = $target1->format('Y-m-d');
         } catch (Exception $e) {
-            throw new SegmentPlugin_ValueException;
+            throw new SegmentPlugin_ValueException();
         }
 
         if ($op == SegmentPlugin_Operator::BETWEEN) {
             if (!$value[1]) {
-                throw new SegmentPlugin_ValueException;
+                throw new SegmentPlugin_ValueException();
             }
             try {
                 $target2 = new DateTime($value[1]);
                 $target2 = $target2->format('Y-m-d');
             } catch (Exception $e) {
-                throw new SegmentPlugin_ValueException;
+                throw new SegmentPlugin_ValueException();
             }
         } else {
             $target2 = null;
         }
+
         return array($target1, $target2);
     }
 
@@ -79,7 +77,7 @@ abstract class SegmentPlugin_DateConditionBase extends SegmentPlugin_Condition
 
     public function display($op, $value, $namePrefix)
     {
-        $value = (array)$value;
+        $value = (array) $value;
         $htmlOptions = array();
 
         if ($op != SegmentPlugin_Operator::AFTERINTERVAL) {
@@ -100,6 +98,7 @@ abstract class SegmentPlugin_DateConditionBase extends SegmentPlugin_Condition
                 $htmlOptions
             );
         }
+
         return $html;
     }
 }

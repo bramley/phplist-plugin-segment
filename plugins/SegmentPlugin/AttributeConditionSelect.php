@@ -1,6 +1,6 @@
 <?php
 /**
- * SegmentPlugin for phplist
+ * SegmentPlugin for phplist.
  * 
  * This file is a part of SegmentPlugin.
  *
@@ -14,19 +14,15 @@
  * GNU General Public License for more details.
  * 
  * @category  phplist
- * @package   SegmentPlugin
+ *
  * @author    Duncan Cameron
- * @copyright 2014-2015 Duncan Cameron
+ * @copyright 2014-2016 Duncan Cameron
  * @license   http://www.gnu.org/licenses/gpl.html GNU General Public License, Version 3
  */
 
 /**
- * 
- * 
  * @category  phplist
- * @package   SegmentPlugin
  */
-
 class SegmentPlugin_AttributeConditionSelect extends SegmentPlugin_Condition
 {
     public function operators()
@@ -54,14 +50,15 @@ class SegmentPlugin_AttributeConditionSelect extends SegmentPlugin_Condition
     public function joinQuery($operator, $value)
     {
         if (!is_array($value) || count($value) == 0) {
-            throw new SegmentPlugin_ValueException;
+            throw new SegmentPlugin_ValueException();
         }
         $ua = 'ua' .  $this->id;
         $in = ($operator == SegmentPlugin_Operator::ONE ? 'IN ' : 'NOT IN ') . $this->formatInList($value);
 
-        $r = new stdClass;
+        $r = new stdClass();
         $r->join = "LEFT JOIN {$this->tables['user_attribute']} $ua ON u.id = $ua.userid AND $ua.attributeid = {$this->field['id']} ";
         $r->where = "COALESCE($ua.value, 0) $in";
+
         return $r;
     }
 }
