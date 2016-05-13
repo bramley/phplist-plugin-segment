@@ -85,7 +85,7 @@ JOIN {$this->tables['listmessage']} lm0 ON lm0.listid = lu0.listid AND lm0.messa
 LEFT JOIN {$this->tables['usermessage']} um0 ON um0.userid = u.id AND um0.messageid = $messageId
 $extraJoin
 WHERE u.confirmed = 1 AND u.blacklisted = 0
-AND COALESCE(um0.status, 'not sent') = 'not sent'
+AND um0.status IS NULL OR um0.status IN ('not sent', 'todo')
 $excludeSubquery
 AND (
 $w
