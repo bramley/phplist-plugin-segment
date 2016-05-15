@@ -1,3 +1,7 @@
+version 2.1.7+20160515
+      Use BitArray class to hold selected subscribers
+      Add class map
+
 version 2.1.6+20160513
       Include subscribers who have 'todo' status, set by MESSAGEQUEUE_PREPARE
 
