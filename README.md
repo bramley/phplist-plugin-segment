@@ -75,6 +75,7 @@ This plugin is free but if you install and find it useful then a donation to sup
 ## Version history ##
 
     version         Description
+    2.1.8+20160515  Fix sql error introduced in version 2.1.6
     2.1.7+20160515  Minor changes
     2.1.6+20160513  Fix for bug when using MESSAGEQUEUE_PREPARE
     2.1.5+20160316  Handle condition for an attribute that no longer exists
