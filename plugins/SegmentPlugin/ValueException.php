@@ -26,7 +26,6 @@
  * 
  * @category  phplist
  */
-
 class SegmentPlugin_ValueException extends Exception
 {
     /*

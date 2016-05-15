@@ -188,4 +188,19 @@ END;
 
         return $this->dbCommand->queryOne($query, 't');
     }
+
+    /**
+     * Returns the highest value of id from the user table.
+     *
+     * @return int the highest value of id
+     */
+    public function highestSubscriberId()
+    {
+        $sql = "
+            SELECT MAX(id)
+            FROM {$this->tables['user']}
+        ";
+
+        return $this->dbCommand->queryOne($sql);
+    }
 }

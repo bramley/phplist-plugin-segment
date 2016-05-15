@@ -24,9 +24,9 @@ The target value, also specific to each field, can be a text value, a select val
 
 ### Dependencies ###
 
-Requires php version 5.3.0 or later. Please check your php version before installing the plugin, otherwise phplist will fail (probably a white page).
+Requires php version 5.4.0 or later. Please check your php version before installing the plugin, otherwise phplist will fail (probably a white page).
 
-This plugin requires the Common Plugin v3 to also be installed, and will not work without that.
+This plugin requires the Common Plugin version 3.5.6 or greater to also be installed, and will not work without that.
 **You must install that plugin or upgrade to the latest version if it is already installed**.
 See <https://github.com/bramley/phplist-plugin-common>
 
