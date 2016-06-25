@@ -75,6 +75,7 @@ This plugin is free but if you install and find it useful then a donation to sup
 ## Version history ##
 
     version         Description
+    2.1.9+20160626  Fix problem whereby 0 was not accepted in text fields
     2.1.8+20160515  Fix sql error introduced in version 2.1.6
     2.1.7+20160515  Minor changes
     2.1.6+20160513  Fix for bug when using MESSAGEQUEUE_PREPARE

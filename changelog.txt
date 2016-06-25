@@ -1,3 +1,6 @@
+version 2.1.9+20160626
+      Fix problem whereby 0 was not accepted in text fields
+
 version 2.1.8+20160515
       Fix sql error introduced in version 2.1.6
 
