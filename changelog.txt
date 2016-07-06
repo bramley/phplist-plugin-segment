@@ -1,3 +1,6 @@
+version 2.1.10+20160725
+      Calculate number of subscribers when there are not any conditions
+
 version 2.1.9+20160626
       Fix problem whereby 0 was not accepted in text fields
 

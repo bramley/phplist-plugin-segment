@@ -51,7 +51,7 @@ END;
             if (count($excluded) > 0) {
                 $inList = $this->formatInList($excluded);
                 $excludeSubquery = <<<END
-AND u.id NOT IN (
+u.id NOT IN (
     SELECT userid
     FROM {$this->tables['listuser']}
     WHERE listid IN $inList
@@ -65,17 +65,28 @@ END;
 
     private function buildSubscriberQuery($select, $messageId, array $joins, $combine)
     {
-        $excludeSubquery = USE_LIST_EXCLUDE ? $this->exclude($messageId) : '';
+        $excludeSubquery = '';
+
+        if (USE_LIST_EXCLUDE) {
+            if ($excludeSubquery = $this->exclude($messageId)) {
+                $excludeSubquery = "AND (\n$excludeSubquery\n)";
+            }
+        }
 
         $booleanOp = ($combine == SegmentPlugin_Operator::ONE) ? 'OR' : 'AND';
         $extraJoin = '';
-        $extraWhere = array();
 
-        foreach ($joins as $p) {
-            $extraJoin .= $p->join ? $p->join . "\n" : '';
-            $extraWhere[] = $p->where;
+        if (count($joins) > 0) {
+            $extraWhere = array();
+
+            foreach ($joins as $p) {
+                $extraJoin .= $p->join ? $p->join . "\n" : '';
+                $extraWhere[] = $p->where;
+            }
+            $w = "AND (\n" . implode("\n$booleanOp ", $extraWhere) . "\n)";
+        } else {
+            $w = '';
         }
-        $w = implode("\n$booleanOp ", $extraWhere);
 
         $query = <<<END
 SELECT $select
@@ -84,12 +95,11 @@ JOIN {$this->tables['listuser']} lu0 ON u.id = lu0.userid
 JOIN {$this->tables['listmessage']} lm0 ON lm0.listid = lu0.listid AND lm0.messageid = $messageId
 LEFT JOIN {$this->tables['usermessage']} um0 ON um0.userid = u.id AND um0.messageid = $messageId
 $extraJoin
-WHERE u.confirmed = 1 AND u.blacklisted = 0
+WHERE u.confirmed = 1
+AND u.blacklisted = 0
 AND (um0.status IS NULL OR um0.status IN ('not sent', 'todo'))
 $excludeSubquery
-AND (
 $w
-)
 END;
 
         return $query;

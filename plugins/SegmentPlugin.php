@@ -109,10 +109,7 @@ class SegmentPlugin extends phplistPlugin
             memory_get_usage(), memory_get_peak_usage(), memory_get_peak_usage(true)
         ));
         $joins = $this->selectionQueryJoins($conditions);
-
-        $count = (count($joins) > 0)
-            ? $this->dao->calculateSubscribers($messageId, $joins, $combine)
-            : 0;
+        $count = $this->dao->calculateSubscribers($messageId, $joins, $combine);
         $this->logger->debug(sprintf(
             "Post usage %s\nPost peak usage %s\nPost peak real usage %s",
             memory_get_usage(), memory_get_peak_usage(), memory_get_peak_usage(true)
