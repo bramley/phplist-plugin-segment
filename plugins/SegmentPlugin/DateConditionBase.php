@@ -85,7 +85,7 @@ abstract class SegmentPlugin_DateConditionBase extends SegmentPlugin_Condition
         $htmlOptions = array();
 
         if ($op != SegmentPlugin_Operator::AFTERINTERVAL) {
-            $htmlOptions['class'] = 'datepicker';
+            $htmlOptions['class'] = 'flatpickr';
         }
 
         $html = CHtml::textField(

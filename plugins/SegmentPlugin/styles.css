@@ -21,6 +21,9 @@ selfclear:after {
 ul {
     list-style: none outside none;
 }
+input[type="text"].form-control {
+    width: 8em !important;
+}
 input[type="text"], input[type="submit"] {
     display: inline;
     margin-bottom: 0px;
