@@ -57,6 +57,10 @@ abstract class SegmentPlugin_DateConditionBase extends SegmentPlugin_Condition
             } catch (Exception $e) {
                 throw new SegmentPlugin_ValueException();
             }
+
+            if ($target2 < $target1) {
+                throw new SegmentPlugin_ValueException();
+            }
         } else {
             $target2 = null;
         }
