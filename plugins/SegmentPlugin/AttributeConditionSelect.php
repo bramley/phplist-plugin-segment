@@ -28,8 +28,8 @@ class SegmentPlugin_AttributeConditionSelect extends SegmentPlugin_Condition
     public function operators()
     {
         return array(
-            SegmentPlugin_Operator::ONE => s('is one of'),
-            SegmentPlugin_Operator::NONE => s('is none of'),
+            SegmentPlugin_Operator::ONE => s($this->i18n->get('one_of')),
+            SegmentPlugin_Operator::NONE => s($this->i18n->get('none_of')),
         );
     }
 

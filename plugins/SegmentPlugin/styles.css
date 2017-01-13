@@ -1,6 +1,20 @@
 <style type="text/css">
+
+.instructions {
+    margin-bottom: 10px;
+    font-style: italic;
+}
+
+.segment-help { margin-bottom: 20px; }
+
+.bold {
+    font-weight: bold;
+}
 .segment select {
     width: auto;
+}
+.segment select[multiple] {
+    height: 200px;
 }
 .segment-block {
     display: inline-block;
@@ -20,17 +34,24 @@ selfclear:after {
 }
 ul {
     list-style: none outside none;
+    margin: 0;
+    padding: 0 20px;
 }
 input[type="text"].form-control {
     width: 8em !important;
 }
-input[type="text"], input[type="submit"] {
+.segment input[type="text"], .segment input[type="submit"] {
     display: inline;
-    margin-bottom: 0px;
+    margin: 0 0 20px 0;
+}
+.ui-datepicker {
+    z-index: 2 !important;
 }
 input[type="text"].datepicker {
     width: 8em !important;
 }
-
+.segment-subheading { margin-bottom: 5px; }
+#recalculate { margin: 10px 0; }
+.edit-segments  { display: inline-block; padding: 6px 0; }
 </style>
 

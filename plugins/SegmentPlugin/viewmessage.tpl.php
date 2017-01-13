@@ -29,7 +29,7 @@
 <?php echo file_get_contents($this->coderoot . 'styles.css'); ?>
 
 <div class="segment">
-    <div><?php echo s('Subscribers match %s of the following:', $combine); ?></div>
+    <div class="bold"><?php echo s($this->i18n->get('match_%s_criteria'), $combine); ?></div>
     <ul>
 <?php foreach ($condition as $c) : ?>
         <li class="selfclear">

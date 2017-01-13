@@ -28,12 +28,12 @@ class SegmentPlugin_SubscriberConditionActivity extends SegmentPlugin_Condition
     public function operators()
     {
         return array(
-            SegmentPlugin_Operator::SENT => s('was sent'),
-            SegmentPlugin_Operator::NOTSENT => s('was not sent'),
-            SegmentPlugin_Operator::OPENED => s('opened'),
-            SegmentPlugin_Operator::NOTOPENED => s('did not open'),
-            SegmentPlugin_Operator::CLICKED => s('clicked'),
-            SegmentPlugin_Operator::NOTCLICKED => s('did not click'),
+            SegmentPlugin_Operator::SENT => s($this->i18n->get('was_sent')),
+            SegmentPlugin_Operator::NOTSENT => s($this->i18n->get('was_not_sent')),
+            SegmentPlugin_Operator::OPENED => s($this->i18n->get('opened')),
+            SegmentPlugin_Operator::NOTOPENED => s($this->i18n->get('did_not_open')),
+            SegmentPlugin_Operator::CLICKED => s($this->i18n->get('clicked')),
+            SegmentPlugin_Operator::NOTCLICKED => s($this->i18n->get('did_not_click')),
         );
     }
 

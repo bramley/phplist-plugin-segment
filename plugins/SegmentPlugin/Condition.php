@@ -39,7 +39,7 @@ abstract class SegmentPlugin_Condition
         return '(' . implode(', ', $values) . ')';
     }
 
-    public function __construct($field)
+    public function __construct($field, $i18n)
     {
         global $tables;
         global $table_prefix;
@@ -48,6 +48,7 @@ abstract class SegmentPlugin_Condition
         $this->tables = $tables;
         $this->table_prefix = $table_prefix;
         $this->field = $field;
+        $this->i18n = $i18n;
     }
 
     abstract public function operators();

@@ -29,14 +29,15 @@
 <?php echo file_get_contents($this->coderoot . 'styles.css'); ?>
 
 <div class="segment">
-    <div>
-<?php
-    echo s("Select one or more subscriber fields or attributes.
-The campaign will be sent only to those subscribers who match any or all of the conditions.
-To remove a condition, choose '%s' from the drop-down list.", $selectPrompt);
-?>
+    <div class="instructions">
+        <?php echo s($this->i18n->get('instructions'), $selectPrompt); ?>
     </div>
-    <div><?php echo s('Subscribers match %s of the following:', $combineList); ?></div>
+    <div class="segment-help">
+        <a href="https://resources.phplist.com/plugin/segment#add_segment_conditions" target="_blank">
+            <?php echo s($this->i18n->get('usage_guidance')); ?>
+        </a>
+    </div>    
+    <div class="bold"><?php echo s($this->i18n->get('match_%s_criteria'), $combineList); ?></div>
     <ul>
 <?php foreach ($condition as $c) : ?>
         <li class="selfclear">
@@ -64,19 +65,17 @@ To remove a condition, choose '%s' from the drop-down list.", $selectPrompt);
         </li>
 <?php endforeach; ?>
     </ul>
-    <div>
-<?php echo s('Use a saved segment. This will replace any conditions already entered.'); ?>
-    </div>
-<?php echo $savedList; ?>
+    <div class="segment-subheading"><?php echo s($this->i18n->get('use_saved_segment')); ?></div>
+    <?php echo $savedList; ?>
     <div id="recalculate">
-<?php echo $calculateButton ?>
-<?php if (isset($totalSubscribers)):
-    echo s('%d subscribers will be selected', $totalSubscribers);
-endif; ?>
-<?php if (isset($warning)): ?> <span class="error"><?php echo $warning;?></span><?php endif; ?>
+        <?php echo $calculateButton ?>
+        <?php if (isset($totalSubscribers)) {
+    echo s($this->i18n->get('%d_subscribers_selected'), $totalSubscribers);
+} ?>
+        <?php if (isset($warning)): ?> <span class="error"><?php echo $warning;?></span><?php endif; ?>
     </div>
-<?php if (isset($saveButton)): ?>
-    <div>Save the current segment (set of conditions).</div>
+    <?php if (isset($saveButton)): ?>
+    <div class="segment-subheading"><?php echo s($this->i18n->get('save_current_segment')); ?> </div>
     <div class="segment-block">
     <?php echo $saveName; ?>
     </div>
@@ -85,7 +84,6 @@ endif; ?>
     </div>
 <?php endif; ?>
     <div class="segment-block">
-<?php echo $settings; ?>
-        <a href="https://resources.phplist.com/plugin/segment#add_segment_conditions" target="_blank">Guidance on usage</a>
+        <div class="edit-segments"><?php echo $settings; ?></div>
     </div>
 </div>

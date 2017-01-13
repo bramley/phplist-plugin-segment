@@ -71,11 +71,11 @@ abstract class SegmentPlugin_DateConditionBase extends SegmentPlugin_Condition
     public function operators()
     {
         return array(
-            SegmentPlugin_Operator::IS => s('is'),
-            SegmentPlugin_Operator::AFTER => s('is after'),
-            SegmentPlugin_Operator::BEFORE => s('is before'),
-            SegmentPlugin_Operator::BETWEEN => s('is between'),
-            SegmentPlugin_Operator::AFTERINTERVAL => s('after interval'),
+            SegmentPlugin_Operator::IS => s($this->i18n->get('is')),
+            SegmentPlugin_Operator::AFTER => s($this->i18n->get('is_after')),
+            SegmentPlugin_Operator::BEFORE => s($this->i18n->get('is_before')),
+            SegmentPlugin_Operator::BETWEEN => s($this->i18n->get('is_between')),
+            SegmentPlugin_Operator::AFTERINTERVAL => s($this->i18n->get('after_interval'))
         );
     }
 
