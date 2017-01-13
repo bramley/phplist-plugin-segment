@@ -1,4 +1,7 @@
 <?php
+
+use chdemko\BitArray\BitArray;
+
 /**
  * SegmentPlugin for phplist.
  * 
@@ -29,8 +32,7 @@ class SegmentPlugin extends phplistPlugin
 {
     const VERSION_FILE = 'version.txt';
 
-    private $selectedSubscribers = array();
-    private $noConditions = true;
+    private $selectedSubscribers = null;
     private $dao;
 
 /*
@@ -87,14 +89,17 @@ class SegmentPlugin extends phplistPlugin
 
     private function loadSubscribers($messageId, array $conditions, $combine)
     {
+        $highest = $this->dao->highestSubscriberId();
+        $subscribers = BitArray::fromInteger($highest + 1);
         $joins = $this->selectionQueryJoins($conditions);
-        $this->selectedSubscribers = array();
 
         if (count($joins) > 0) {
             foreach ($this->dao->subscribers($messageId, $joins, $combine) as $row) {
-                $this->selectedSubscribers[$row['id']] = 1;
+                $subscribers[(int) $row['id']] = 1;
             }
         }
+
+        return $subscribers;
     }
 
     private function calculateSubscribers($messageId, array $conditions, $combine)
@@ -104,10 +109,7 @@ class SegmentPlugin extends phplistPlugin
             memory_get_usage(), memory_get_peak_usage(), memory_get_peak_usage(true)
         ));
         $joins = $this->selectionQueryJoins($conditions);
-
-        $count = (count($joins) > 0)
-            ? $this->dao->calculateSubscribers($messageId, $joins, $combine)
-            : 0;
+        $count = $this->dao->calculateSubscribers($messageId, $joins, $combine);
         $this->logger->debug(sprintf(
             "Post usage %s\nPost peak usage %s\nPost peak real usage %s",
             memory_get_usage(), memory_get_peak_usage(), memory_get_peak_usage(true)
@@ -168,12 +170,12 @@ class SegmentPlugin extends phplistPlugin
         global $plugins;
 
         return array(
-            'Common plugin v3 installed' => (
+            'Common plugin version 3.5.6 or greater installed' => (
                 phpListPlugin::isEnabled('CommonPlugin')
                 && preg_match('/\d+\.\d+\.\d+/', $plugins['CommonPlugin']->version, $matches)
-                && version_compare($matches[0], '3') > 0
+                && version_compare($matches[0], '3.5.6') >= 0
             ),
-            'PHP version 5.3.0 or greater' => version_compare(PHP_VERSION, '5.3') > 0,
+            'PHP version 5.4.0 or greater' => version_compare(PHP_VERSION, '5.4') > 0,
         );
     }
 
@@ -377,9 +379,8 @@ class SegmentPlugin extends phplistPlugin
     }
 
     /**
-     * Use this hook to select the subscribers who meet the segment conditions 
-     * $noConditions indicates whether there are any conditions
-     * $selectedSubscribers contains the selected subscribers.
+     * Use this hook to select the subscribers who meet the segment conditions.
+     * $selectedSubscribers will contain the selected subscribers.
      *
      * @param array $messageData the message data
      *
@@ -388,17 +389,17 @@ class SegmentPlugin extends phplistPlugin
     public function campaignStarted($messageData = array())
     {
         $er = error_reporting(-1);
-        $this->noConditions = true;
-        $this->selectedSubscribers = array();
 
         if (isset($messageData['segment']['c'])) {
             $conditions = $this->filterIncompleteConditions($messageData['segment']['c']);
 
             if (count($conditions) > 0) {
-                $this->noConditions = false;
-
                 try {
-                    $this->loadSubscribers($messageData['id'], $conditions, $messageData['segment']['combine']);
+                    $this->selectedSubscribers = $this->loadSubscribers(
+                        $messageData['id'],
+                        $conditions,
+                        $messageData['segment']['combine']
+                    );
                 } catch (SegmentPlugin_ValueException $e) {
                     logEvent("Invalid segment condition, message {$messageData['id']}");
                 }
@@ -417,11 +418,9 @@ class SegmentPlugin extends phplistPlugin
      */
     public function canSend($messageData, $userData)
     {
-        if ($this->noConditions) {
-            return true;
-        }
-
-        return isset($this->selectedSubscribers[$userData['id']]);
+        return ($this->selectedSubscribers === null)
+            ? true
+            : (bool) $this->selectedSubscribers[(int) $userData['id']];
     }
 
     /**

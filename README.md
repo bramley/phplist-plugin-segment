@@ -24,9 +24,9 @@ The target value, also specific to each field, can be a text value, a select val
 
 ### Dependencies ###
 
-Requires php version 5.3.0 or later. Please check your php version before installing the plugin, otherwise phplist will fail (probably a white page).
+Requires php version 5.4.0 or later. Please check your php version before installing the plugin, otherwise phplist will fail (probably a white page).
 
-This plugin requires the Common Plugin v3 to also be installed, and will not work without that.
+This plugin requires the Common Plugin version 3.5.6 or greater to also be installed, and will not work without that.
 **You must install that plugin or upgrade to the latest version if it is already installed**.
 See <https://github.com/bramley/phplist-plugin-common>
 
@@ -75,6 +75,13 @@ This plugin is free but if you install and find it useful then a donation to sup
 ## Version history ##
 
     version         Description
+    2.1.11+20161217 Extra validation of from and to dates
+                    Use flatpickr for date input
+    2.1.10+20160725 Calculate number of subscribers when there are not any conditions
+    2.1.9+20160626  Fix problem whereby 0 was not accepted in text fields
+    2.1.8+20160515  Fix sql error introduced in version 2.1.6
+    2.1.7+20160515  Minor changes
+    2.1.6+20160513  Fix for bug when using MESSAGEQUEUE_PREPARE
     2.1.5+20160316  Handle condition for an attribute that no longer exists
     2.1.4+20151117  Internal code refactoring
     2.1.3+20151024  Internal changes to meet coding standards

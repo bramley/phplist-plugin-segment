@@ -26,7 +26,6 @@
  * 
  * @category  phplist
  */
-
 class SegmentPlugin_ConditionException extends Exception
 {
 }

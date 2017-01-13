@@ -46,7 +46,7 @@ class SegmentPlugin_SubscriberConditionEmail extends SegmentPlugin_Condition
 
     public function joinQuery($operator, $value)
     {
-        if (!(is_string($value) && $value)) {
+        if (!(is_string($value) && $value !== '')) {
             throw new SegmentPlugin_ValueException();
         }
 
