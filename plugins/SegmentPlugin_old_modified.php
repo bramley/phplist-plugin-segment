@@ -132,26 +132,29 @@ class SegmentPlugin extends phplistPlugin
      */
     public function __construct()
     {
+        global $plugins;
         $this->coderoot = dirname(__FILE__) . '/' . __CLASS__ . '/';
+        require_once $plugins['CommonPlugin']->coderoot . 'Autoloader.php';
+        $this->i18n = new CommonPlugin_I18N($this);
         $this->version = (is_file($f = $this->coderoot . self::VERSION_FILE))
             ? file_get_contents($f)
             : '';
         $this->settings = array(
             'segment_campaign_max' => array (
-              'description' => s('The maximum number of earlier campaigns to select from'),
+              'description' => s($this->i18n->get('max_number_campaigns')),
               'type' => 'integer',
               'value' => 10,
               'allowempty' => 0,
               'min' => 4,
               'max' => 25,
-              'category' => 'Segmentation',
+              'category' => $this->i18n->get('segmentation'),
             ),
             'segment_saved_summary' => array (
-              'description' => s('Summary of saved segments'),
+              'description' => s($this->i18n->get('summary_saved_segments')),
               'type' => 'textarea',
               'value' => '',
               'allowempty' => true,
-              'category' => 'Segmentation',
+              'category' => $this->i18n->get('segmentation'),
             ),
         );
         parent::__construct();
@@ -182,10 +185,6 @@ class SegmentPlugin extends phplistPlugin
      */
     public function sendFormats()
     {
-        global $plugins;
-
-        require_once $plugins['CommonPlugin']->coderoot . 'Autoloader.php';
-        $this->i18n = new CommonPlugin_I18N($this);
         $this->dao = new SegmentPlugin_DAO(new CommonPlugin_DB());
         $this->logger = CommonPlugin_Logger::instance();
 
