@@ -145,7 +145,7 @@ END
         $inList = $this->formatInList($lists);
 
         $sql = <<<END
-SELECT DISTINCT m.id, CONCAT_WS(' - ',m.subject, DATE_FORMAT(m.sent,'%d/%m/%y')) AS subject
+SELECT DISTINCT m.id, CONCAT_WS(' - ',m.subject, DATE_FORMAT(m.sent,'%d/%m/%y')) AS subject, m.sent
 FROM {$this->tables['message']} m
 JOIN {$this->tables['listmessage']} lm ON m.id = lm.messageid AND lm.listid IN $inList
 WHERE m.status = 'sent'
