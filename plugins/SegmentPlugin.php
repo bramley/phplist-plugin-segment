@@ -19,7 +19,7 @@ use chdemko\BitArray\BitArray;
  * @category  phplist
  *
  * @author    Duncan Cameron
- * @copyright 2014-2016 Duncan Cameron
+ * @copyright 2014-2017 Duncan Cameron
  * @license   http://www.gnu.org/licenses/gpl.html GNU General Public License, Version 3
  */
 
@@ -264,7 +264,7 @@ class SegmentPlugin extends phplistPlugin
             /*
              *  Save the current set of conditions
              */
-            $saved->addSegment($segment['savename'], $combine, $this->filterIncompleteConditions($conditions));
+            $saved->addSegment($segment['savename'], $this->filterIncompleteConditions($conditions));
             $this->saveMessageSegment($messageId, $segment, ['save']);
         } elseif (isset($segment['load']) && isset($segment['usesaved']) && is_array($segment['usesaved'])) {
             /*
@@ -272,7 +272,7 @@ class SegmentPlugin extends phplistPlugin
              */
             try {
                 foreach ($segment['usesaved'] as $savedId) {
-                    list($ignore, $savedConditions) = $saved->segmentById($savedId);
+                    $savedConditions = $saved->segmentById($savedId);
                     $conditions = array_merge($conditions, $savedConditions);
                 }
             } catch (Exception $e) {

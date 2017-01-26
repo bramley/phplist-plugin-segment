@@ -1,3 +1,10 @@
+version 2.2.0+20170126
+      Correct query to work with ONLY_FULL_GROUP_BY.
+      Multiselect when adding saved segments.
+      Saved segment conditions are added to existing conditions instead of replacing them.
+      Button to remove all conditions.
+      Remove combine when saving/loading saved segment
+
 version 2.1.11+20161217
       Validate that to date is not earlier than the from date.
       Use flatpickr package instead of jquery-ui for date input.

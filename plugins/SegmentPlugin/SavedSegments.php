@@ -16,7 +16,7 @@
  * @category  phplist
  *
  * @author    Duncan Cameron
- * @copyright 2014-2016 Duncan Cameron
+ * @copyright 2014-2017 Duncan Cameron
  * @license   http://www.gnu.org/licenses/gpl.html GNU General Public License, Version 3
  */
 
@@ -103,11 +103,10 @@ class SegmentPlugin_SavedSegments
      * Add a segment to the summary and saved segments
      * If the segment name already exists then the current segment is replaced.
      *
-     * @param string $name       the segment name 
-     * @param string $combine    the segment combine operator 
+     * @param string $name       the segment name
      * @param array  $conditions array of conditions
      */
-    public function addSegment($name, $combine, array $conditions)
+    public function addSegment($name, array $conditions)
     {
         $position = array_search($name, $this->summary, true);
 
@@ -116,7 +115,6 @@ class SegmentPlugin_SavedSegments
         }
         $this->segments[$position] = array(
             'name' => $name,
-            'combine' => $combine,
             'conditions' => $conditions,
         );
         $this->summary[$position] = $name;
@@ -130,7 +128,7 @@ class SegmentPlugin_SavedSegments
      *
      * @param int $id the segment id 
      *
-     * @return array the segment's combine operator and conditions
+     * @return array the segment's conditions
      */
     public function segmentById($id)
     {
@@ -138,7 +136,7 @@ class SegmentPlugin_SavedSegments
             throw new Exception("Invalid segment id $id");
         }
 
-        return array($this->segments[$id]['combine'], $this->segments[$id]['conditions']);
+        return $this->segments[$id]['conditions'];
     }
 
     /**
