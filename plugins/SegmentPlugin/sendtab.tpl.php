@@ -26,7 +26,7 @@
  * @category  phplist
  */
 ?>
-<?php echo file_get_contents($this->coderoot . 'styles.css'); ?>
+<?php echo file_get_contents($this->coderoot . 'styles.html'); ?>
 
 <div class="segment">
     <div>
@@ -65,10 +65,15 @@ To remove a condition, choose '%s' from the drop-down list.", $selectPrompt);
 <?php endforeach; ?>
     </ul>
     <div>
-<?php echo s('Use a saved segment. This will replace any conditions already entered.'); ?>
-    </div>
+        <label>
+<?php echo s('Use one or more saved segments. They will be added to any conditions already entered.'); ?>
+<br/>
 <?php echo $savedList; ?>
+&nbsp;<?php echo $loadButton ?>
+        </label>
+    </div>
     <div id="recalculate">
+<?php echo $removeButton ?>
 <?php echo $calculateButton ?>
 <?php if (isset($totalSubscribers)):
     echo s('%d subscribers will be selected', $totalSubscribers);
@@ -76,13 +81,16 @@ endif; ?>
 <?php if (isset($warning)): ?> <span class="error"><?php echo $warning;?></span><?php endif; ?>
     </div>
 <?php if (isset($saveButton)): ?>
-    <div>Save the current segment (set of conditions).</div>
+        <label>
+<?php echo s('Save the current segment (set of conditions).'); ?>
+<br/>
     <div class="segment-block">
     <?php echo $saveName; ?>
     </div>
     <div class="segment-block">
     <?php echo $saveButton; ?>
     </div>
+    </label>
 <?php endif; ?>
     <div class="segment-block">
 <?php echo $settings; ?>

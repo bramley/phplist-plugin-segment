@@ -26,7 +26,7 @@
  * @category  phplist
  */
 ?>
-<?php echo file_get_contents($this->coderoot . 'styles.css'); ?>
+<?php echo file_get_contents($this->coderoot . 'styles.html'); ?>
 
 <div class="segment">
     <div><?php echo s('Subscribers match %s of the following:', $combine); ?></div>

@@ -128,6 +128,40 @@ class SegmentPlugin extends phplistPlugin
     }
 
     /**
+     * Saves the segment as a message data field.
+     *
+     * @param int   $messageId message id
+     * @param array $segment   segment
+     * @param array $toUnset   optional segment fields to be unset
+     */
+    private function saveMessageSegment($messageId, array $segment, array $toUnset = [])
+    {
+        foreach ($toUnset as $item) {
+            unset($segment[$item]);
+        }
+        setMessageData($messageId, 'segment', $segment);
+    }
+
+    /**
+     * Remove duplicate entries from a multi-dimensional array.
+     *
+     * @param array $input
+     *
+     * @return array
+     */
+    private function array_unique(array $input)
+    {
+        return array_values(
+            array_intersect_key(
+                $input,
+                array_unique(
+                    array_map('serialize', $input)
+                )
+            )
+        );
+    }
+
+    /**
      * Constructor.
      */
     public function __construct()
@@ -221,25 +255,36 @@ class SegmentPlugin extends phplistPlugin
         $conditions = (isset($segment['c']))
             ? array_values($this->filterEmptyFields($segment['c']))
             : array();
-
-        $combine = isset($segment['combine'])
-            ? $segment['combine'] : SegmentPlugin_Operator::ALL;
-
         $saved = new SegmentPlugin_SavedSegments();
 
-        if (isset($segment['save']) && $segment['savename'] != '') {
+        if (isset($segment['remove'])) {
+            $this->saveMessageSegment($messageId, $segment, ['c', 'combine', 'remove']);
+            $conditions = [];
+        } elseif (isset($segment['save']) && $segment['savename'] != '') {
+            /*
+             *  Save the current set of conditions
+             */
             $saved->addSegment($segment['savename'], $combine, $this->filterIncompleteConditions($conditions));
-            $segment['savename'] = '';
-            setMessageData($messageId, 'segment', $segment);
-        }
-
-        if (isset($segment['usesaved']) && $segment['usesaved'] !== '') {
+            $this->saveMessageSegment($messageId, $segment, ['save']);
+        } elseif (isset($segment['load']) && isset($segment['usesaved']) && is_array($segment['usesaved'])) {
+            /*
+             *  Load saved segments and save the message data
+             */
             try {
-                list($combine, $conditions) = $saved->segmentById($segment['usesaved']);
+                foreach ($segment['usesaved'] as $savedId) {
+                    list($ignore, $savedConditions) = $saved->segmentById($savedId);
+                    $conditions = array_merge($conditions, $savedConditions);
+                }
             } catch (Exception $e) {
                 // do nothing
             }
+            $conditions = $this->array_unique($conditions);
+            $segment['c'] = $conditions;
+            $this->saveMessageSegment($messageId, $segment, ['load', 'usesaved']);
         }
+        $combine = isset($segment['combine'])
+            ? $segment['combine'] : SegmentPlugin_Operator::ALL;
+
         $conditions[] = array('field' => '');
         $selectPrompt = s('Select ...');
         $params = array();
@@ -293,11 +338,16 @@ class SegmentPlugin extends phplistPlugin
 
         // display drop-down list of saved segments
         $params['savedList'] = CHtml::dropDownList(
-            'segment[usesaved]',
+            'segment[usesaved][]',
             '',
             $saved->selectListData(),
-            array('prompt' => $selectPrompt, 'class' => 'autosubmit')
+            array('multiple' => 'multiple', 'style' => 'width: 50%')
         );
+        // display Load button
+        $params['loadButton'] = CHtml::submitButton(s('Load'), array('name' => 'segment[load]'));
+
+        // display Remove all button
+        $params['removeButton'] = CHtml::submitButton(s('Remove all'), array('name' => 'segment[remove]'));
 
         // display calculate button
         $params['calculateButton'] = CHtml::submitButton(s('Calculate'), array('name' => 'segment[calculate]'));
@@ -335,7 +385,7 @@ class SegmentPlugin extends phplistPlugin
             array('target' => '_blank')
         );
         $html = $this->render('sendtab.tpl.php', $params);
-        $pagefooter[basename(__FILE__)] = file_get_contents($this->coderoot . 'date.js');
+        $pagefooter[basename(__FILE__)] = file_get_contents($this->coderoot . 'script.html');
         error_reporting($er);
 
         return $html;
