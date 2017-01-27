@@ -1,7 +1,7 @@
 <?php
 /**
  * SegmentPlugin for phplist.
- * 
+ *
  * This file is a part of SegmentPlugin.
  *
  * SegmentPlugin is free software: you can redistribute it and/or modify
@@ -12,7 +12,7 @@
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * @category  phplist
  *
  * @author    Duncan Cameron
@@ -126,7 +126,7 @@ class SegmentPlugin_SavedSegments
     /**
      * Return a saved segment.
      *
-     * @param int $id the segment id 
+     * @param int $id the segment id
      *
      * @return array the segment's conditions
      */

@@ -1,7 +1,7 @@
 <?php
 /**
  * SegmentPlugin for phplist.
- * 
+ *
  * This file is a part of SegmentPlugin.
  *
  * SegmentPlugin is free software: you can redistribute it and/or modify
@@ -12,7 +12,7 @@
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * @category  phplist
  *
  * @author    Duncan Cameron
@@ -22,7 +22,7 @@
 
 /**
  * Plugin class.
- * 
+ *
  * @category  phplist
  */
 ?>
@@ -78,7 +78,7 @@ To remove a condition, choose '%s' from the drop-down list.", $selectPrompt);
 <?php if (isset($totalSubscribers)):
     echo s('%d subscribers will be selected', $totalSubscribers);
 endif; ?>
-<?php if (isset($warning)): ?> <span class="error"><?php echo $warning;?></span><?php endif; ?>
+<?php if (isset($warning)): ?> <span class="error"><?php echo $warning; ?></span><?php endif; ?>
     </div>
 <?php if (isset($saveButton)): ?>
         <label>

@@ -1,7 +1,7 @@
 <?php
 /**
  * CriteriaPlugin for phplist.
- * 
+ *
  * This file is a part of CriteriaPlugin.
  *
  * CriteriaPlugin is free software: you can redistribute it and/or modify
@@ -12,7 +12,7 @@
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * @category  phplist
  *
  * @author    Duncan Cameron
@@ -22,7 +22,7 @@
 
 /**
  * DAO class that encapsulates the database access.
- * 
+ *
  * @category  phplist
  */
 class SegmentPlugin_DAO extends CommonPlugin_DAO
@@ -112,7 +112,7 @@ END;
     /**
      * Retrieves the values for a select/radio button attribute.
      *
-     * @param array $attribute an attribute 
+     * @param array $attribute an attribute
      *
      * @return Iterator
      */

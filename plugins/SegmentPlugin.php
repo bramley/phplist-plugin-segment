@@ -4,7 +4,7 @@ use chdemko\BitArray\BitArray;
 
 /**
  * SegmentPlugin for phplist.
- * 
+ *
  * This file is a part of SegmentPlugin.
  *
  * SegmentPlugin is free software: you can redistribute it and/or modify
@@ -15,7 +15,7 @@ use chdemko\BitArray\BitArray;
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * @category  phplist
  *
  * @author    Duncan Cameron
@@ -25,7 +25,7 @@ use chdemko\BitArray\BitArray;
 
 /**
  * Plugin class.
- * 
+ *
  * @category  phplist
  */
 class SegmentPlugin extends phplistPlugin
@@ -51,7 +51,9 @@ class SegmentPlugin extends phplistPlugin
     {
         return array_filter(
             $conditions,
-            function ($c) {return $c['field'] !== '';}
+            function ($c) {
+                return $c['field'] !== '';
+            }
         );
     }
 
@@ -59,7 +61,9 @@ class SegmentPlugin extends phplistPlugin
     {
         return array_filter(
             $conditions,
-            function ($c) {return $c['field'] !== '' && isset($c['op']);}
+            function ($c) {
+                return $c['field'] !== '' && isset($c['op']);
+            }
         );
     }
 
@@ -404,7 +408,7 @@ class SegmentPlugin extends phplistPlugin
     }
 
     /**
-     * Use this hook to delete the 'not sent' rows from the usermessage table 
+     * Use this hook to delete the 'not sent' rows from the usermessage table
      * so that they will be re-evaluated.
      *
      * @param int $id the message id
