@@ -377,10 +377,9 @@ class SegmentPlugin extends phplistPlugin
         }
 
         // display save button and input field
-        if (count($conditions) > 1) {
-            $params['saveButton'] = CHtml::submitButton(s('Save segment'), array('name' => 'segment[save]'));
-            $params['saveName'] = CHtml::textField('segment[savename]', '', array('size' => 20));
-        }
+        $disabled = count($conditions) > 1 ? [] : ['disabled' => 'disabled'];
+        $params['saveButton'] = CHtml::submitButton(s('Save segment'), array('name' => 'segment[save]') + $disabled);
+        $params['saveName'] = CHtml::textField('segment[savename]', '', array('size' => 20) + $disabled);
 
         // display link to Settings page
         $params['settings'] = new CommonPlugin_PageLink(

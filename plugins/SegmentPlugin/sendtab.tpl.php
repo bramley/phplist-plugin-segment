@@ -80,18 +80,16 @@ To remove a condition, choose '%s' from the drop-down list.", $selectPrompt);
 endif; ?>
 <?php if (isset($warning)): ?> <span class="error"><?php echo $warning; ?></span><?php endif; ?>
     </div>
-<?php if (isset($saveButton)): ?>
-        <label>
+    <label>
 <?php echo s('Save the current segment (set of conditions).'); ?>
-<br/>
-    <div class="segment-block">
+        <br/>
+        <div class="segment-block">
     <?php echo $saveName; ?>
-    </div>
-    <div class="segment-block">
+        </div>
+        <div class="segment-block">
     <?php echo $saveButton; ?>
-    </div>
+        </div>
     </label>
-<?php endif; ?>
     <div class="segment-block">
 <?php echo $settings; ?>
         <a href="https://resources.phplist.com/plugin/segment#add_segment_conditions" target="_blank">Guidance on usage</a>
