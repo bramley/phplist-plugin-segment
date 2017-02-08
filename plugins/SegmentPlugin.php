@@ -551,4 +551,16 @@ class SegmentPlugin extends phplistPlugin
 
         return array('Segment conditions', $html);
     }
+
+    /**
+     * Called when a campaign is being copied.
+     * Allows this plugin to specify which rows of the messagedata table should also
+     * be copied.
+     *
+     * @return array rows of messagedata table that should be copied
+     */
+    public function copyCampaignHook()
+    {
+        return array('segment');
+    }
 }

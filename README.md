@@ -75,6 +75,7 @@ This plugin is free but if you install and find it useful then a donation to sup
 ## Version history ##
 
     version         Description
+    2.2.1+20170208  Copy segment fields when copying a campaign
     2.2.0+20170126  Improvements to use of saved segments
     2.1.11+20161217 Extra validation of from and to dates
                     Use flatpickr for date input

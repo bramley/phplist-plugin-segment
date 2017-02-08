@@ -1,3 +1,9 @@
+version 2.2.1+20170208
+      Upgrade for version 2 of cs fixer. Use recommended file name.
+      Coding standards changes, mostly remove trailing white space.
+      Always display save segment fields but disable when there are no entered conditions.
+      Hook for copying a campaign
+
 version 2.2.0+20170126
       Correct query to work with ONLY_FULL_GROUP_BY.
       Multiselect when adding saved segments.
