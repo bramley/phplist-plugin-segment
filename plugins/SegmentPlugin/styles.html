@@ -1,39 +1,48 @@
 <style type="text/css">
-.segment select {
-    width: auto;
-}
 .segment-block {
     display: inline-block;
-    margin: 0px 15px 0px 0px;
+    margin: 5px 10px 0px 0px;
     vertical-align: top;
     white-space: nowrap;
 }
-.segment-block, .segment-block fieldset {
+.segment-block fieldset,
+.segment select,
+.segment input,
+.segment .button,
+.segment .btn {
+    margin-top: 0px;
     margin-bottom: 0px;
 }
-
-select {
-    display: inline-block;
-}
-selfclear:after {
-    clear: both
-}
-ul {
+.segment ul {
+    padding-left: 0px;
     list-style: none outside none;
 }
-input[type="text"].form-control {
-    width: 8em !important;
+.segment ul li {
+    margin: 0px 0px 10px 0px;
 }
-input[type="text"], input[type="submit"] {
+.selfclear {
+    clear: both
+}
+.segment input[type="text"].form-control {
+    width: 8em !important;
+    margin-left: 5px;
+}
+.segment input[type="text"],
+.segment input[type="submit"] {
     display: inline;
-    margin-bottom: 0px;
+}
+.segment select {
+    display: inline-block;
+    width: auto;
+}
+.segment select.campaigns {
+    width: 160px;
 }
 input[type="text"].datepicker {
     width: 8em !important;
 }
-
 li.select2-search {
-    margin: 0 0 0 0;
+    margin: 0px 0px 0px 0px;
 }
 span.select2-selection--multiple {
     overflow-y : auto;

@@ -51,7 +51,8 @@ class SegmentPlugin_SubscriberConditionActivity extends SegmentPlugin_Condition
         return CHtml::dropDownList(
             $namePrefix . '[value]',
             $value,
-            CHtml::listData($campaigns, 'id', 'subject')
+            CHtml::listData($campaigns, 'id', 'subject'),
+            ['class' => 'campaigns']
         );
     }
 
