@@ -26,9 +26,9 @@
 abstract class SegmentPlugin_Condition
 {
     private static $count = 0;
+    private $id;
 
     protected $field;
-    protected $id;
     protected $tables;
     protected $table_prefix;
 
@@ -37,6 +37,11 @@ abstract class SegmentPlugin_Condition
     protected function formatInList(array $values)
     {
         return '(' . implode(', ', $values) . ')';
+    }
+
+    protected function createUniqueAlias($alias)
+    {
+        return $alias . $this->id;
     }
 
     public function __construct($field)

@@ -52,7 +52,7 @@ class SegmentPlugin_AttributeConditionCheckboxgroup extends SegmentPlugin_Condit
             throw new SegmentPlugin_ValueException();
         }
 
-        $ua = 'ua' . $this->id;
+        $ua = $this->createUniqueAlias('ua');
         $where = array();
 
         if ($operator == SegmentPlugin_Operator::ONE) {

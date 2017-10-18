@@ -52,7 +52,7 @@ class SegmentPlugin_AttributeConditionSelect extends SegmentPlugin_Condition
         if (!is_array($value) || count($value) == 0) {
             throw new SegmentPlugin_ValueException();
         }
-        $ua = 'ua' .  $this->id;
+        $ua = $this->createUniqueAlias('ua');
         $in = ($operator == SegmentPlugin_Operator::ONE ? 'IN ' : 'NOT IN ') . $this->formatInList($value);
 
         $r = new stdClass();

@@ -40,7 +40,7 @@ class SegmentPlugin_AttributeConditionCheckbox extends SegmentPlugin_Condition
 
     public function joinQuery($operator, $value)
     {
-        $ua = 'ua' . $this->id;
+        $ua = $this->createUniqueAlias('ua');
         $op = $operator == SegmentPlugin_Operator::IS ? '=' : '!=';
 
         $r = new stdClass();

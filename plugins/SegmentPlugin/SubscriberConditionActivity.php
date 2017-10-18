@@ -61,8 +61,8 @@ class SegmentPlugin_SubscriberConditionActivity extends SegmentPlugin_Condition
             throw new SegmentPlugin_ValueException();
         }
 
-        $um = 'um' . $this->id;
-        $uml = 'uml' . $this->id;
+        $um = $this->createUniqueAlias('um');
+        $uml = $this->createUniqueAlias('uml');
         $r = new stdClass();
 
         if ($operator == SegmentPlugin_Operator::CLICKED || $operator == SegmentPlugin_Operator::NOTCLICKED) {

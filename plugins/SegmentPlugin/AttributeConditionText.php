@@ -57,7 +57,7 @@ class SegmentPlugin_AttributeConditionText extends SegmentPlugin_Condition
             throw new SegmentPlugin_ValueException();
         }
 
-        $ua = 'ua' . $this->id;
+        $ua = $this->createUniqueAlias('ua');
         $value = sql_escape($value);
 
         switch ($operator) {

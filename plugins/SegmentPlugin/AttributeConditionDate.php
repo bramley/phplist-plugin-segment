@@ -27,7 +27,7 @@ class SegmentPlugin_AttributeConditionDate extends SegmentPlugin_DateConditionBa
 {
     public function joinQuery($operator, $value)
     {
-        $ua = 'ua' . $this->id;
+        $ua = $this->createUniqueAlias('ua');
         $r = new stdClass();
         $r->join = "LEFT JOIN {$this->tables['user_attribute']} $ua ON u.id = $ua.userid AND $ua.attributeid = {$this->field['id']} ";
 
