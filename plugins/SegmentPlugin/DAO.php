@@ -105,10 +105,6 @@ END;
         return $query;
     }
 
-/*
- *  Public functions
- */
-
     /**
      * Retrieves the values for a select/radio button attribute.
      *

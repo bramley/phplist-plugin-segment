@@ -35,18 +35,15 @@ class SegmentPlugin extends phplistPlugin
     private $selectedSubscribers = null;
     private $dao;
 
-/*
- *  Inherited variables
- */
+    /*
+     *  Inherited variables
+     */
     public $name = 'Segmentation';
     public $authors = 'Duncan Cameron';
     public $description = 'Send to a subset of subscribers using custom conditions';
     public $documentationUrl = 'https://resources.phplist.com/plugin/segment';
     public $settings;
 
-/*
- *  Private methods
- */
     private function filterEmptyFields(array $conditions)
     {
         return array_filter(
@@ -398,7 +395,7 @@ class SegmentPlugin extends phplistPlugin
             'a',
             array(
                 'href' => 'https://resources.phplist.com/plugin/segment#add_segment_conditions',
-                'target' => '_blank'
+                'target' => '_blank',
             ),
             new \phpList\plugin\Common\ImageTag('info.png', 'Guidance')
         );
