@@ -54,16 +54,16 @@ This should contain
 * the file SegmentPlugin.php
 * the directory SegmentPlugin
 
-###Settings###
+### Settings ###
 In the Segmentation group on the Settings page you can specify:
 
 * The size of the list of previous campaigns for Campaign activity. The default is 10.
 
-##Usage##
+## Usage ##
 
 For guidance on usage see the plugin page within the phplist documentation site <https://resources.phplist.com/plugin/segment>
 
-##Support##
+## Support ##
 
 Please raise any questions or problems in the user forum <https://discuss.phplist.org/>.
 

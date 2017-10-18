@@ -29,7 +29,13 @@
 <?php echo file_get_contents($this->coderoot . 'styles.html'); ?>
 
 <div class="segment">
+<?php if (isset($warning)): ?>
+    <div class="note">
+        <?php echo $warning; ?>
+    </div>
+<?php endif; ?>
     <div>
+<?php echo $help; ?>&nbsp;
 <?php
     echo s("Select one or more subscriber fields or attributes.
 The campaign will be sent only to those subscribers who match any or all of the conditions.
@@ -43,11 +49,6 @@ To remove a condition, choose '%s' from the drop-down list.", $selectPrompt);
     <?php if (isset($c->error)): ?>
             <div class="note"><?php echo $c->error; ?></div>
     <?php else: ?>
-        <?php if (isset($c->caption)): ?>
-            <div>
-                <b><?php echo $c->caption; ?></b>
-            </div>
-        <?php endif; ?>
             <div class="segment-block"><?php echo $c->fieldList, $c->hiddenField; ?></div>
             <div class="segment-block">
         <?php
@@ -64,6 +65,13 @@ To remove a condition, choose '%s' from the drop-down list.", $selectPrompt);
         </li>
 <?php endforeach; ?>
     </ul>
+    <div id="recalculate">
+<?php echo $removeButton ?>
+<?php echo $calculateButton ?>
+<?php if (isset($totalSubscribers)):
+    echo s('%d subscribers will be selected', $totalSubscribers);
+endif; ?>
+    </div>
     <div>
         <label>
 <?php echo s('Use one or more saved segments. They will be added to any conditions already entered.'); ?>
@@ -71,14 +79,6 @@ To remove a condition, choose '%s' from the drop-down list.", $selectPrompt);
 <?php echo $savedList; ?>
 &nbsp;<?php echo $loadButton ?>
         </label>
-    </div>
-    <div id="recalculate">
-<?php echo $removeButton ?>
-<?php echo $calculateButton ?>
-<?php if (isset($totalSubscribers)):
-    echo s('%d subscribers will be selected', $totalSubscribers);
-endif; ?>
-<?php if (isset($warning)): ?> <span class="error"><?php echo $warning; ?></span><?php endif; ?>
     </div>
     <label>
 <?php echo s('Save the current segment (set of conditions).'); ?>
@@ -89,9 +89,8 @@ endif; ?>
         <div class="segment-block">
     <?php echo $saveButton; ?>
         </div>
-    </label>
-    <div class="segment-block">
+        <div class="segment-block">
 <?php echo $settings; ?>
-        <a href="https://resources.phplist.com/plugin/segment#add_segment_conditions" target="_blank">Guidance on usage</a>
-    </div>
+        </div>
+    </label>
 </div>

@@ -39,19 +39,19 @@ class SegmentPlugin_SubscriberConditionActivity extends SegmentPlugin_Condition
 
     public function display($op, $value, $namePrefix)
     {
-        if (is_array($this->messageData['targetlist']) && count($this->messageData['targetlist']) > 0) {
-            $selectData = CHtml::listData(
-                $this->dao->campaigns(null, getConfig('segment_campaign_max'), array_keys($this->messageData['targetlist'])),
-                'id', 'subject'
-            );
-        } else {
-            $selectData = array();
+        if (!(is_array($this->messageData['targetlist']) && count($this->messageData['targetlist']) > 0)) {
+            return '';
+        }
+        $campaigns = $this->dao->campaigns(null, getConfig('segment_campaign_max'), array_keys($this->messageData['targetlist']));
+
+        if (count($campaigns) == 0) {
+            return s('No campaigns have been sent to the selected lists');
         }
 
         return CHtml::dropDownList(
             $namePrefix . '[value]',
             $value,
-            $selectData
+            CHtml::listData($campaigns, 'id', 'subject')
         );
     }
 

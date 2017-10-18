@@ -340,6 +340,11 @@ class SegmentPlugin extends phplistPlugin
             $s->display = $condition->display($op, $value, "segment[c][$i]");
         }
 
+        // display warning if no lists have been selected
+        if (!(is_array($messageData['targetlist']) && count($messageData['targetlist']) > 0)) {
+            $params['warning'] = 'No lists have been selected on the Lists tab';
+        }
+
         // display drop-down list of saved segments
         $params['savedList'] = CHtml::dropDownList(
             'segment[usesaved][]',
@@ -385,7 +390,17 @@ class SegmentPlugin extends phplistPlugin
         $params['settings'] = new CommonPlugin_PageLink(
             new CommonPlugin_PageURL('configure', array(), 'segmentation'),
             'Edit saved segments',
-            array('target' => '_blank')
+            array('target' => '_blank', 'class' => 'button')
+        );
+
+        // display link to Help page
+        $params['help'] = CHtml::tag(
+            'a',
+            array(
+                'href' => 'https://resources.phplist.com/plugin/segment#add_segment_conditions',
+                'target' => '_blank'
+            ),
+            new \phpList\plugin\Common\ImageTag('info.png', 'Guidance')
         );
         $html = $this->render('sendtab.tpl.php', $params);
         $pagefooter[basename(__FILE__)] = file_get_contents($this->coderoot . 'script.html');
