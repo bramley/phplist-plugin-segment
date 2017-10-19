@@ -35,11 +35,13 @@
     </div>
 <?php endif; ?>
     <div>
-<?php echo $help; ?>&nbsp;
+<?php echo $help; ?>
+    &nbsp;
 <?php
-    echo s("Select one or more subscriber fields or attributes.
- The campaign will be sent only to those subscribers who match any or all of the conditions.
- To remove a condition, choose '%s' from the drop-down list.", $selectPrompt);
+    echo s(
+        'Select one or more subscriber fields or attributes. The campaign will be sent only to those subscribers who match any or all of the conditions. To remove a condition, choose %s from the drop-down list.',
+        '<em>' . $selectPrompt . '</em>'
+    );
 ?>
     </div>
     <div><?php echo s('Subscribers match %s of the following:', $combineList); ?></div>
@@ -66,31 +68,36 @@
 <?php endforeach; ?>
     </ul>
     <div id="recalculate">
-<?php echo $removeButton ?>
+<?php if (isset($removeButton)) echo $removeButton; ?>
 <?php echo $calculateButton ?>
-<?php if (isset($totalSubscribers)):
-    echo s('%d subscribers will be selected', $totalSubscribers);
-endif; ?>
+<?php if (isset($totalSubscribers)): ?>
+        <div class="note">
+    <?php echo s('%d subscribers will be selected', $totalSubscribers); ?>
+        </div>
+<?php endif; ?>
     </div>
+<?php if (isset($savedList)): ?>
     <div>
         <label>
-<?php echo s('Use one or more saved segments. They will be added to any conditions already entered.'); ?>
-<br/>
-<?php echo $savedList; ?>
-&nbsp;<?php echo $loadButton ?>
+    <?php echo s('Use one or more saved segments. They will be added to any conditions already entered.'); ?>
+            <br/>
+    <?php echo $savedList; ?>
+    <?php echo $loadButton ?>
+    <?php echo $settings ?>
         </label>
     </div>
-    <label>
-<?php echo s('Save the current segment (set of conditions).'); ?>
-        <br/>
+<?php endif; ?>
+    <div>
+<?php if (isset($saveName)): ?>
+        <label>
+    <?php echo s('Save the current segment (set of conditions).'); ?>
+        </label>
         <div class="segment-block">
     <?php echo $saveName; ?>
         </div>
         <div class="segment-block">
     <?php echo $saveButton; ?>
         </div>
-        <div class="segment-block">
-<?php echo $settings; ?>
-        </div>
-    </label>
+<?php endif; ?>
+    </div>
 </div>

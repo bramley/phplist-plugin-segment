@@ -1,3 +1,9 @@
+version 2.2.3+20171023
+      Display the saved segments fields only when there is at least one.
+      Display the save segment input field and load button only when there is at least one condition.
+Sam Tuke:
+      Left align condition rows, other layout improvements. Fixes #12
+
 version 2.2.2+20171018
       Add warnings when no lists have been selected or no campaigns sent to the selected lists.
       Re-position some of the command buttons.

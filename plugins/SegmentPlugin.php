@@ -31,6 +31,7 @@ use chdemko\BitArray\BitArray;
 class SegmentPlugin extends phplistPlugin
 {
     const VERSION_FILE = 'version.txt';
+    const GUIDANCE = 'https://resources.phplist.com/plugin/segment#add_segment_conditions';
 
     private $selectedSubscribers = null;
     private $dao;
@@ -342,18 +343,23 @@ class SegmentPlugin extends phplistPlugin
             $params['warning'] = 'No lists have been selected on the Lists tab';
         }
 
-        // display drop-down list of saved segments
-        $params['savedList'] = CHtml::dropDownList(
-            'segment[usesaved][]',
-            '',
-            $saved->selectListData(),
-            array('multiple' => 'multiple', 'style' => 'width: 50%')
-        );
-        // display Load button
-        $params['loadButton'] = CHtml::submitButton(s('Load'), array('name' => 'segment[load]'));
+        // display fields for saved segments only where there are some
+        $savedListData = $saved->selectListData();
 
-        // display Remove all button
-        $params['removeButton'] = CHtml::submitButton(s('Remove all'), array('name' => 'segment[remove]'));
+        if (count($savedListData) > 0) {
+            $params['savedList'] = CHtml::dropDownList(
+                'segment[usesaved][]',
+                '',
+                $savedListData,
+                array('multiple' => 'multiple', 'style' => 'width: 50%')
+            );
+            $params['loadButton'] = CHtml::submitButton(s('Load'), array('name' => 'segment[load]'));
+            $params['settings'] = new CommonPlugin_PageLink(
+                new CommonPlugin_PageURL('configure', array(), 'segmentation'),
+                'Edit saved segments',
+                array('target' => '_blank', 'class' => 'button')
+            );
+        }
 
         // display calculate button
         $params['calculateButton'] = CHtml::submitButton(s('Calculate'), array('name' => 'segment[calculate]'));
@@ -378,25 +384,17 @@ class SegmentPlugin extends phplistPlugin
             }
         }
 
-        // display save button and input field
-        $disabled = count($conditions) > 1 ? [] : ['disabled' => 'disabled'];
-        $params['saveButton'] = CHtml::submitButton(s('Save segment'), array('name' => 'segment[save]') + $disabled);
-        $params['saveName'] = CHtml::textField('segment[savename]', '', array('size' => 20) + $disabled);
-
-        // display link to Settings page
-        $params['settings'] = new CommonPlugin_PageLink(
-            new CommonPlugin_PageURL('configure', array(), 'segmentation'),
-            'Edit saved segments',
-            array('target' => '_blank', 'class' => 'button')
-        );
+        // display remvove all, save button and input field only when there is at least one entered condition
+        if (count($conditions) > 1) {
+            $params['removeButton'] = CHtml::submitButton(s('Remove all'), array('name' => 'segment[remove]'));
+            $params['saveButton'] = CHtml::submitButton(s('Save segment'), array('name' => 'segment[save]'));
+            $params['saveName'] = CHtml::textField('segment[savename]', '', array('size' => 20));
+        }
 
         // display link to Help page
         $params['help'] = CHtml::tag(
             'a',
-            array(
-                'href' => 'https://resources.phplist.com/plugin/segment#add_segment_conditions',
-                'target' => '_blank',
-            ),
+            array('href' => self::GUIDANCE, 'target' => '_blank'),
             new \phpList\plugin\Common\ImageTag('info.png', 'Guidance')
         );
         $html = $this->render('sendtab.tpl.php', $params);

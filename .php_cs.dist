@@ -2,6 +2,7 @@
 
 $finder = PhpCsFixer\Finder::create()
     ->in(__DIR__)
+    ->notPath('plugins/SegmentPlugin/sendtab.tpl.php')
 ;
 
 return PhpCsFixer\Config::create()
