@@ -75,6 +75,7 @@ This plugin is free but if you install and find it useful then a donation to sup
 ## Version history ##
 
     version         Description
+    2.2.4+20171109  Improve display of multiple-select
     2.2.3+20171023  Improvements to layout of the Segment tab
     2.2.2+20171018  Display warning when lists have not been selected
     2.2.1+20170208  Copy segment fields when copying a campaign

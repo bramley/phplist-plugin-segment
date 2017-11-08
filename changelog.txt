@@ -1,3 +1,8 @@
+version 2.2.4+20171109
+      Improve display of multiple-select
+      Clarify the warning displayed when no lists have been selected. Fixes #13.
+      Add English translation file as basis for other languages
+
 version 2.2.3+20171023
       Display the saved segments fields only when there is at least one.
       Display the save segment input field and load button only when there is at least one condition.
