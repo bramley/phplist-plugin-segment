@@ -41,9 +41,7 @@ class SegmentPlugin_AttributeConditionSelect extends SegmentPlugin_Condition
             $namePrefix . '[value]',
             $value,
             $selectData,
-            array(
-                'multiple' => 1, 'size' => 4,
-            )
+            array('multiple' => 1)
         );
     }
 
