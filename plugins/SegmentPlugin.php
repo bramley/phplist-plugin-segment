@@ -340,7 +340,7 @@ class SegmentPlugin extends phplistPlugin
 
         // display warning if no lists have been selected
         if (!(is_array($messageData['targetlist']) && count($messageData['targetlist']) > 0)) {
-            $params['warning'] = 'No lists have been selected on the Lists tab';
+            $params['warning'] = s('Please select at least one list on the Lists tab before adding segmentation conditions');
         }
 
         // display fields for saved segments only where there are some
