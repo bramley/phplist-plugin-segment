@@ -1,3 +1,6 @@
+version 2.2.5+20171218
+      Improve the layout of the Segment tab
+
 version 2.2.4+20171109
       Improve display of multiple-select
       Clarify the warning displayed when no lists have been selected. Fixes #13.

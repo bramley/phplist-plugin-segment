@@ -353,8 +353,8 @@ class SegmentPlugin extends phplistPlugin
                 $savedListData,
                 array('multiple' => 'multiple', 'style' => 'width: 50%')
             );
-            $params['loadButton'] = CHtml::submitButton(s('Load'), array('name' => 'segment[load]'));
-            $params['settings'] = new CommonPlugin_PageLink(
+            $params['loadButton'] = CHtml::submitButton(s('Load segments'), array('name' => 'segment[load]'));
+            $params['settingsButton'] = new CommonPlugin_PageLink(
                 new CommonPlugin_PageURL('configure', array(), 'segmentation'),
                 'Edit saved segments',
                 array('target' => '_blank', 'class' => 'button')
@@ -384,11 +384,11 @@ class SegmentPlugin extends phplistPlugin
             }
         }
 
-        // display remvove all, save button and input field only when there is at least one entered condition
+        // display remove all, save button and input field only when there is at least one entered condition
         if (count($conditions) > 1) {
             $params['removeButton'] = CHtml::submitButton(s('Remove all'), array('name' => 'segment[remove]'));
             $params['saveButton'] = CHtml::submitButton(s('Save segment'), array('name' => 'segment[save]'));
-            $params['saveName'] = CHtml::textField('segment[savename]', '', array('size' => 20));
+            $params['saveName'] = CHtml::textField('segment[savename]', '', array('size' => 25, 'placeholder' => 'Name of segment'));
         }
 
         // display link to Help page

@@ -30,19 +30,31 @@
 
 <div class="segment">
 <?php if (isset($warning)): ?>
-    <div class="note">
+    <div class="error">
         <?php echo $warning; ?>
     </div>
 <?php endif; ?>
-    <div>
-<?php echo $help; ?>
-    &nbsp;
+    <div class="note">
 <?php
-    echo s('Select one or more subscriber fields or attributes. The campaign will be sent only to those subscribers who match any or all of the conditions. To remove a condition, choose %s from the drop-down list.',
-        '<em>' . $selectPrompt . '</em>'
-    );
+    $sentence1 = s('Select one or more subscriber fields or attributes.');
+    $sentence2 = s('The campaign will be sent only to those subscribers who match any or all of the conditions.');
+    $sentence3 = s('To remove a condition set it to "%s" from the list.', '<em>' . $selectPrompt . '</em>');
+    echo $sentence1, ' ', $sentence2, ' ', $sentence3;
 ?>
+&nbsp;
+<?php echo $help; ?>
     </div>
+<?php if (isset($savedList)): ?>
+    <div class="field">
+        <label>
+    <?php echo s('Use one or more saved segments. They will be added to any conditions below.'); ?>
+        </label>
+    <?php echo $savedList; ?>
+    <?php echo $loadButton ?>
+    <?php echo $settingsButton ?>
+    </div>
+    <hr class="separator"/>
+<?php endif; ?>
     <div><?php echo s('Subscribers match %s of the following:', $combineList); ?></div>
     <ul>
 <?php foreach ($condition as $c) : ?>
@@ -75,21 +87,11 @@
         </div>
 <?php endif; ?>
     </div>
-<?php if (isset($savedList)): ?>
-    <div>
-        <label>
-    <?php echo s('Use one or more saved segments. They will be added to any conditions already entered.'); ?>
-            <br/>
-    <?php echo $savedList; ?>
-    <?php echo $loadButton ?>
-    <?php echo $settings ?>
-        </label>
-    </div>
-<?php endif; ?>
-    <div>
 <?php if (isset($saveName)): ?>
+    <div class="field">
+        <hr class="separator"/>
         <label>
-    <?php echo s('Save the current segment (set of conditions).'); ?>
+    <?php echo s('Save the current set of conditions'); ?>
         </label>
         <div class="segment-block">
     <?php echo $saveName; ?>
@@ -97,6 +99,6 @@
         <div class="segment-block">
     <?php echo $saveButton; ?>
         </div>
-<?php endif; ?>
     </div>
+<?php endif; ?>
 </div>
