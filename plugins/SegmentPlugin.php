@@ -380,7 +380,7 @@ class SegmentPlugin extends phplistPlugin
                     $combine
                 );
             } catch (SegmentPlugin_ValueException $e) {
-                $params['warning'] = 'one of the conditions has an invalid target value';
+                $params['warning'] = s('one of the conditions has an invalid target value');
             }
         }
 
