@@ -5,6 +5,7 @@ return [
     ['Calculate', 'Calculate'],
     ['CommonPlugin must be installed in order to use segments', 'CommonPlugin must be installed in order to use segments'],
     ['Load segments', 'Load segments'],
+    ['One of the conditions has an invalid target value', 'One of the conditions has an invalid target value'],
     ['No campaigns have been sent to the selected lists', 'No campaigns have been sent to the selected lists'],
     ['Please select at least one list on the Lists tab before adding segmentation conditions', 'Please select at least one list on the Lists tab before adding segmentation conditions'],
     ['REGEXP', 'REGEXP'],

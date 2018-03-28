@@ -75,6 +75,7 @@ This plugin is free but if you install and find it useful then a donation to sup
 ## Version history ##
 
     version         Description
+    2.2.6+20180328  Reduce the level of php errors that are reported
     2.2.5+20171218  Improve the layout of the Segment tab
     2.2.4+20171109  Improve display of multiple-select
     2.2.3+20171023  Improvements to layout of the Segment tab

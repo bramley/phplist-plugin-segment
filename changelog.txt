@@ -1,3 +1,7 @@
+version 2.2.6+20180328
+      Reduce the level of php errors that are reported.
+      Allow warning to be translated. Fixes #15.
+
 version 2.2.5+20171218
       Improve the layout of the Segment tab
 
