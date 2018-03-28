@@ -33,6 +33,7 @@ class SegmentPlugin extends phplistPlugin
     const VERSION_FILE = 'version.txt';
     const GUIDANCE = 'https://resources.phplist.com/plugin/segment#add_segment_conditions';
 
+    private $error_level = E_ALL ^ E_NOTICE ^ E_DEPRECATED ^ E_STRICT;
     private $selectedSubscribers = null;
     private $dao;
 
@@ -169,9 +170,6 @@ class SegmentPlugin extends phplistPlugin
     public function __construct()
     {
         $this->coderoot = dirname(__FILE__) . '/' . __CLASS__ . '/';
-        $this->version = (is_file($f = $this->coderoot . self::VERSION_FILE))
-            ? file_get_contents($f)
-            : '';
         $this->settings = array(
             'segment_campaign_max' => array(
               'description' => s('The maximum number of earlier campaigns to select from'),
@@ -191,6 +189,9 @@ class SegmentPlugin extends phplistPlugin
             ),
         );
         parent::__construct();
+        $this->version = (is_file($f = $this->coderoot . self::VERSION_FILE))
+            ? file_get_contents($f)
+            : '';
     }
 
     /**
@@ -205,8 +206,7 @@ class SegmentPlugin extends phplistPlugin
         return array(
             'Common plugin version 3.5.6 or greater installed' => (
                 phpListPlugin::isEnabled('CommonPlugin')
-                && preg_match('/\d+\.\d+\.\d+/', $plugins['CommonPlugin']->version, $matches)
-                && version_compare($matches[0], '3.5.6') >= 0
+                && version_compare($plugins['CommonPlugin']->version, '3.5.6') >= 0
             ),
             'PHP version 5.4.0 or greater' => version_compare(PHP_VERSION, '5.4') > 0,
         );
@@ -247,12 +247,9 @@ class SegmentPlugin extends phplistPlugin
      */
     public function sendMessageTab($messageId = 0, $messageData = array())
     {
-        $er = error_reporting(-1);
-        global $plugins, $pagefooter;
+        global $pagefooter;
 
-        if (!phplistPlugin::isEnabled('CommonPlugin')) {
-            return s('CommonPlugin must be installed in order to use segments');
-        }
+        $er = error_reporting($this->error_level);
         $segment = isset($messageData['segment']) ? $messageData['segment'] : array();
         $conditions = (isset($segment['c']))
             ? array_values($this->filterEmptyFields($segment['c']))
@@ -451,7 +448,7 @@ class SegmentPlugin extends phplistPlugin
      */
     public function campaignStarted($messageData = array())
     {
-        $er = error_reporting(-1);
+        $er = error_reporting($this->error_level);
 
         if (isset($messageData['segment']['c'])) {
             $conditions = $this->filterIncompleteConditions($messageData['segment']['c']);
@@ -497,13 +494,7 @@ class SegmentPlugin extends phplistPlugin
      */
     public function viewMessage($messageId, array $messageData)
     {
-        global $plugins;
-
-        $er = error_reporting(-1);
-
-        if (!phplistPlugin::isEnabled('CommonPlugin')) {
-            return s('CommonPlugin must be installed in order to use segments');
-        }
+        $er = error_reporting($this->error_level);
 
         if (!isset($messageData['segment'])) {
             return false;
