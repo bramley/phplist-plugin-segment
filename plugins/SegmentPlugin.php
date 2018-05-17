@@ -33,7 +33,7 @@ class SegmentPlugin extends phplistPlugin
     const VERSION_FILE = 'version.txt';
     const GUIDANCE = 'https://resources.phplist.com/plugin/segment#add_segment_conditions';
 
-    private $error_level = E_ALL ^ E_NOTICE ^ E_DEPRECATED ^ E_STRICT;
+    private $error_level;
     private $selectedSubscribers = null;
     private $dao;
 
@@ -188,6 +188,8 @@ class SegmentPlugin extends phplistPlugin
               'category' => 'Segmentation',
             ),
         );
+        $this->error_level = E_ALL ^ E_NOTICE ^ E_DEPRECATED ^ E_STRICT;
+
         parent::__construct();
         $this->version = (is_file($f = $this->coderoot . self::VERSION_FILE))
             ? file_get_contents($f)
