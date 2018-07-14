@@ -36,6 +36,8 @@ class SegmentPlugin extends phplistPlugin
     private $error_level;
     private $selectedSubscribers = null;
     private $dao;
+    private $conditionFactory;
+    private $logger;
 
     /*
      *  Inherited variables
@@ -73,14 +75,13 @@ class SegmentPlugin extends phplistPlugin
 
     private function selectionQueryJoins(array $conditions)
     {
-        $cf = new SegmentPlugin_ConditionFactory($this->dao);
         $joins = array();
 
         foreach ($conditions as $i => $c) {
             $field = $c['field'];
 
             try {
-                $condition = $cf->createCondition($field);
+                $condition = $this->conditionFactory->createCondition($field);
                 $joins[] = $condition->joinQuery($c['op'], isset($c['value']) ? $c['value'] : '');
             } catch (SegmentPlugin_ConditionException $e) {
                 // do nothing
@@ -206,6 +207,7 @@ class SegmentPlugin extends phplistPlugin
         global $plugins;
 
         return array(
+            'phpList version 3.3.2 or later' => version_compare(VERSION, '3.3.2') >= 0,
             'Common plugin version 3.5.6 or greater installed' => (
                 phpListPlugin::isEnabled('CommonPlugin')
                 && version_compare($plugins['CommonPlugin']->version, '3.5.6') >= 0
@@ -214,16 +216,15 @@ class SegmentPlugin extends phplistPlugin
         );
     }
 
-    /**
-     * Use this method as a hook to create the dao
-     * Need to create autoloader because of the unpredictable order in which plugins are called.
-     */
-    public function sendFormats()
+    public function activate()
     {
-        global $plugins;
-
-        require_once $plugins['CommonPlugin']->coderoot . 'Autoloader.php';
-        $this->dao = new SegmentPlugin_DAO(new CommonPlugin_DB());
+        $db = new CommonPlugin_DB();
+        $this->dao = new SegmentPlugin_DAO($db);
+        $daoAttr = new CommonPlugin_DAO_Attribute($db, 20, 0);
+        $this->conditionFactory = new SegmentPlugin_ConditionFactory(
+            $this->dao,
+            $daoAttr->attributesById()
+        );
         $this->logger = CommonPlugin_Logger::instance();
 
         return;
@@ -291,7 +292,6 @@ class SegmentPlugin extends phplistPlugin
         $params = array();
         $params['condition'] = array();
         $params['selectPrompt'] = $selectPrompt;
-        $cf = new SegmentPlugin_ConditionFactory($this->dao);
 
         foreach ($conditions as $i => $c) {
             $s = new stdClass();
@@ -301,7 +301,7 @@ class SegmentPlugin extends phplistPlugin
             $s->fieldList = CHtml::dropDownList(
                 "segment[c][$i][field]",
                 $c['field'],
-                array('Subscriber Data' => $cf->subscriberFields(), 'Attributes' => $cf->attributeFields()),
+                array('Subscriber Data' => $this->conditionFactory->subscriberFields(), 'Attributes' => $this->conditionFactory->attributeFields()),
                 array('prompt' => $selectPrompt, 'class' => 'autosubmit')
             );
 
@@ -314,7 +314,7 @@ class SegmentPlugin extends phplistPlugin
             }
 
             try {
-                $condition = $cf->createCondition($field);
+                $condition = $this->conditionFactory->createCondition($field);
             } catch (SegmentPlugin_ConditionException $e) {
                 $s->error = sprintf('Unable to display condition: %s', $e->getMessage());
                 continue;
@@ -516,7 +516,6 @@ class SegmentPlugin extends phplistPlugin
 
         $params = array();
         $params['condition'] = array();
-        $cf = new SegmentPlugin_ConditionFactory($this->dao);
 
         foreach ($conditions as $i => $c) {
             $s = new stdClass();
@@ -524,7 +523,7 @@ class SegmentPlugin extends phplistPlugin
             $field = $c['field'];
 
             try {
-                $condition = $cf->createCondition($field);
+                $condition = $this->conditionFactory->createCondition($field);
             } catch (SegmentPlugin_ConditionException $e) {
                 $s->error = sprintf('Unable to display condition: %s', $e->getMessage());
                 continue;
@@ -532,7 +531,7 @@ class SegmentPlugin extends phplistPlugin
             $condition->messageData = $messageData;
 
             // display field selection
-            $fields = $cf->subscriberFields() + $cf->attributeFields();
+            $fields = $this->conditionFactory->subscriberFields() + $this->conditionFactory->attributeFields();
             $s->field = $fields[$field];
 
             // display operator

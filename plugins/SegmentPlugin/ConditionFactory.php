@@ -25,21 +25,34 @@
  */
 class SegmentPlugin_ConditionFactory
 {
-    public function __construct($dao)
+    private $attributes;
+    private $dao;
+
+    /**
+     * @param SegmentPlugin_DAO $dao
+     * @param array             $attributes
+     */
+    public function __construct($dao, $attributes)
     {
         $this->dao = $dao;
-        $daoAttr = new CommonPlugin_DAO_Attribute(new CommonPlugin_DB(), 20, 0);
-        $this->attributes = iterator_to_array($daoAttr->attributes());
-        $this->attributesById = $daoAttr->attributesById();
+        $this->attributes = $attributes;
     }
 
+    /**
+     * Create a condition object using a subscriber field or attribute.
+     * A field is treated as an attribute id if it is numeric, otherwise as a subscriber field.
+     *
+     * @param string $field attribute id or subscriber field
+     *
+     * @return SegmentPlugin_Condition
+     */
     public function createCondition($field)
     {
         if (ctype_digit($field)) {
-            if (!isset($this->attributesById[$field])) {
+            if (!isset($this->attributes[$field])) {
                 throw new SegmentPlugin_ConditionException("attribute id $field does not exist");
             }
-            $attr = $this->attributesById[$field];
+            $attr = $this->attributes[$field];
 
             switch ($attr['type']) {
                 case 'select':
@@ -89,11 +102,21 @@ class SegmentPlugin_ConditionFactory
         return $r;
     }
 
+    /**
+     * Returns an array of attribute names indexed by attribute id.
+     *
+     * @return array
+     */
     public function attributeFields()
     {
         return array_column($this->attributes, 'name', 'id');
     }
 
+    /**
+     * Returns an array of descriptive subscriber fields.
+     *
+     * @return array
+     */
     public function subscriberFields()
     {
         return array(
