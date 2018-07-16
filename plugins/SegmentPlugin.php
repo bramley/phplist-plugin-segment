@@ -113,13 +113,14 @@ class SegmentPlugin extends phplistPlugin
             memory_get_usage(), memory_get_peak_usage(), memory_get_peak_usage(true)
         ));
         $joins = $this->selectionQueryJoins($conditions);
-        $count = $this->dao->calculateSubscribers($messageId, $joins, $combine);
+        $limit = getConfig('segment_subscribers_max');
+        list($count, $subscribers) = $this->dao->calculateSubscribers($messageId, $joins, $combine, $limit);
         $this->logger->debug(sprintf(
             "Post usage %s\nPost peak usage %s\nPost peak real usage %s",
             memory_get_usage(), memory_get_peak_usage(), memory_get_peak_usage(true)
         ));
 
-        return $count;
+        return [$count, $subscribers];
     }
 
     private function render($template, $params)
@@ -181,6 +182,15 @@ class SegmentPlugin extends phplistPlugin
               'max' => 25,
               'category' => 'Segmentation',
             ),
+            'segment_subscribers_max' => array(
+              'description' => s('The maximum number of selected subscribers to display'),
+              'type' => 'integer',
+              'value' => 50,
+              'allowempty' => 0,
+              'min' => 5,
+              'max' => 500,
+              'category' => 'Segmentation',
+            ),
             'segment_saved_summary' => array(
               'description' => s('Summary of saved segments'),
               'type' => 'textarea',
@@ -208,9 +218,9 @@ class SegmentPlugin extends phplistPlugin
 
         return array(
             'phpList version 3.3.2 or later' => version_compare(VERSION, '3.3.2') >= 0,
-            'Common plugin version 3.5.6 or greater installed' => (
+            'Common plugin version 3.8.0 or greater installed' => (
                 phpListPlugin::isEnabled('CommonPlugin')
-                && version_compare($plugins['CommonPlugin']->version, '3.5.6') >= 0
+                && version_compare($plugins['CommonPlugin']->version, '3.8.0') >= 0
             ),
             'PHP version 5.4.0 or greater' => version_compare(PHP_VERSION, '5.4') > 0,
         );
@@ -218,6 +228,8 @@ class SegmentPlugin extends phplistPlugin
 
     public function activate()
     {
+        parent::activate();
+
         $db = new CommonPlugin_DB();
         $this->dao = new SegmentPlugin_DAO($db);
         $daoAttr = new CommonPlugin_DAO_Attribute($db, 20, 0);
@@ -226,8 +238,6 @@ class SegmentPlugin extends phplistPlugin
             $daoAttr->attributesById()
         );
         $this->logger = CommonPlugin_Logger::instance();
-
-        return;
     }
 
     /**
@@ -373,7 +383,7 @@ class SegmentPlugin extends phplistPlugin
         // display calculated number of subscribers
         if (isset($segment['calculate'])) {
             try {
-                $params['totalSubscribers'] = $this->calculateSubscribers(
+                list($params['totalSubscribers'], $params['subscribers']) = $this->calculateSubscribers(
                     $messageId,
                     $this->filterIncompleteConditions($segment['c']),
                     $combine

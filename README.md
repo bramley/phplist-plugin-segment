@@ -24,9 +24,10 @@ The target value, also specific to each field, can be a text value, a select val
 
 ### Dependencies ###
 
-Requires php version 5.4.0 or later. Please check your php version before installing the plugin, otherwise phplist will fail (probably a white page).
+Requires phplist version 3.3.2 or later, and php version 5.4.0 or later.
+Please check your php version before installing the plugin, otherwise phplist will fail (probably a white page).
 
-This plugin requires the Common Plugin version 3.5.6 or greater to also be installed, and will not work without that.
+This plugin requires the Common Plugin version 3.8.0 or greater to also be installed, and will not work without that.
 **You must install that plugin or upgrade to the latest version if it is already installed**.
 See <https://github.com/bramley/phplist-plugin-common>
 
@@ -38,12 +39,6 @@ The benefit of this is that plugins will not be affected when you upgrade phplis
 
 ### Install through phplist ###
 Install on the Plugins page (menu Config > Plugins) using the package URL `https://github.com/bramley/phplist-plugin-segment/archive/master.zip`
-
-In phplist releases 3.0.5 and earlier there is a bug that can cause a plugin to be incompletely installed on some configurations (<https://mantis.phplist.com/view.php?id=16865>). 
-Check that these files are in the plugin directory. If not then you will need to install manually. The bug has been fixed in release 3.0.6.
-
-* the file SegmentPlugin.php
-* the directory SegmentPlugin
 
 ### Install manually ###
 Download the plugin zip file from <https://github.com/bramley/phplist-plugin-segment/archive/master.zip>
@@ -58,6 +53,7 @@ This should contain
 In the Segmentation group on the Settings page you can specify:
 
 * The size of the list of previous campaigns for Campaign activity. The default is 10.
+* The number of subscribers to display who meet the segment conditions. The default is 50.
 
 ## Usage ##
 
@@ -75,6 +71,7 @@ This plugin is free but if you install and find it useful then a donation to sup
 ## Version history ##
 
     version         Description
+    2.3.0+20180722  Display subscribers that meet the segment conditions
     2.2.7+20180517  Avoid dependency on php 5.6
     2.2.6+20180328  Reduce the level of php errors that are reported
     2.2.5+20171218  Improve the layout of the Segment tab

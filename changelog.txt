@@ -1,3 +1,7 @@
+version 2.3.0+20180722
+      Simplify condition factory and use of attributes
+      Display subscribers that meet the segment conditions
+
 version 2.2.7+20180517
       Remove constant scalar expression to avoid dependency on php 5.6
 

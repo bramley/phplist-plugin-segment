@@ -63,7 +63,7 @@ END;
         return $excludeSubquery;
     }
 
-    private function buildSubscriberQuery($select, $messageId, array $joins, $combine)
+    private function buildSubscriberQuery($select, $messageId, array $joins, $combine, $limit = 0)
     {
         $excludeSubquery = '';
 
@@ -87,7 +87,6 @@ END;
         } else {
             $w = '';
         }
-
         $query = <<<END
 SELECT $select
 FROM {$this->tables['user']} u
@@ -101,6 +100,12 @@ AND (um0.status IS NULL OR um0.status IN ('not sent', 'todo'))
 $excludeSubquery
 $w
 END;
+
+        if ($limit > 0) {
+            $query .= <<<END
+LIMIT 0, $limit
+END;
+        }
 
         return $query;
     }
@@ -164,7 +169,7 @@ END;
     }
 
     /**
-     * Queries the subscribers.
+     * Returns the id of each subscriber to which the message will be sent.
      *
      * @param int   $messageId message id
      * @param array $joins
@@ -180,19 +185,23 @@ END;
     }
 
     /**
-     * Calculates the number of subscribers.
+     * Returns the total number of subscribers to which the message will be sent and the email address of the
+     * first N subscribers.
      *
      * @param int   $messageId message id
      * @param array $joins
      * @param int   $combine   whether to AND or OR conditions
+     * @param int   $limit     the maximum number of subscriber email addresses to return
      *
      * @return int number of subscribers
      */
-    public function calculateSubscribers($messageId, array $joins, $combine)
+    public function calculateSubscribers($messageId, array $joins, $combine, $limit)
     {
-        $query = $this->buildSubscriberQuery('COUNT(DISTINCT u.id) AS t', $messageId, $joins, $combine);
+        $query = $this->buildSubscriberQuery('SQL_CALC_FOUND_ROWS DISTINCT u.email', $messageId, $joins, $combine, $limit);
+        $subscribers = $this->dbCommand->queryAll($query);
+        $totalRows = $this->dbCommand->queryOne('SELECT FOUND_ROWS()');
 
-        return $this->dbCommand->queryOne($query, 't');
+        return [$totalRows, $subscribers];
     }
 
     /**
