@@ -1,7 +1,4 @@
 <?php
-
-use chdemko\BitArray\BitArray;
-
 /**
  * SegmentPlugin for phplist.
  *
@@ -22,12 +19,11 @@ use chdemko\BitArray\BitArray;
  * @copyright 2014-2017 Duncan Cameron
  * @license   http://www.gnu.org/licenses/gpl.html GNU General Public License, Version 3
  */
+use chdemko\BitArray\BitArray;
+use phpList\plugin\Common\ImageTag;
+use phpList\plugin\Common\Logger;
+use phpList\plugin\SegmentPlugin\Segment;
 
-/**
- * Plugin class.
- *
- * @category  phplist
- */
 class SegmentPlugin extends phplistPlugin
 {
     const VERSION_FILE = 'version.txt';
@@ -47,31 +43,6 @@ class SegmentPlugin extends phplistPlugin
     public $description = 'Send to a subset of subscribers using custom conditions';
     public $documentationUrl = 'https://resources.phplist.com/plugin/segment';
     public $settings;
-
-    private function filterEmptyFields(array $conditions)
-    {
-        return array_filter(
-            $conditions,
-            function ($c) {
-                return $c['field'] !== '';
-            }
-        );
-    }
-
-    private function filterIncompleteConditions(array $conditions)
-    {
-        return array_filter(
-            $conditions,
-            function ($c) {
-                return $c['field'] !== '' && isset($c['op']);
-            }
-        );
-    }
-
-    private function deleteNotSent($campaign)
-    {
-        $this->dao->deleteNotSent($campaign);
-    }
 
     private function selectionQueryJoins(array $conditions)
     {
@@ -132,37 +103,13 @@ class SegmentPlugin extends phplistPlugin
         return ob_get_clean();
     }
 
-    /**
-     * Saves the segment as a message data field.
-     *
-     * @param int   $messageId message id
-     * @param array $segment   segment
-     * @param array $toUnset   optional segment fields to be unset
-     */
-    private function saveMessageSegment($messageId, array $segment, array $toUnset = [])
+    private function fieldDropDownList($field, $seq, $selectPrompt)
     {
-        foreach ($toUnset as $item) {
-            unset($segment[$item]);
-        }
-        setMessageData($messageId, 'segment', $segment);
-    }
-
-    /**
-     * Remove duplicate entries from a multi-dimensional array.
-     *
-     * @param array $input
-     *
-     * @return array
-     */
-    private function array_unique(array $input)
-    {
-        return array_values(
-            array_intersect_key(
-                $input,
-                array_unique(
-                    array_map('serialize', $input)
-                )
-            )
+        return CHtml::dropDownList(
+            "segment[c][$seq][field]",
+            $field,
+            array('Subscriber Data' => $this->conditionFactory->subscriberFields(), 'Attributes' => $this->conditionFactory->attributeFields()),
+            array('prompt' => $selectPrompt, 'class' => 'autosubmit')
         );
     }
 
@@ -200,6 +147,7 @@ class SegmentPlugin extends phplistPlugin
             ),
         );
         $this->error_level = E_ALL ^ E_NOTICE ^ E_DEPRECATED ^ E_STRICT;
+        $this->error_level = E_ALL;
 
         parent::__construct();
         $this->version = (is_file($f = $this->coderoot . self::VERSION_FILE))
@@ -237,7 +185,7 @@ class SegmentPlugin extends phplistPlugin
             $this->dao,
             $daoAttr->attributesById()
         );
-        $this->logger = CommonPlugin_Logger::instance();
+        $this->logger = Logger::instance();
     }
 
     /**
@@ -263,65 +211,51 @@ class SegmentPlugin extends phplistPlugin
         global $pagefooter;
 
         $er = error_reporting($this->error_level);
-        $segment = isset($messageData['segment']) ? $messageData['segment'] : array();
-        $conditions = (isset($segment['c']))
-            ? array_values($this->filterEmptyFields($segment['c']))
-            : array();
+
+        $formFields = isset($messageData['segment']) ? $messageData['segment'] : array();
+        $segment = new Segment(
+            $messageId,
+            isset($formFields['c']) ? $formFields['c'] : array(),
+            isset($formFields['combine']) ? $formFields['combine'] : SegmentPlugin_Operator::ALL
+        );
         $saved = new SegmentPlugin_SavedSegments();
 
-        if (isset($segment['remove'])) {
-            $this->saveMessageSegment($messageId, $segment, ['c', 'combine', 'remove']);
-            $conditions = [];
-        } elseif (isset($segment['save']) && $segment['savename'] != '') {
+        if (isset($formFields['remove'])) {
+            $segment->removeAll();
+        } elseif (isset($formFields['save']) && $formFields['savename'] != '') {
             /*
              *  Save the current set of conditions
              */
-            $saved->addSegment($segment['savename'], $this->filterIncompleteConditions($conditions));
-            $this->saveMessageSegment($messageId, $segment, ['save']);
-        } elseif (isset($segment['load']) && isset($segment['usesaved']) && is_array($segment['usesaved'])) {
+            $saved->addSegment($formFields['savename'], $segment->conditions());
+        } elseif (isset($formFields['load']) && isset($formFields['usesaved']) && is_array($formFields['usesaved'])) {
             /*
-             *  Load saved segments and save the message data
+             *  Load the selected saved segments
              */
             try {
-                foreach ($segment['usesaved'] as $savedId) {
+                foreach ($formFields['usesaved'] as $savedId) {
                     $savedConditions = $saved->segmentById($savedId);
-                    $conditions = array_merge($conditions, $savedConditions);
+                    $segment->addConditions($savedConditions);
                 }
             } catch (Exception $e) {
                 // do nothing
             }
-            $conditions = $this->array_unique($conditions);
-            $segment['c'] = $conditions;
-            $this->saveMessageSegment($messageId, $segment, ['load', 'usesaved']);
         }
-        $combine = isset($segment['combine'])
-            ? $segment['combine'] : SegmentPlugin_Operator::ALL;
 
-        $conditions[] = array('field' => '');
         $selectPrompt = s('Select ...');
         $params = array();
         $params['condition'] = array();
         $params['selectPrompt'] = $selectPrompt;
 
-        foreach ($conditions as $i => $c) {
+        foreach ($segment->conditions() as $i => $c) {
             $s = new stdClass();
             $params['condition'][] = $s;
-
-            // display field selection drop-down list
-            $s->fieldList = CHtml::dropDownList(
-                "segment[c][$i][field]",
-                $c['field'],
-                array('Subscriber Data' => $this->conditionFactory->subscriberFields(), 'Attributes' => $this->conditionFactory->attributeFields()),
-                array('prompt' => $selectPrompt, 'class' => 'autosubmit')
-            );
-
-            // display hidden input to detect when field changes
-            $s->hiddenField = CHtml::hiddenField("segment[c][$i][_field]", $c['field']);
             $field = $c['field'];
 
-            if ($field == '') {
-                continue;
-            }
+            // display field selection drop-down list
+            $s->fieldList = $this->fieldDropDownList($field, $i, $selectPrompt);
+
+            // display hidden input to detect when field changes
+            $s->hiddenField = CHtml::hiddenField("segment[c][$i][_field]", $field);
 
             try {
                 $condition = $this->conditionFactory->createCondition($field);
@@ -342,10 +276,17 @@ class SegmentPlugin extends phplistPlugin
                 array('class' => 'autosubmit')
             );
 
-            // display value field
+            // display value
             $value = ($field == $c['_field'] && isset($c['value'])) ? $c['value'] : '';
             $s->display = $condition->display($op, $value, "segment[c][$i]");
         }
+
+        // add empty field
+        $s = new stdClass();
+        $i = count($segment->conditions());
+        $s->fieldList = $this->fieldDropDownList('', $i, $selectPrompt);
+        $s->hiddenField = CHtml::hiddenField("segment[c][$i][_field]", '');
+        $params['condition'][] = $s;
 
         // display warning if no lists have been selected
         if (!(is_array($messageData['targetlist']) && count($messageData['targetlist']) > 0)) {
@@ -370,23 +311,23 @@ class SegmentPlugin extends phplistPlugin
             );
         }
 
-        // display calculate button
-        $params['calculateButton'] = CHtml::submitButton(s('Calculate'), array('name' => 'segment[calculate]'));
-
         // display combine drop-down list
         $params['combineList'] = CHtml::dropDownList(
             'segment[combine]',
-            $combine,
+            $segment->combine(),
             array(SegmentPlugin_Operator::ONE => s('any'), SegmentPlugin_Operator::ALL => s('all'))
         );
 
+        // display calculate button
+        $params['calculateButton'] = CHtml::submitButton(s('Calculate'), array('name' => 'segment[calculate]'));
+
         // display calculated number of subscribers
-        if (isset($segment['calculate'])) {
+        if (isset($formFields['calculate'])) {
             try {
                 list($params['totalSubscribers'], $params['subscribers']) = $this->calculateSubscribers(
                     $messageId,
-                    $this->filterIncompleteConditions($segment['c']),
-                    $combine
+                    $segment->filterIncompleteConditions(),
+                    $segment->combine()
                 );
             } catch (SegmentPlugin_ValueException $e) {
                 $params['warning'] = s('One of the conditions has an invalid target value');
@@ -394,7 +335,7 @@ class SegmentPlugin extends phplistPlugin
         }
 
         // display remove all, save button and input field only when there is at least one entered condition
-        if (count($conditions) > 1) {
+        if (count($segment->conditions()) > 0) {
             $params['removeButton'] = CHtml::submitButton(s('Remove all'), array('name' => 'segment[remove]'));
             $params['saveButton'] = CHtml::submitButton(s('Save segment'), array('name' => 'segment[save]'));
             $params['saveName'] = CHtml::textField('segment[savename]', '', array('size' => 25, 'placeholder' => 'Name of segment'));
@@ -404,7 +345,7 @@ class SegmentPlugin extends phplistPlugin
         $params['help'] = CHtml::tag(
             'a',
             array('href' => self::GUIDANCE, 'target' => '_blank'),
-            new \phpList\plugin\Common\ImageTag('info.png', 'Guidance')
+            new ImageTag('info.png', 'Guidance')
         );
         $html = $this->render('sendtab.tpl.php', $params);
         $pagefooter[basename(__FILE__)] = file_get_contents($this->coderoot . 'script.html');
@@ -435,7 +376,7 @@ class SegmentPlugin extends phplistPlugin
      */
     public function messageQueued($id)
     {
-        $this->deleteNotSent($id);
+        $this->dao->deleteNotSent($id);
     }
 
     /**
@@ -463,14 +404,15 @@ class SegmentPlugin extends phplistPlugin
         $er = error_reporting($this->error_level);
 
         if (isset($messageData['segment']['c'])) {
-            $conditions = $this->filterIncompleteConditions($messageData['segment']['c']);
+            $segment = new Segment($messageData['id'], $messageData['segment']['c'], $messageData['segment']['combine']);
+            $conditions = $segment->filterIncompleteConditions();
 
             if (count($conditions) > 0) {
                 try {
                     $this->selectedSubscribers = $this->loadSubscribers(
                         $messageData['id'],
                         $conditions,
-                        $messageData['segment']['combine']
+                        $segment->combine()
                     );
                 } catch (SegmentPlugin_ValueException $e) {
                     logEvent("Invalid segment condition, message {$messageData['id']}");
@@ -511,19 +453,17 @@ class SegmentPlugin extends phplistPlugin
         if (!isset($messageData['segment'])) {
             return false;
         }
-        $segment = $messageData['segment'];
+        $formFields = $messageData['segment'];
 
-        if (!isset($segment['c'])) {
+        if (!isset($formFields['c'])) {
             return false;
         }
-        $conditions = array_values($this->filterEmptyFields($segment['c']));
+        $segment = new Segment($messageId, $formFields['c'], $formFields['combine']);
+        $conditions = $segment->conditions();
 
         if (count($conditions) == 0) {
             return false;
         }
-        $combine = isset($segment['combine'])
-            ? $segment['combine'] : SegmentPlugin_Operator::ALL;
-
         $params = array();
         $params['condition'] = array();
 
@@ -556,7 +496,7 @@ class SegmentPlugin extends phplistPlugin
 
         // display combine
         $combineOps = array(SegmentPlugin_Operator::ONE => s('any'), SegmentPlugin_Operator::ALL => s('all'));
-        $params['combine'] = $combineOps[$combine];
+        $params['combine'] = $combineOps[$segment->combine()];
 
         $html = $this->render('viewmessage.tpl.php', $params);
         error_reporting($er);
