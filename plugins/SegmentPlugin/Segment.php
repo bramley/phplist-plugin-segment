@@ -22,25 +22,40 @@
 
 namespace phpList\plugin\SegmentPlugin;
 
+use chdemko\BitArray\BitArray;
+use phpList\plugin\Common\DB;
+use phpList\plugin\Common\Logger;
+use SegmentPlugin_NoConditionsException;
+use SegmentPlugin_DAO;
+
 class Segment
 {
     private $changed = false;
     private $combine;
     private $conditions;
     private $messageId;
+    private $logger;
+    private $dao;
+    private $conditionFactory;
 
     /**
      * Constructor.
      *
-     * @param int   $messageId
-     * @param array $conditions
-     * @param int   $combine
+     * @param int                            $messageId
+     * @param array                          $conditions
+     * @param int                            $combine
+     * @param SegmentPlugin_ConditionFactory $conditionFactory
      */
-    public function __construct($messageId, $conditions, $combine)
+    public function __construct($messageId, $conditions, $combine, $conditionFactory)
     {
         $this->messageId = $messageId;
         $this->conditions = $this->filterEmptyFields($conditions);
         $this->combine = $combine;
+        $this->conditionFactory = $conditionFactory;
+
+        $db = new DB();
+        $this->dao = new SegmentPlugin_DAO($db);
+        $this->logger = Logger::instance();
     }
 
     /**
@@ -51,7 +66,7 @@ class Segment
     public function __destruct()
     {
         if ($this->changed) {
-            $this->save();
+            setMessageData($this->messageId, 'segment', ['c' => $this->conditions, 'combine' => $this->combine]);
             $this->changed = false;
         }
     }
@@ -92,30 +107,46 @@ class Segment
         $this->changed = true;
     }
 
-    /**
-     * Remove conditions that do not have an operator.
-     */
-    public function filterIncompleteConditions()
+    public function loadSubscribers()
     {
-        return array_filter(
-            $this->conditions,
-            function ($c) {
-                return isset($c['op']);
+        $this->filterIncompleteConditions();
+
+        if (count($this->conditions) == 0) {
+            throw new SegmentPlugin_NoConditionsException();
+        }
+        $highest = $this->dao->highestSubscriberId();
+        $subscribers = BitArray::fromInteger($highest + 1);
+        $joins = $this->selectionQueryJoins();
+
+        if (count($joins) > 0) {
+            foreach ($this->dao->subscribers($this->messageId, $joins, $this->combine) as $row) {
+                $subscribers[(int) $row['id']] = 1;
             }
-        );
+        }
+
+        return $subscribers;
     }
 
-    /**
-     * Saves the segment as a message data field.
-     */
-    private function save()
+    public function calculateSubscribers()
     {
-        setMessageData($this->messageId, 'segment', ['c' => $this->conditions, 'combine' => $this->combine]);
+        $this->logger->debug(sprintf(
+            "Prior usage %s\nPrior peak usage %s\nPrior peak real usage %s",
+            memory_get_usage(), memory_get_peak_usage(), memory_get_peak_usage(true)
+        ));
+        $this->filterIncompleteConditions();
+        $joins = $this->selectionQueryJoins();
+        $limit = getConfig('segment_subscribers_max');
+        list($count, $subscribers) = $this->dao->calculateSubscribers($this->messageId, $joins, $this->combine, $limit);
+        $this->logger->debug(sprintf(
+            "Post usage %s\nPost peak usage %s\nPost peak real usage %s",
+            memory_get_usage(), memory_get_peak_usage(), memory_get_peak_usage(true)
+        ));
+
+        return [$count, $subscribers];
     }
 
     /**
      * Return only those conditions that have a field.
-     * Remove conditions that have field value of 0, due to being removed in the UI.
      * Remove the condition with an empty field.
      */
     private function filterEmptyFields($conditions)
@@ -124,15 +155,26 @@ class Segment
             array_filter(
                 $conditions,
                 function ($c) {
-                    if ($c['field'] === 0) {
-                        $this->changed = true;
-
-                        return false;
-                    }
-
-                    return $c['field'] !== '';
+                    return $c['field'] != '';
                 }
             )
+        );
+    }
+
+    /**
+     * Remove conditions that do not have an operator.
+     */
+    private function filterIncompleteConditions()
+    {
+        $this->conditions = array_filter(
+            $this->conditions,
+            function ($c) {
+                if (empty($c['op'])) {
+                    $this->logger->debug(sprintf('Condition without an operator %s', print_r($c, true)));
+                }
+
+                return isset($c['op']);
+            }
         );
     }
 
@@ -153,5 +195,23 @@ class Segment
                 )
             )
         );
+    }
+
+    /**
+     * Create the join and where clauses for each condition.
+     *
+     * @return array
+     */
+    private function selectionQueryJoins()
+    {
+        $joins = [];
+
+        foreach ($this->conditions as $i => $c) {
+            $field = $c['field'];
+            $condition = $this->conditionFactory->createCondition($field);
+            $joins[] = $condition->joinQuery($c['op'], isset($c['value']) ? $c['value'] : '');
+        }
+
+        return $joins;
     }
 }
