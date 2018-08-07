@@ -38,7 +38,7 @@ class SegmentPlugin extends phplistPlugin
     public $settings;
 
     private $error_level;
-    private $selectedSubscribers = null;
+    private $selectedSubscribers = array();
     private $dao;
     private $conditionFactory;
     private $logger;
@@ -385,17 +385,19 @@ class SegmentPlugin extends phplistPlugin
     public function campaignStarted($messageData = array())
     {
         $er = error_reporting($this->error_level);
+        $messageId = $messageData['id'];
+        $this->selectedSubscribers[$messageId] = null;
 
         if (isset($messageData['segment']['c'])) {
             $segment = new Segment(
-                $messageData['id'],
+                $messageId,
                 $messageData['segment']['c'],
                 $messageData['segment']['combine'],
                 $this->conditionFactory
             );
 
             try {
-                $this->selectedSubscribers = $segment->loadSubscribers();
+                $this->selectedSubscribers[$messageId] = $segment->loadSubscribers();
             } catch (SegmentPlugin_ValueException $e) {
                 logEvent(s('Invalid value for segment condition'));
             } catch (SegmentPlugin_ConditionException $e) {
@@ -417,9 +419,12 @@ class SegmentPlugin extends phplistPlugin
      */
     public function canSend($messageData, $userData)
     {
-        return ($this->selectedSubscribers === null)
+        $messageId = $messageData['id'];
+        $userId = (int) $userData['id'];
+
+        return ($this->selectedSubscribers[$messageId] === null)
             ? true
-            : (bool) $this->selectedSubscribers[(int) $userData['id']];
+            : (bool) $this->selectedSubscribers[$messageId][$userId];
     }
 
     /**
