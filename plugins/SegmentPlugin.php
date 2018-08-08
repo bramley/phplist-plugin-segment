@@ -246,7 +246,7 @@ class SegmentPlugin extends phplistPlugin
         // display calculated number of subscribers
         if (isset($formFields['calculate'])) {
             try {
-                list($params['totalSubscribers'], $params['subscribers']) = $segment->calculateSubscribers();
+                list($params['totalSubscribers'], $params['subscribers']) = $segment->calculateSubscribers(getConfig('segment_subscribers_max'));
             } catch (SegmentPlugin_ValueException $e) {
                 $params['warning'] = s('Invalid value for segment condition');
             } catch (SegmentPlugin_ConditionException $e) {
@@ -320,7 +320,7 @@ class SegmentPlugin extends phplistPlugin
     }
 
     /**
-     * Validate that conditions are valid for the message to be submitted.
+     * Validate that conditions are valid for the message to be submitted by calculating the number of subscribers.
      *
      * @param array $messageData
      *
@@ -339,7 +339,7 @@ class SegmentPlugin extends phplistPlugin
         );
 
         try {
-            list($totalSubscribers, $subscribers) = $segment->calculateSubscribers();
+            list($totalSubscribers, $subscribers) = $segment->calculateSubscribers(getConfig('segment_subscribers_max'));
         } catch (SegmentPlugin_ValueException $e) {
             return s('Invalid value for segment condition');
         } catch (SegmentPlugin_ConditionException $e) {

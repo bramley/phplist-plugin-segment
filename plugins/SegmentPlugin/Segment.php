@@ -107,6 +107,13 @@ class Segment
         $this->changed = true;
     }
 
+    /**
+     * Load all the subscribers who are to receive the campaign.
+     *
+     * @throws SegmentPlugin_NoConditionsException if there are not any conditions
+     *
+     * @return BitArray
+     */
     public function loadSubscribers()
     {
         $this->filterIncompleteConditions();
@@ -127,7 +134,15 @@ class Segment
         return $subscribers;
     }
 
-    public function calculateSubscribers()
+    /**
+     * Query for the number of subscribers and their email addresses.
+     *
+     * @param int $limit
+     *
+     * @return array [0] int      number of subscribers
+     *               [1] Iterator subscriber email addresses
+     */
+    public function calculateSubscribers($limit = 0)
     {
         $this->logger->debug(sprintf(
             "Prior usage %s\nPrior peak usage %s\nPrior peak real usage %s",
@@ -135,7 +150,6 @@ class Segment
         ));
         $this->filterIncompleteConditions();
         $joins = $this->selectionQueryJoins();
-        $limit = getConfig('segment_subscribers_max');
         list($count, $subscribers) = $this->dao->calculateSubscribers($this->messageId, $joins, $this->combine, $limit);
         $this->logger->debug(sprintf(
             "Post usage %s\nPost peak usage %s\nPost peak real usage %s",
