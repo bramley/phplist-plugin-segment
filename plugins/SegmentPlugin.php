@@ -19,8 +19,8 @@
  * @copyright 2014-2017 Duncan Cameron
  * @license   http://www.gnu.org/licenses/gpl.html GNU General Public License, Version 3
  */
+use phpList\plugin\Common\Container;
 use phpList\plugin\Common\ImageTag;
-use phpList\plugin\Common\Logger;
 use phpList\plugin\SegmentPlugin\Segment;
 
 class SegmentPlugin extends phplistPlugin
@@ -108,14 +108,11 @@ class SegmentPlugin extends phplistPlugin
     {
         parent::activate();
 
-        $db = new CommonPlugin_DB();
-        $this->dao = new SegmentPlugin_DAO($db);
-        $daoAttr = new CommonPlugin_DAO_Attribute($db, 20, 0);
-        $this->conditionFactory = new SegmentPlugin_ConditionFactory(
-            $this->dao,
-            $daoAttr->attributesById()
-        );
-        $this->logger = Logger::instance();
+        $depends = require $this->coderoot . 'depends.php';
+        $container = new Container($depends);
+        $this->dao = $container->get('SegmentPlugin_DAO');
+        $this->conditionFactory = $container->get('ConditionFactory');
+        //~ $this->logger = $container->get('Logger');
     }
 
     /**
@@ -161,7 +158,6 @@ class SegmentPlugin extends phplistPlugin
             isset($formFields['combine']) ? $formFields['combine'] : SegmentPlugin_Operator::ALL,
             $this->conditionFactory
         );
-        $saved = new SegmentPlugin_SavedSegments();
         $selectPrompt = s('Select ...');
         $params = array();
         $params['condition'] = array();
@@ -178,6 +174,7 @@ class SegmentPlugin extends phplistPlugin
                 $s->error = s('Unable to create condition - %s', $e->getMessage());
                 continue;
             }
+            $condition->messageData = $messageData;
 
             // display field selection drop-down list
             $s->fieldList = $this->fieldDropDownList($field, $i, $selectPrompt);
@@ -185,21 +182,18 @@ class SegmentPlugin extends phplistPlugin
             // display hidden input to detect when field changes
             $s->hiddenField = CHtml::hiddenField("segment[c][$i][_field]", $field);
 
-            $condition->messageData = $messageData;
-
             // display operators drop-down list
             $operators = $condition->operators();
-
-            $op = ($field == $c['_field'] && isset($c['op'])) ? $c['op'] : key($operators);
+            $selected = isset($c['op']) ? $c['op'] : key($operators);
             $s->operatorList = CHtml::dropDownList(
                 "segment[c][$i][op]",
-                $op,
+                $selected,
                 $operators,
                 array('class' => 'autosubmit')
             );
 
             // display value
-            $value = ($field == $c['_field'] && isset($c['value'])) ? $c['value'] : '';
+            $value = isset($c['value']) ? $c['value'] : '';
             $s->display = $condition->display($op, $value, "segment[c][$i]");
         }
 
@@ -216,6 +210,7 @@ class SegmentPlugin extends phplistPlugin
         }
 
         // display fields for saved segments only where there are some
+        $saved = new SegmentPlugin_SavedSegments();
         $savedListData = $saved->selectListData();
 
         if (count($savedListData) > 0) {
@@ -242,6 +237,11 @@ class SegmentPlugin extends phplistPlugin
 
         // display calculate button
         $params['calculateButton'] = CHtml::submitButton(s('Calculate'), array('name' => 'segment[calculate]'));
+        $params['exportCalculatedButton'] = new CommonPlugin_PageLink(
+            new CommonPlugin_PageURL('export', array('pi' => 'SegmentPlugin', 'id' => $messageId)),
+            'Export subscribers',
+            array('class' => 'button dialog')
+        );
 
         // display calculated number of subscribers
         if (isset($formFields['calculate'])) {
@@ -474,11 +474,11 @@ class SegmentPlugin extends phplistPlugin
 
             // display operator
             $operators = $condition->operators();
-            $op = ($field == $c['_field'] && isset($c['op'])) ? $c['op'] : key($operators);
+            $op = isset($c['op']) ? $c['op'] : key($operators);
             $s->operator = $operators[$op];
 
             // display value field
-            $value = ($field == $c['_field'] && isset($c['value'])) ? $c['value'] : '';
+            $value = isset($c['value']) ? $c['value'] : '';
             $s->display = $condition->display($op, $value, "segment[c][$i]");
         }
 

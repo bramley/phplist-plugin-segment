@@ -49,13 +49,16 @@ class Segment
     public function __construct($messageId, $conditions, $combine, $conditionFactory)
     {
         $this->messageId = $messageId;
-        $this->conditions = $this->filterEmptyFields($conditions);
+        $this->conditions = $conditions;
+        $this->filterEmptyFields();
+        $this->resetChangedFields();
         $this->combine = $combine;
         $this->conditionFactory = $conditionFactory;
 
         $db = new DB();
         $this->dao = new SegmentPlugin_DAO($db);
         $this->logger = Logger::instance();
+        $this->logger->debug(print_r($this->conditions, true));
     }
 
     /**
@@ -160,18 +163,35 @@ class Segment
     }
 
     /**
-     * Return only those conditions that have a field.
-     * Remove the condition with an empty field.
+     * Remove any conditions that have an empty field.
      */
-    private function filterEmptyFields($conditions)
+    private function filterEmptyFields()
     {
-        return array_values(
+        $this->conditions = array_values(
             array_filter(
-                $conditions,
+                $this->conditions,
                 function ($c) {
                     return $c['field'] != '';
                 }
             )
+        );
+    }
+
+    /**
+     * When a field has been changed unset the operator and value.
+     */
+    private function resetChangedFields()
+    {
+        $this->conditions = array_map(
+            function ($c) {
+                if ($c['field'] != $c['_field']) {
+                    unset($c['op']);
+                    unset($c['value']);
+                }
+
+                return $c;
+            },
+            $this->conditions
         );
     }
 

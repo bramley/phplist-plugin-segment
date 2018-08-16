@@ -82,6 +82,7 @@
 <?php if (isset($removeButton)) echo $removeButton; ?>
 <?php echo $calculateButton ?>
 <?php if (isset($totalSubscribers)): ?>
+    <?php echo $exportCalculatedButton ?>
         <div class="note">
     <?php echo s('%d subscribers will be selected.', $totalSubscribers); ?>
     <?php if ($totalSubscribers > count($subscribers)): echo s('First %d subscribers:', count($subscribers)); endif; ?>
@@ -108,3 +109,11 @@
     </div>
 <?php endif; ?>
 </div>
+<?php
+global $plugins, $pagefooter, $ui, $THEMES;
+
+$themeDir = isset($THEMES[$ui]['parentdir']) ? $THEMES[$ui]['parentdir'] : $ui;
+
+if (is_readable($f = $plugins['CommonPlugin']->coderoot . "ui/$themeDir/dialog.js")) {
+    $pagefooter[__FILE__] = file_get_contents($f);
+}
