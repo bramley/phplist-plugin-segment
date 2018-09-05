@@ -71,6 +71,7 @@ This plugin is free but if you install and find it useful then a donation to sup
 ## Version history ##
 
     version         Description
+    2.5.0+20180906  Segment according to a textarea filled with emails
     2.4.0+20180905  Add export of selected subscribers
     2.3.0+20180722  Display subscribers that meet the segment conditions
     2.2.7+20180517  Avoid dependency on php 5.6

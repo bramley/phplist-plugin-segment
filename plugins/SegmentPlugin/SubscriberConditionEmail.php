@@ -33,15 +33,15 @@ class SegmentPlugin_SubscriberConditionEmail extends SegmentPlugin_Condition
             SegmentPlugin_Operator::NOTMATCHES => s('does not match'),
             SegmentPlugin_Operator::REGEXP => s('REGEXP'),
             SegmentPlugin_Operator::NOTREGEXP => s('not REGEXP'),
+            SegmentPlugin_Operator::ISINCLUDED => s('is included'),
         );
     }
 
     public function display($op, $value, $namePrefix)
     {
-        return CHtml::textField(
-            $namePrefix . '[value]',
-            $value
-        );
+        return $op == SegmentPlugin_Operator::ISINCLUDED
+            ? CHtml::textArea($namePrefix . '[value]', $value)
+            : CHtml::textField($namePrefix . '[value]', $value);
     }
 
     public function joinQuery($operator, $value)
@@ -49,8 +49,7 @@ class SegmentPlugin_SubscriberConditionEmail extends SegmentPlugin_Condition
         if (!(is_string($value) && $value !== '')) {
             throw new SegmentPlugin_ValueException();
         }
-
-        $value = sql_escape($value);
+        $target = null;
 
         switch ($operator) {
             case SegmentPlugin_Operator::MATCHES:
@@ -65,14 +64,22 @@ class SegmentPlugin_SubscriberConditionEmail extends SegmentPlugin_Condition
             case SegmentPlugin_Operator::NOTREGEXP:
                 $op = 'NOT REGEXP';
                 break;
+            case SegmentPlugin_Operator::ISINCLUDED:
+                $emails = preg_split("/[\r\n]+/", $value, -1, PREG_SPLIT_NO_EMPTY);
+                $op = 'IN';
+                $target = '(' . $this->commaQuotedList($emails) . ')';
+                break;
             case SegmentPlugin_Operator::IS:
             default:
                 $op = '=';
         }
 
+        if (!$target) {
+            $target = "'" . sql_escape($value) . "'";
+        }
         $r = new stdClass();
         $r->join = '';
-        $r->where = "u.email $op '$value'";
+        $r->where = "u.email $op $target";
 
         return $r;
     }

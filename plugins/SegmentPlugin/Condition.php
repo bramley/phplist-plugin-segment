@@ -39,6 +39,26 @@ abstract class SegmentPlugin_Condition
         return '(' . implode(', ', $values) . ')';
     }
 
+    /**
+     * Create a comma separated list of the quoted array values for use in an sql statement.
+     *
+     * @param array values to be combined
+     *
+     * @return string
+     */
+    protected function commaQuotedList(array $values)
+    {
+        return implode(
+            ', ',
+            array_map(
+                function ($item) {
+                    return "'" . sql_escape($item) . "'";
+                },
+                $values
+            )
+        );
+    }
+
     protected function createUniqueAlias($alias)
     {
         return $alias . $this->id;

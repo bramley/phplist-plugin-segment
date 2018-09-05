@@ -1,3 +1,7 @@
+version 2.5.0+20180906
+Aris (1):
+      Option to segment according to a textarea filled with emails
+
 version 2.4.0+20180905
       Refactor condition handling into new class
       Move calculation of subscribers into the Segment class
