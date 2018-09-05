@@ -46,6 +46,7 @@ class SegmentPlugin_Operator
     const NOTCLICKED = 19;
     const BETWEEN = 20;
     const AFTERINTERVAL = 21;
+    const ISINCLUDED = 22;
 
     private function __construct()
     {

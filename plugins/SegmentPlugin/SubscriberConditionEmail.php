@@ -33,15 +33,23 @@ class SegmentPlugin_SubscriberConditionEmail extends SegmentPlugin_Condition
             SegmentPlugin_Operator::NOTMATCHES => s('does not match'),
             SegmentPlugin_Operator::REGEXP => s('REGEXP'),
             SegmentPlugin_Operator::NOTREGEXP => s('not REGEXP'),
+            SegmentPlugin_Operator::ISINCLUDED => s('is included')
         );
     }
 
     public function display($op, $value, $namePrefix)
     {
-        return CHtml::textField(
-            $namePrefix . '[value]',
-            $value
-        );
+        if($op == SegmentPlugin_Operator::ISINCLUDED){
+            return CHtml::textArea(
+                $namePrefix . '[value]',
+                $value
+            );
+        }else{
+            return CHtml::textField(
+                $namePrefix . '[value]',
+                $value
+            );
+        }
     }
 
     public function joinQuery($operator, $value)
@@ -65,6 +73,15 @@ class SegmentPlugin_SubscriberConditionEmail extends SegmentPlugin_Condition
             case SegmentPlugin_Operator::NOTREGEXP:
                 $op = 'NOT REGEXP';
                 break;
+            case SegmentPlugin_Operator::ISINCLUDED:
+			    $emails = explode('\r\n', $value);
+			    $query = "";
+			    $op = '=';
+                foreach($emails as $key => $email){
+                    $query .= "u.email $op '$email' OR ";
+                }
+                $query = rtrim($query, 'OR ');
+                break;
             case SegmentPlugin_Operator::IS:
             default:
                 $op = '=';
@@ -72,7 +89,10 @@ class SegmentPlugin_SubscriberConditionEmail extends SegmentPlugin_Condition
 
         $r = new stdClass();
         $r->join = '';
-        $r->where = "u.email $op '$value'";
+        if($operator != SegmentPlugin_Operator::ISINCLUDED)
+            $r->where = "u.email $op '$value'";
+        else
+            $r->where = $query;
 
         return $r;
     }
