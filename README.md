@@ -27,7 +27,7 @@ The target value, also specific to each field, can be a text value, a select val
 Requires phplist version 3.3.2 or later, and php version 5.4.0 or later.
 Please check your php version before installing the plugin, otherwise phplist will fail (probably a white page).
 
-This plugin requires the Common Plugin version 3.8.0 or greater to also be installed, and will not work without that.
+This plugin requires the Common Plugin version 3.9.0 or greater to also be installed, and will not work without that.
 **You must install that plugin or upgrade to the latest version if it is already installed**.
 See <https://github.com/bramley/phplist-plugin-common>
 
@@ -71,6 +71,7 @@ This plugin is free but if you install and find it useful then a donation to sup
 ## Version history ##
 
     version         Description
+    2.4.0+20180905  Add export of selected subscribers
     2.3.0+20180722  Display subscribers that meet the segment conditions
     2.2.7+20180517  Avoid dependency on php 5.6
     2.2.6+20180328  Reduce the level of php errors that are reported

@@ -1,3 +1,14 @@
+version 2.4.0+20180905
+      Refactor condition handling into new class
+      Move calculation of subscribers into the Segment class
+      Store selected subscribers for each campaign
+      Refactor use of limit when calculating subscribers
+      Add export of selected subscribers
+      Add dependency container
+      Improve handling of empty and changed fields
+      Ensure segment is created only once
+      Further refactoring
+
 version 2.3.0+20180722
       Simplify condition factory and use of attributes
       Display subscribers that meet the segment conditions

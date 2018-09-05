@@ -25,6 +25,7 @@ namespace phpList\plugin\SegmentPlugin;
 use chdemko\BitArray\BitArray;
 use phpList\plugin\Common\DB;
 use phpList\plugin\Common\Logger;
+use phpList\plugin\Common\StringCallback;
 use SegmentPlugin_NoConditionsException;
 use SegmentPlugin_DAO;
 
@@ -58,7 +59,6 @@ class Segment
         $db = new DB();
         $this->dao = new SegmentPlugin_DAO($db);
         $this->logger = Logger::instance();
-        $this->logger->debug(print_r($this->conditions, true));
     }
 
     /**
@@ -147,17 +147,21 @@ class Segment
      */
     public function calculateSubscribers($limit = 0)
     {
-        $this->logger->debug(sprintf(
-            "Prior usage %s\nPrior peak usage %s\nPrior peak real usage %s",
-            memory_get_usage(), memory_get_peak_usage(), memory_get_peak_usage(true)
-        ));
+        $this->logger->debug(new StringCallback(function () {
+            return sprintf(
+                "Prior usage %s\nPrior peak usage %s\nPrior peak real usage %s",
+                memory_get_usage(), memory_get_peak_usage(), memory_get_peak_usage(true)
+            );
+        }));
         $this->filterIncompleteConditions();
         $joins = $this->selectionQueryJoins();
         list($count, $subscribers) = $this->dao->calculateSubscribers($this->messageId, $joins, $this->combine, $limit);
-        $this->logger->debug(sprintf(
-            "Post usage %s\nPost peak usage %s\nPost peak real usage %s",
-            memory_get_usage(), memory_get_peak_usage(), memory_get_peak_usage(true)
-        ));
+        $this->logger->debug(new StringCallback(function () {
+            return sprintf(
+                "Post usage %s\nPost peak usage %s\nPost peak real usage %s",
+                memory_get_usage(), memory_get_peak_usage(), memory_get_peak_usage(true)
+            );
+        }));
 
         return [$count, $subscribers];
     }

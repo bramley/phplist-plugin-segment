@@ -110,10 +110,6 @@
 <?php endif; ?>
 </div>
 <?php
-global $plugins, $pagefooter, $ui, $THEMES;
+global $plugins;
 
-$themeDir = isset($THEMES[$ui]['parentdir']) ? $THEMES[$ui]['parentdir'] : $ui;
-
-if (is_readable($f = $plugins['CommonPlugin']->coderoot . "ui/$themeDir/dialog.js")) {
-    $pagefooter[__FILE__] = file_get_contents($f);
-}
+require $plugins['CommonPlugin']->coderoot . 'dialog_js.php';
