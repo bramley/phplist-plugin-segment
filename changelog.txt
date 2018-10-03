@@ -1,3 +1,7 @@
+version 2.5.1+20181003
+      Fix earlier regression that limited the number of attributes to 15.
+      Fixes #18
+
 version 2.5.0+20180906
 Aris (1):
       Option to segment according to a textarea filled with emails
