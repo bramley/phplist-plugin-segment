@@ -93,6 +93,9 @@ class SegmentPlugin_ConditionFactory
                 case 'uniqid':
                     $r = new SegmentPlugin_SubscriberConditionIdentity($field);
                     break;
+                case 'lists':
+                    $r = new SegmentPlugin_SubscriberConditionLists($field);
+                    break;
                 default:
                     throw new SegmentPlugin_ConditionException("unrecognised subscriber field $field");
             }
@@ -125,6 +128,7 @@ class SegmentPlugin_ConditionFactory
             'email' => 'email address',
             'id' => 'subscriber id',
             'uniqid' => 'subscriber unique id',
+            'lists' => 'List membership',
         );
     }
 }

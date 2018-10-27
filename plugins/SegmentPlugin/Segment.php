@@ -247,6 +247,7 @@ class Segment
         foreach ($this->conditions as $i => $c) {
             $field = $c['field'];
             $condition = $this->conditionFactory->createCondition($field);
+            $condition->messageData = loadMessageData($this->messageId);
             $joins[] = $condition->joinQuery($c['op'], isset($c['value']) ? $c['value'] : '');
         }
 
