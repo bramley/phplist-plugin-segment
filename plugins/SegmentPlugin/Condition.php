@@ -32,7 +32,9 @@ abstract class SegmentPlugin_Condition
     protected $tables;
     protected $table_prefix;
 
+    // set by ConditionFactory
     public $dao;
+    public $messageData;
 
     protected function formatInList(array $values)
     {

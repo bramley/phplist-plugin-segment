@@ -168,12 +168,11 @@ class SegmentPlugin extends phplistPlugin
             $field = $c['field'];
 
             try {
-                $condition = $this->conditionFactory->createCondition($field);
+                $condition = $this->conditionFactory->createCondition($field, $messageData);
             } catch (SegmentPlugin_ConditionException $e) {
                 $s->error = s('Unable to create condition - %s', $e->getMessage());
                 continue;
             }
-            $condition->messageData = $messageData;
 
             // display field selection drop-down list
             $s->fieldList = $this->fieldDropDownList($field, $i, $selectPrompt);
@@ -405,12 +404,11 @@ class SegmentPlugin extends phplistPlugin
             $field = $c['field'];
 
             try {
-                $condition = $this->conditionFactory->createCondition($field);
+                $condition = $this->conditionFactory->createCondition($field, $messageData);
             } catch (SegmentPlugin_ConditionException $e) {
                 $s->error = sprintf('Unable to create condition - %s', $e->getMessage());
                 continue;
             }
-            $condition->messageData = $messageData;
 
             // display field selection
             $fields = $this->conditionFactory->subscriberFields() + $this->conditionFactory->attributeFields();

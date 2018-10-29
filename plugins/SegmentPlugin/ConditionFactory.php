@@ -46,7 +46,7 @@ class SegmentPlugin_ConditionFactory
      *
      * @return SegmentPlugin_Condition
      */
-    public function createCondition($field)
+    public function createCondition($field, $messageData)
     {
         if (ctype_digit($field)) {
             if (!isset($this->attributes[$field])) {
@@ -101,6 +101,7 @@ class SegmentPlugin_ConditionFactory
             }
         }
         $r->dao = $this->dao;
+        $r->messageData = $messageData;
 
         return $r;
     }
