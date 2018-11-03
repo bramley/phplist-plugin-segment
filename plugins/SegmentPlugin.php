@@ -168,7 +168,7 @@ class SegmentPlugin extends phplistPlugin
             $field = $c['field'];
 
             try {
-                $condition = $this->conditionFactory->createCondition($field, $messageData);
+                $type = $this->conditionFactory->createConditionType($field, $messageData);
             } catch (SegmentPlugin_ConditionException $e) {
                 $s->error = s('Unable to create condition - %s', $e->getMessage());
                 continue;
@@ -181,7 +181,7 @@ class SegmentPlugin extends phplistPlugin
             $s->hiddenField = CHtml::hiddenField("segment[c][$i][_field]", $field);
 
             // display operators drop-down list
-            $operators = $condition->operators();
+            $operators = $type->operators();
             $selected = isset($c['op']) ? $c['op'] : key($operators);
             $s->operatorList = CHtml::dropDownList(
                 "segment[c][$i][op]",
@@ -192,7 +192,7 @@ class SegmentPlugin extends phplistPlugin
 
             // display value
             $value = isset($c['value']) ? $c['value'] : '';
-            $s->display = $condition->display($selected, $value, "segment[c][$i]");
+            $s->display = $type->display($selected, $value, "segment[c][$i]");
         }
 
         // add empty field
@@ -404,7 +404,7 @@ class SegmentPlugin extends phplistPlugin
             $field = $c['field'];
 
             try {
-                $condition = $this->conditionFactory->createCondition($field, $messageData);
+                $type = $this->conditionFactory->createConditionType($field, $messageData);
             } catch (SegmentPlugin_ConditionException $e) {
                 $s->error = sprintf('Unable to create condition - %s', $e->getMessage());
                 continue;
@@ -415,13 +415,13 @@ class SegmentPlugin extends phplistPlugin
             $s->field = $fields[$field];
 
             // display operator
-            $operators = $condition->operators();
+            $operators = $type->operators();
             $op = isset($c['op']) ? $c['op'] : key($operators);
             $s->operator = $operators[$op];
 
             // display value field
             $value = isset($c['value']) ? $c['value'] : '';
-            $s->display = $condition->display($op, $value, "segment[c][$i]");
+            $s->display = $type->display($op, $value, "segment[c][$i]");
         }
 
         // display combine
