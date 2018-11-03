@@ -71,6 +71,7 @@ This plugin is free but if you install and find it useful then a donation to sup
 ## Version history ##
 
     version         Description
+    2.6.0+20181103  Add condition for subscriber belonging to all lists selected for the campaign
     2.5.1+20181003  Fix earlier regression that limited the number of attributes to 15
     2.5.0+20180906  Segment according to a textarea filled with emails
     2.4.0+20180905  Add export of selected subscribers

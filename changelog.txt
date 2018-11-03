@@ -1,3 +1,9 @@
+version 2.6.0+20181103
+      Add condition for subscriber belonging to all lists selected for the campaign
+      Rework how messageData is provided when creating a condition
+      Rename method and variables for condition type
+      Fix error in earlier commit of creating segment only once
+
 version 2.5.1+20181003
       Fix earlier regression that limited the number of attributes to 15.
       Fixes #18

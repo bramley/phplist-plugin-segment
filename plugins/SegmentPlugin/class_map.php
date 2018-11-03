@@ -18,6 +18,7 @@ return array(
     'SegmentPlugin_SubscriberConditionEmail' => $base . '/SegmentPlugin/SubscriberConditionEmail.php',
     'SegmentPlugin_SubscriberConditionEntered' => $base . '/SegmentPlugin/SubscriberConditionEntered.php',
     'SegmentPlugin_SubscriberConditionIdentity' => $base . '/SegmentPlugin/SubscriberConditionIdentity.php',
+    'SegmentPlugin_SubscriberConditionLists' => $base . '/SegmentPlugin/SubscriberConditionLists.php',
     'SegmentPlugin_ValueException' => $base . '/SegmentPlugin/ValueException.php',
     'phpList\plugin\SegmentPlugin\ControllerFactory' => $base . '/SegmentPlugin/ControllerFactory.php',
     'phpList\plugin\SegmentPlugin\Segment' => $base . '/SegmentPlugin/Segment.php',
