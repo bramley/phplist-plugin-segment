@@ -340,7 +340,8 @@ class SegmentPlugin extends phplistPlugin
             $segment = $this->createSegment($messageId, $messageData['segment']);
 
             try {
-                $this->selectedSubscribers[$messageId] = $segment->loadSubscribers();
+                list($total, $this->selectedSubscribers[$messageId]) = $segment->loadSubscribers();
+                logEvent(s('Segment plugin selected %d subscribers for campaign %d', $total, $messageId));
             } catch (SegmentPlugin_ValueException $e) {
                 logEvent(s('Invalid value for segment condition'));
             } catch (SegmentPlugin_ConditionException $e) {
