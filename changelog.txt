@@ -1,3 +1,7 @@
+version 2.6.1+20181104
+      When sending a campaign log an event showing the number of subscribers selected
+      Update English translations
+
 version 2.6.0+20181103
       Add condition for subscriber belonging to all lists selected for the campaign
       Rework how messageData is provided when creating a condition
