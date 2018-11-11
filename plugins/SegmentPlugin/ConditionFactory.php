@@ -84,6 +84,9 @@ class SegmentPlugin_ConditionFactory
                 case 'entered':
                     $r = new SegmentPlugin_SubscriberConditionEntered($field);
                     break;
+                case 'listentered':
+                    $r = new SegmentPlugin_SubscriberConditionListEntered($field);
+                    break;
                 case 'email':
                     $r = new SegmentPlugin_SubscriberConditionEmail($field);
                     break;
@@ -124,12 +127,13 @@ class SegmentPlugin_ConditionFactory
     public function subscriberFields()
     {
         return array(
-            'activity' => 'Campaign activity',
-            'entered' => 'Entered date',
-            'email' => 'email address',
-            'id' => 'subscriber id',
-            'uniqid' => 'subscriber unique id',
+            'email' => 'Email address',
+            'id' => 'Subscriber id',
+            'uniqid' => 'Subscriber unique id',
+            'entered' => 'Date signed-up to phpList',
+            'listentered' => 'Date subscribed to list',
             'lists' => 'List membership',
+            'activity' => 'Campaign activity',
         );
     }
 }
