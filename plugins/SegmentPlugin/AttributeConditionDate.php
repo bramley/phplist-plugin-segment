@@ -25,31 +25,26 @@
  */
 class SegmentPlugin_AttributeConditionDate extends SegmentPlugin_DateConditionBase
 {
-    public function joinQuery($operator, $value)
+    protected function queryCallBacks()
     {
         $ua = $this->createUniqueAlias('ua');
-        $r = new stdClass();
-        $r->join = "LEFT JOIN {$this->tables['user_attribute']} $ua ON u.id = $ua.userid AND $ua.attributeid = {$this->field['id']} ";
 
-        if ($operator == SegmentPlugin_Operator::AFTERINTERVAL) {
-            $value1 = $this->validateInterval($value[0]);
-            $r->where =
-                "COALESCE($ua.value, '') != ''
-                AND CURDATE() = DATE($ua.value) + INTERVAL $value1";
-        } else {
-            list($value1, $value2) = $this->validateDates($operator, $value);
-            $value1 = sql_escape($value1);
-
-            if ($operator == SegmentPlugin_Operator::BETWEEN) {
-                $value2 = sql_escape($value2);
-                $r->where = "(COALESCE($ua.value, '') != '' AND DATE(COALESCE($ua.value, '')) BETWEEN '$value1' AND '$value2')";
-            } else {
-                $op = $operator == SegmentPlugin_Operator::BEFORE ? '<'
-                    : ($operator == SegmentPlugin_Operator::AFTER ? '>' : '=');
-                $r->where = "(COALESCE($ua.value, '') != '' AND DATE(COALESCE($ua.value, '')) $op '$value1')";
-            }
-        }
-
-        return $r;
+        return [
+            'JOIN' => function () use ($ua) {
+                return "LEFT JOIN {$this->tables['user_attribute']} $ua ON u.id = $ua.userid AND $ua.attributeid = {$this->field['id']} ";
+            },
+            SegmentPlugin_Operator::AFTERINTERVAL => function ($interval) use ($ua) {
+                return "COALESCE($ua.value, '') != '' AND CURDATE() = DATE($ua.value) + INTERVAL $interval";
+            },
+            SegmentPlugin_Operator::BETWEEN => function ($start, $end) use ($ua) {
+                return "(COALESCE($ua.value, '') != '' AND DATE(COALESCE($ua.value, '')) BETWEEN '$start' AND '$end')";
+            },
+            SegmentPlugin_Operator::BEFORE => function ($date) use ($ua) {
+                return "(COALESCE($ua.value, '') != '' AND DATE(COALESCE($ua.value, '')) < '$date')";
+            },
+            SegmentPlugin_Operator::AFTER => function ($date) use ($ua) {
+                return "(COALESCE($ua.value, '') != '' AND DATE(COALESCE($ua.value, '')) > '$date')";
+            },
+        ];
     }
 }

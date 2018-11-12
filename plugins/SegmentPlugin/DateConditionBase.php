@@ -25,6 +25,16 @@
  */
 abstract class SegmentPlugin_DateConditionBase extends SegmentPlugin_Condition
 {
+    /**
+     * To be implemented by sub-classes.
+     * A subclass must provide a set of callbacks that return
+     *     the join clause
+     *     the where clause for each operator.
+     *
+     * @return array
+     */
+    abstract protected function queryCallBacks();
+
     protected function validateInterval($interval)
     {
         if (!preg_match('/^([+-]?\d+\s+(day|week|month|quarter|year))s?$/i', $interval, $matches)) {
@@ -48,7 +58,7 @@ abstract class SegmentPlugin_DateConditionBase extends SegmentPlugin_Condition
         }
 
         if ($op == SegmentPlugin_Operator::BETWEEN) {
-            if (!$value[1]) {
+            if (empty($value[1])) {
                 throw new SegmentPlugin_ValueException();
             }
             try {
@@ -104,5 +114,27 @@ abstract class SegmentPlugin_DateConditionBase extends SegmentPlugin_Condition
         }
 
         return $html;
+    }
+
+    public function joinQuery($operator, $value)
+    {
+        $callBack = $this->queryCallBacks();
+        $r = new stdClass();
+        $r->join = $callBack['JOIN']();
+
+        if ($operator == SegmentPlugin_Operator::AFTERINTERVAL) {
+            $interval = $this->validateInterval($value[0]);
+            $r->where = $callBack[$operator]($interval);
+        } else {
+            list($value1, $value2) = $this->validateDates($operator, $value);
+
+            if ($operator == SegmentPlugin_Operator::BETWEEN) {
+                $r->where = $callBack[$operator]($value1, $value2);
+            } else {
+                $r->where = $callBack[$operator]($value1);
+            }
+        }
+
+        return $r;
     }
 }

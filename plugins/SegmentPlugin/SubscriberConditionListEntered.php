@@ -25,28 +25,24 @@
  */
 class SegmentPlugin_SubscriberConditionListEntered extends SegmentPlugin_DateConditionBase
 {
-    public function joinQuery($operator, $value)
+    protected function queryCallBacks()
     {
-        $r = new stdClass();
-        $r->join = '';
-
-        if ($operator == SegmentPlugin_Operator::AFTERINTERVAL) {
-            $value1 = $this->validateInterval($value[0]);
-            $r->where = "CURDATE() = DATE(lu0.entered) + INTERVAL $value1";
-        } else {
-            list($value1, $value2) = $this->validateDates($operator, $value);
-            $value1 = sql_escape($value1);
-
-            if ($operator == SegmentPlugin_Operator::BETWEEN) {
-                $value2 = sql_escape($value2);
-                $r->where = "DATE(lu0.entered) BETWEEN '$value1' AND '$value2'";
-            } else {
-                $op = $operator == SegmentPlugin_Operator::BEFORE ? '<'
-                    : ($operator == SegmentPlugin_Operator::AFTER ? '>' : '=');
-                $r->where = "DATE(lu0.entered) $op '$value1'";
-            }
-        }
-
-        return $r;
+        return [
+            'JOIN' => function () {
+                return '';
+            },
+            SegmentPlugin_Operator::AFTERINTERVAL => function ($interval) {
+                return "CURDATE() = DATE(lu0.entered) + INTERVAL $interval";
+            },
+            SegmentPlugin_Operator::BETWEEN => function ($start, $end) {
+                return "DATE(lu0.entered) BETWEEN '$start' AND '$end'";
+            },
+            SegmentPlugin_Operator::BEFORE => function ($date) {
+                return "DATE(lu0.entered) < '$date'";
+            },
+            SegmentPlugin_Operator::AFTER => function ($date) {
+                return "DATE(lu0.entered) > '$date'";
+            },
+        ];
     }
 }
