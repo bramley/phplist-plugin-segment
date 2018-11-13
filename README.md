@@ -11,9 +11,11 @@ These subscriber fields and attributes are supported for fields:
 
 * each subscriber attribute
 * the subscriber email address
-* the subscriber Entered date
 * the subscriber id
 * the subscriber unique id
+* the date they signed-up to phpList
+* the date they subscribed to the lists to which the campaign is being sent
+* the subscriber belongs to all lists to which the campaign is being sent
 * subscriber campaign activity - whether the subscriber was sent, opened, or clicked a link in a specific prior campaign
 
 Each condition has a set of operators, specific to each field, such as 'is', 'is not', 'matches', 'is before', 'opened', etc.
@@ -71,6 +73,7 @@ This plugin is free but if you install and find it useful then a donation to sup
 ## Version history ##
 
     version         Description
+    2.7.0+20181115  Add condition for date subscribed to list
     2.6.1+20181104  When sending a campaign log an event showing the number of subscribers selected
     2.6.0+20181103  Add condition for subscriber belonging to all lists selected for the campaign
     2.5.1+20181003  Fix earlier regression that limited the number of attributes to 15

@@ -1,3 +1,8 @@
+version 2.7.0+20181115
+      Add condition for date subscribed to list
+      Refactor joinQuery() for each date field
+      Update cs config to not apply yoda rules.
+
 version 2.6.1+20181104
       When sending a campaign log an event showing the number of subscribers selected
       Update English translations
