@@ -48,6 +48,7 @@ return [
     ['matches', 'matches'],
     ['none checked', 'none checked'],
     ['not REGEXP', 'not REGEXP'],
+    ['on anniversary', 'on anniversary'],
     ['one checked', 'one checked'],
     ['opened', 'opened'],
     ['was not sent', 'was not sent'],

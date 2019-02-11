@@ -91,6 +91,9 @@ abstract class SegmentPlugin_DateConditionBase extends SegmentPlugin_Condition
 
     public function display($op, $value, $namePrefix)
     {
+        if ($op == SegmentPlugin_Operator::ANNIVERSARY) {
+            return '';
+        }
         $value = (array) $value;
         $htmlOptions = array();
 
@@ -122,7 +125,9 @@ abstract class SegmentPlugin_DateConditionBase extends SegmentPlugin_Condition
         $r = new stdClass();
         $r->join = $callBack['JOIN']();
 
-        if ($operator == SegmentPlugin_Operator::AFTERINTERVAL) {
+        if ($operator == SegmentPlugin_Operator::ANNIVERSARY) {
+            $r->where = $callBack[$operator]();
+        } elseif ($operator == SegmentPlugin_Operator::AFTERINTERVAL) {
             $interval = $this->validateInterval($value[0]);
             $r->where = $callBack[$operator]($interval);
         } else {
