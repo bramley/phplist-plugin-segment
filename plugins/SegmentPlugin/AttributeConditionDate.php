@@ -42,13 +42,16 @@ class SegmentPlugin_AttributeConditionDate extends SegmentPlugin_DateConditionBa
                 return "COALESCE($ua.value, '') != '' AND CURDATE() = DATE($ua.value) + INTERVAL $interval";
             },
             SegmentPlugin_Operator::BETWEEN => function ($start, $end) use ($ua) {
-                return "(COALESCE($ua.value, '') != '' AND DATE(COALESCE($ua.value, '')) BETWEEN '$start' AND '$end')";
+                return "(COALESCE($ua.value, '') != '' AND DATE($ua.value) BETWEEN '$start' AND '$end')";
+            },
+            SegmentPlugin_Operator::IS => function ($date) use ($ua) {
+                return "(COALESCE($ua.value, '') != '' AND DATE($ua.value) = '$date')";
             },
             SegmentPlugin_Operator::BEFORE => function ($date) use ($ua) {
-                return "(COALESCE($ua.value, '') != '' AND DATE(COALESCE($ua.value, '')) < '$date')";
+                return "(COALESCE($ua.value, '') != '' AND DATE($ua.value) < '$date')";
             },
             SegmentPlugin_Operator::AFTER => function ($date) use ($ua) {
-                return "(COALESCE($ua.value, '') != '' AND DATE(COALESCE($ua.value, '')) > '$date')";
+                return "(COALESCE($ua.value, '') != '' AND DATE($ua.value) > '$date')";
             },
             SegmentPlugin_Operator::ANNIVERSARY => function () use ($ua) {
                 return <<<END

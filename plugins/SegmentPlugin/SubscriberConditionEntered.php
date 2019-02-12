@@ -37,6 +37,9 @@ class SegmentPlugin_SubscriberConditionEntered extends SegmentPlugin_DateConditi
             SegmentPlugin_Operator::BETWEEN => function ($start, $end) {
                 return "DATE(u.entered) BETWEEN '$start' AND '$end'";
             },
+            SegmentPlugin_Operator::IS => function ($date) {
+                return "DATE(u.entered) = '$date'";
+            },
             SegmentPlugin_Operator::BEFORE => function ($date) {
                 return "DATE(u.entered) < '$date'";
             },

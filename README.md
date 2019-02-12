@@ -5,7 +5,7 @@
 The plugin allows you to send a campaign to a segment, a subset, of the subscribers who belong to the selected lists.
 
 The plugin adds a tab to the Send a campaign page that lets you define conditions. A condition comprises a field, an operator, and a target value.
-When the campaign is sent only those subscribers who meet either any or all of the conditions will be selected. 
+When the campaign is sent only those subscribers who meet either any or all of the conditions will be selected.
 
 These subscriber fields and attributes are supported for fields:
 
@@ -73,6 +73,7 @@ This plugin is free but if you install and find it useful then a donation to sup
 ## Version history ##
 
     version         Description
+    2.8.0+20190212  Add anniversary operator for date attribute field
     2.7.0+20181115  Add condition for date subscribed to list
     2.6.1+20181104  When sending a campaign log an event showing the number of subscribers selected
     2.6.0+20181103  Add condition for subscriber belonging to all lists selected for the campaign
