@@ -1,3 +1,6 @@
+version 2.9.0+20191231
+      Add aggregated campaigns to subscriber campaigns opened/not opened
+
 version 2.8.0+20190212
       Add anniversary operator for date attribute field
       Reinstate processing of IS operator for date fields

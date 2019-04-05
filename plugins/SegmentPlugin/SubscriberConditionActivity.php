@@ -25,6 +25,25 @@
  */
 class SegmentPlugin_SubscriberConditionActivity extends SegmentPlugin_Condition
 {
+    private $aggregatedCaptions;
+    private $aggregatedIntervals;
+
+    public function __construct($field)
+    {
+        parent::__construct($field);
+
+        $this->aggregatedCaptions = [
+            'last7day' => s('Any campaigns within the last 7 days'),
+            'last1month' => s('Any campaigns within the last 1 month'),
+            'last3month' => s('Any campaigns within the last 3 months'),
+        ];
+        $this->aggregatedIntervals = [
+            'last7day' => '7 DAY',
+            'last1month' => '1 MONTH',
+            'last3month' => '3 MONTH',
+        ];
+    }
+
     public function operators()
     {
         return array(
@@ -47,21 +66,55 @@ class SegmentPlugin_SubscriberConditionActivity extends SegmentPlugin_Condition
         if (count($campaigns) == 0) {
             return s('No campaigns have been sent to the selected lists');
         }
+        $listData = [];
+
+        if ($op == SegmentPlugin_Operator::OPENED || $op == SegmentPlugin_Operator::NOTOPENED) {
+            $listData['Aggregated Campaigns'] = $this->aggregatedCaptions;
+        }
+        $listData['Sent Campaigns'] = CHtml::listData($campaigns, 'id', 'subject');
 
         return CHtml::dropDownList(
             $namePrefix . '[value]',
             $value,
-            CHtml::listData($campaigns, 'id', 'subject'),
+            $listData,
             ['class' => 'campaigns']
         );
     }
 
     public function joinQuery($operator, $value)
     {
-        if (!ctype_digit($value)) {
+        if (ctype_digit($value)) {
+            return $this->joinQuerySingleCampaign($operator, $value);
+        }
+
+        if (!isset($this->aggregatedIntervals[$value])) {
             throw new SegmentPlugin_ValueException();
         }
 
+        return $this->joinQueryAggregate($operator, $this->aggregatedIntervals[$value]);
+    }
+
+    private function joinQueryAggregate($operator, $interval)
+    {
+        $r = new stdClass();
+
+        if ($operator == SegmentPlugin_Operator::OPENED || $operator == SegmentPlugin_Operator::NOTOPENED) {
+            $negate = $operator == SegmentPlugin_Operator::OPENED ? '' : 'NOT';
+            $umv = $this->createUniqueAlias('umv');
+            $r->join = '';
+            $r->where = <<<END
+                $negate EXISTS (
+                    SELECT * FROM {$this->tables['user_message_view']} $umv
+                    WHERE u.id = $umv.userid AND DATE_SUB(CURDATE(), INTERVAL $interval) < $umv.viewed
+                )
+END;
+        }
+
+        return $r;
+    }
+
+    private function joinQuerySingleCampaign($operator, $value)
+    {
         $um = $this->createUniqueAlias('um');
         $uml = $this->createUniqueAlias('uml');
         $r = new stdClass();
