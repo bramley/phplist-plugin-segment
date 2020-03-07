@@ -23,7 +23,6 @@
 namespace phpList\plugin\SegmentPlugin;
 
 use Psr\Container\ContainerInterface;
-use phpList\plugin\Common\DAO\Attribute;
 use phpList\plugin\SegmentPlugin\Controller\Export;
 use SegmentPlugin_ConditionFactory;
 use SegmentPlugin_DAO;
@@ -34,15 +33,11 @@ use SegmentPlugin_DAO;
 
 return [
     'ConditionFactory' => function (ContainerInterface $container) {
-        $daoAttr = new Attribute(
-            $container->get('phpList\plugin\Common\DB'),
-            20,
-            0
-        );
+        $daoAttr = $container->get('phpList\plugin\Common\DAO\Attribute');
 
         return new SegmentPlugin_ConditionFactory(
             $container->get('SegmentPlugin_DAO'),
-            $daoAttr->attributesById()
+            $daoAttr->attributesById(getConfig('segment_attribute_max_length'), 0)
         );
     },
     'SegmentPlugin_DAO' => function (ContainerInterface $container) {

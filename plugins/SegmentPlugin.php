@@ -78,6 +78,15 @@ class SegmentPlugin extends phplistPlugin
                 'allowempty' => true,
                 'category' => 'Segmentation',
             ),
+            'segment_attribute_max_length' => array(
+                'description' => s('Limit the display length of an attribute name. Enter 0 to always display the full attribute name'),
+                'type' => 'integer',
+                'value' => 0,
+                'allowempty' => true,
+                'min' => 0,
+                'max' => 100,
+                'category' => 'Segmentation',
+            ),
         );
         $this->error_level = E_ALL ^ E_NOTICE ^ E_DEPRECATED ^ E_STRICT;
 
@@ -98,9 +107,9 @@ class SegmentPlugin extends phplistPlugin
 
         return array(
             'phpList version 3.3.2 or later' => version_compare(VERSION, '3.3.2') >= 0,
-            'Common plugin version 3.9.0 or greater installed' => (
+            'Common plugin version 3.11.0 or greater installed' => (
                 phpListPlugin::isEnabled('CommonPlugin')
-                && version_compare($plugins['CommonPlugin']->version, '3.9.0') >= 0
+                && version_compare($plugins['CommonPlugin']->version, '3.11.0') >= 0
             ),
             'PHP version 5.4.0 or greater' => version_compare(PHP_VERSION, '5.4') > 0,
         );
