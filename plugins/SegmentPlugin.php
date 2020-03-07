@@ -469,7 +469,7 @@ class SegmentPlugin extends phplistPlugin
             "segment[c][$seq][field]",
             $field,
             array('Subscriber Data' => $this->conditionFactory->subscriberFields(), 'Attributes' => $this->conditionFactory->attributeFields()),
-            array('prompt' => $selectPrompt, 'class' => 'autosubmit')
+            array('prompt' => $selectPrompt, 'class' => 'autosubmit searchable')
         );
     }
 

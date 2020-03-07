@@ -29,15 +29,9 @@ The target value, also specific to each field, can be a text value, a select val
 Requires phplist version 3.3.2 or later, and php version 5.4.0 or later.
 Please check your php version before installing the plugin, otherwise phplist will fail (probably a white page).
 
-This plugin requires the Common Plugin version 3.9.0 or greater to also be installed, and will not work without that.
-**You must install that plugin or upgrade to the latest version if it is already installed**.
+This plugin requires the Common Plugin version 3.11.0 or greater to be installed, and will not work without that.
+That plugin is now included in phplist so you should only need to enable it.
 See <https://github.com/bramley/phplist-plugin-common>
-
-### Set the plugin directory ###
-The default plugin directory is `plugins` within the admin directory.
-
-You can use a directory outside of the web root by changing the definition of `PLUGIN_ROOTDIR` in config.php.
-The benefit of this is that plugins will not be affected when you upgrade phplist.
 
 ### Install through phplist ###
 Install on the Plugins page (menu Config > Plugins) using the package URL `https://github.com/bramley/phplist-plugin-segment/archive/master.zip`
@@ -73,6 +67,7 @@ This plugin is free but if you install and find it useful then a donation to sup
 ## Version history ##
 
     version         Description
+    2.10.0+20200307 Allow searching select list of subscriber fields and attributes
     2.9.0+20191231  Add aggregated campaigns to subscriber campaigns opened/not opened
     2.8.0+20190212  Add anniversary operator for date attribute field
     2.7.0+20181115  Add condition for date subscribed to list
