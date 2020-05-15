@@ -22,8 +22,8 @@
 
 namespace phpList\plugin\SegmentPlugin;
 
-use Psr\Container\ContainerInterface;
 use phpList\plugin\SegmentPlugin\Controller\Export;
+use Psr\Container\ContainerInterface;
 use SegmentPlugin_ConditionFactory;
 use SegmentPlugin_DAO;
 

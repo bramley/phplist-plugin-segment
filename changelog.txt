@@ -1,3 +1,7 @@
+version 2.10.1+20200515
+      Make the dependency check message clearer
+      Bring PHP CS Fixer up to date
+
 version 2.10.0+20200307
       Rework handling of attribute DAO
       Make the select list of subscriber fields and attributes searchable using Select2

@@ -26,8 +26,8 @@ use chdemko\BitArray\BitArray;
 use phpList\plugin\Common\DB;
 use phpList\plugin\Common\Logger;
 use phpList\plugin\Common\StringCallback;
-use SegmentPlugin_NoConditionsException;
 use SegmentPlugin_DAO;
+use SegmentPlugin_NoConditionsException;
 
 class Segment
 {

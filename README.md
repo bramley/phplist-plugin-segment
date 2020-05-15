@@ -67,6 +67,7 @@ This plugin is free but if you install and find it useful then a donation to sup
 ## Version history ##
 
     version         Description
+    2.10.1+20200515 Make the dependency check message clearer
     2.10.0+20200307 Allow searching select list of subscriber fields and attributes
     2.9.0+20191231  Add aggregated campaigns to subscriber campaigns opened/not opened
     2.8.0+20190212  Add anniversary operator for date attribute field
