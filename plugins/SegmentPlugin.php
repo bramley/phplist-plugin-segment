@@ -107,7 +107,7 @@ class SegmentPlugin extends phplistPlugin
 
         return array(
             'phpList version 3.3.2 or later' => version_compare(VERSION, '3.3.2') >= 0,
-            'Common plugin version 3.11.0 or greater installed' => (
+            'Common plugin version 3.11.0 or greater must be enabled' => (
                 phpListPlugin::isEnabled('CommonPlugin')
                 && version_compare($plugins['CommonPlugin']->version, '3.11.0') >= 0
             ),
