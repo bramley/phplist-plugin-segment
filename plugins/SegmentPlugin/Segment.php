@@ -115,8 +115,7 @@ class Segment
      *
      * @throws SegmentPlugin_NoConditionsException if there are not any conditions
      *
-     * @return array [0] number of subscribers selected
-     *               [1] BitArray
+     * @return array [int, BitArray]
      */
     public function loadSubscribers()
     {

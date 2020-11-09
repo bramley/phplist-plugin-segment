@@ -193,7 +193,7 @@ END;
      * @param int   $combine   whether to AND or OR conditions
      * @param int   $limit     the maximum number of subscriber email addresses to return
      *
-     * @return int number of subscribers
+     * @return array [int, Iterator]
      */
     public function calculateSubscribers($messageId, array $joins, $combine, $limit)
     {
