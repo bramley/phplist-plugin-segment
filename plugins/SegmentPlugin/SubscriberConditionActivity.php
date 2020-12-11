@@ -36,11 +36,13 @@ class SegmentPlugin_SubscriberConditionActivity extends SegmentPlugin_Condition
             'last7day' => s('Any campaigns within the last 7 days'),
             'last1month' => s('Any campaigns within the last 1 month'),
             'last3month' => s('Any campaigns within the last 3 months'),
+            'ever' => s('Any campaigns ever'),
         ];
         $this->aggregatedIntervals = [
             'last7day' => '7 DAY',
             'last1month' => '1 MONTH',
             'last3month' => '3 MONTH',
+            'ever' => '100 YEAR',
         ];
     }
 
@@ -67,10 +69,7 @@ class SegmentPlugin_SubscriberConditionActivity extends SegmentPlugin_Condition
             return s('No campaigns have been sent to the selected lists');
         }
         $listData = [];
-
-        if ($op == SegmentPlugin_Operator::OPENED || $op == SegmentPlugin_Operator::NOTOPENED) {
-            $listData['Aggregated Campaigns'] = $this->aggregatedCaptions;
-        }
+        $listData['Aggregated Campaigns'] = $this->aggregatedCaptions;
         $listData['Sent Campaigns'] = CHtml::listData($campaigns, 'id', 'subject');
 
         return CHtml::dropDownList(
@@ -98,14 +97,36 @@ class SegmentPlugin_SubscriberConditionActivity extends SegmentPlugin_Condition
     {
         $r = new stdClass();
 
-        if ($operator == SegmentPlugin_Operator::OPENED || $operator == SegmentPlugin_Operator::NOTOPENED) {
-            $negate = $operator == SegmentPlugin_Operator::OPENED ? '' : 'NOT';
+        if ($operator == SegmentPlugin_Operator::CLICKED || $operator == SegmentPlugin_Operator::NOTCLICKED) {
+            $uml = $this->createUniqueAlias('uml');
+            $negate = $operator == SegmentPlugin_Operator::CLICKED ? '' : 'NOT';
+            $r->join = '';
+            $r->where = <<<END
+                $negate EXISTS (
+                    SELECT * FROM {$this->tables['linktrack_uml_click']} $uml
+                    WHERE u.id = $uml.userid AND DATE_SUB(CURDATE(), INTERVAL $interval) < $uml.latestclick
+                )
+END;
+        } elseif ($operator == SegmentPlugin_Operator::OPENED || $operator == SegmentPlugin_Operator::NOTOPENED) {
             $umv = $this->createUniqueAlias('umv');
+            $negate = $operator == SegmentPlugin_Operator::OPENED ? '' : 'NOT';
             $r->join = '';
             $r->where = <<<END
                 $negate EXISTS (
                     SELECT * FROM {$this->tables['user_message_view']} $umv
                     WHERE u.id = $umv.userid AND DATE_SUB(CURDATE(), INTERVAL $interval) < $umv.viewed
+                )
+END;
+        } elseif ($operator == SegmentPlugin_Operator::SENT || $operator == SegmentPlugin_Operator::NOTSENT) {
+            $um = $this->createUniqueAlias('um');
+            $negate = $operator == SegmentPlugin_Operator::SENT ? '' : 'NOT';
+            $r->join = '';
+            $r->where = <<<END
+                $negate EXISTS (
+                    SELECT * FROM {$this->tables['usermessage']} $um
+                    WHERE u.id = $um.userid
+                    AND $um.status = 'sent'
+                    AND DATE_SUB(CURDATE(), INTERVAL $interval) < $um.entered
                 )
 END;
         }

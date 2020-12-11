@@ -1,3 +1,7 @@
+version 2.11.0+20201212
+      Correct docblock comments
+      Support aggregated campaigns for sent and clicked
+
 version 2.10.1+20200515
       Make the dependency check message clearer
       Bring PHP CS Fixer up to date
