@@ -67,6 +67,7 @@ This plugin is free but if you install and find it useful then a donation to sup
 ## Version history ##
 
     version         Description
+    2.12.0+20210225 Simplify whether campaign can be submitted
     2.11.0+20201212 Support aggregated campaigns for sent and clicked
     2.10.1+20200515 Make the dependency check message clearer
     2.10.0+20200307 Allow searching select list of subscriber fields and attributes

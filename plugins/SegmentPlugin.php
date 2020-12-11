@@ -296,7 +296,7 @@ class SegmentPlugin extends phplistPlugin
         $segment = $this->createSegment($messageData['id'], $messageData['segment']);
 
         try {
-            list($totalSubscribers, $subscribers) = $segment->calculateSubscribers(getConfig('segment_subscribers_max'));
+            $segment->validateSegment();
         } catch (SegmentPlugin_ValueException $e) {
             return s('Invalid value for segment condition');
         } catch (SegmentPlugin_ConditionException $e) {

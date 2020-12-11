@@ -111,6 +111,16 @@ class Segment
     }
 
     /**
+     * Validate that all conditions are valid by building the joins.
+     * Exceptions can be thrown by the called methods.
+     */
+    public function validateSegment()
+    {
+        $this->filterIncompleteConditions();
+        $joins = $this->selectionQueryJoins();
+    }
+
+    /**
      * Load all the subscribers who are to receive the campaign.
      *
      * @throws SegmentPlugin_NoConditionsException if there are not any conditions

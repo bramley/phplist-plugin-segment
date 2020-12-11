@@ -1,3 +1,7 @@
+version 2.12.0+20210225
+      Add base translations
+      Simplify whether campaign can be submitted
+
 version 2.11.0+20201212
       Correct docblock comments
       Support aggregated campaigns for sent and clicked
