@@ -2,10 +2,15 @@
 
 return [
     ['%d subscribers will be selected.', '%d subscribers will be selected.'],
+    ['Any campaigns ever', 'Any campaigns ever'],
+    ['Any campaigns within the last 1 month', 'Any campaigns within the last 1 month'],
+    ['Any campaigns within the last 3 months', 'Any campaigns within the last 3 months'],
+    ['Any campaigns within the last 7 days', 'Any campaigns within the last 7 days'],
     ['Belongs to all selected lists', 'Belongs to all selected lists'],
     ['Calculate', 'Calculate'],
     ['First %d subscribers:', 'First %d subscribers:'],
     ['Invalid value for segment condition', 'Invalid value for segment condition'],
+    ['Limit the display length of an attribute name. Enter 0 to always display the full attribute name', 'Limit the display length of an attribute name. Enter 0 to always display the full attribute name'],
     ['Load segments', 'Load segments'],
     ['No campaigns have been sent to the selected lists', 'No campaigns have been sent to the selected lists'],
     ['Please select at least one list on the Lists tab before adding segmentation conditions', 'Please select at least one list on the Lists tab before adding segmentation conditions'],
