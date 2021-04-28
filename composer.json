@@ -1,0 +1,14 @@
+{
+    "name": "bramley/phplist-plugin-segment",
+    "description": "Campaign segment plugin for phpList",
+    "keywords": [
+      "phplist",
+      "email",
+      "newsletter",
+      "manager",
+      "permission marketing"
+    ],
+    "homepage": "https://www.phpList.org/",
+    "type": "phplist-plugin",
+    "license": "GNU Affero General Public License version 3.0 or later (AGPLv3+)"
+}
