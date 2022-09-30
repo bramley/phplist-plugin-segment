@@ -69,6 +69,11 @@ class SegmentPlugin_SubscriberConditionEmail extends SegmentPlugin_Condition
                 $op = 'IN';
                 $target = '(' . $this->commaQuotedList($emails) . ')';
                 break;
+            case SegmentPlugin_Operator::ISNOTINCLUDED:
+                $emails = preg_split("/[\r\n]+/", $value, -1, PREG_SPLIT_NO_EMPTY);
+                $op = 'NOT IN';
+                $target = '(' . $this->commaQuotedList($emails) . ')';
+                break;
             case SegmentPlugin_Operator::IS:
             default:
                 $op = '=';
