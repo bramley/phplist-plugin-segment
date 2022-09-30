@@ -1,3 +1,7 @@
+version 2.13.0+20221104
+Aris Lydopoulos (1):
+      Add IS NOT INCLUDED operator for selecting email addresses that are not in a list.
+
 version 2.12.1+20210428
       Allow the plugin to be a dependency of phplist.
 

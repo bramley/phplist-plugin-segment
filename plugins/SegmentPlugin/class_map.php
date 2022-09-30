@@ -1,6 +1,6 @@
 <?php
 
-return array(
+return [
     'SegmentPlugin_AttributeConditionCheckbox' => $base . '/SegmentPlugin/AttributeConditionCheckbox.php',
     'SegmentPlugin_AttributeConditionCheckboxgroup' => $base . '/SegmentPlugin/AttributeConditionCheckboxgroup.php',
     'SegmentPlugin_AttributeConditionDate' => $base . '/SegmentPlugin/AttributeConditionDate.php',
@@ -22,6 +22,7 @@ return array(
     'SegmentPlugin_SubscriberConditionLists' => $base . '/SegmentPlugin/SubscriberConditionLists.php',
     'SegmentPlugin_ValueException' => $base . '/SegmentPlugin/ValueException.php',
     'phpList\plugin\SegmentPlugin\ControllerFactory' => $base . '/SegmentPlugin/ControllerFactory.php',
+    'phpList\plugin\SegmentPlugin\Controller\Export' => $base . '/SegmentPlugin/Controller/Export.php',
     'phpList\plugin\SegmentPlugin\Segment' => $base . '/SegmentPlugin/Segment.php',
     'phpList\plugin\SegmentPlugin\SelectedSubscribersExport' => $base . '/SegmentPlugin/SelectedSubscribersExport.php',
-);
+];

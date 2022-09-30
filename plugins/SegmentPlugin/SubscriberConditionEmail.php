@@ -34,12 +34,13 @@ class SegmentPlugin_SubscriberConditionEmail extends SegmentPlugin_Condition
             SegmentPlugin_Operator::REGEXP => s('REGEXP'),
             SegmentPlugin_Operator::NOTREGEXP => s('not REGEXP'),
             SegmentPlugin_Operator::ISINCLUDED => s('is included'),
+            SegmentPlugin_Operator::ISNOTINCLUDED => s('is not included'),
         );
     }
 
     public function display($op, $value, $namePrefix)
     {
-        return $op == SegmentPlugin_Operator::ISINCLUDED
+        return ($op == SegmentPlugin_Operator::ISINCLUDED || $op == SegmentPlugin_Operator::ISNOTINCLUDED)
             ? CHtml::textArea($namePrefix . '[value]', $value)
             : CHtml::textField($namePrefix . '[value]', $value);
     }
@@ -67,6 +68,11 @@ class SegmentPlugin_SubscriberConditionEmail extends SegmentPlugin_Condition
             case SegmentPlugin_Operator::ISINCLUDED:
                 $emails = preg_split("/[\r\n]+/", $value, -1, PREG_SPLIT_NO_EMPTY);
                 $op = 'IN';
+                $target = '(' . $this->commaQuotedList($emails) . ')';
+                break;
+            case SegmentPlugin_Operator::ISNOTINCLUDED:
+                $emails = preg_split("/[\r\n]+/", $value, -1, PREG_SPLIT_NO_EMPTY);
+                $op = 'NOT IN';
                 $target = '(' . $this->commaQuotedList($emails) . ')';
                 break;
             case SegmentPlugin_Operator::IS:
