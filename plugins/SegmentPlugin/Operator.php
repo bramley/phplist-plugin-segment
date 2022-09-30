@@ -48,6 +48,7 @@ class SegmentPlugin_Operator
     const AFTERINTERVAL = 21;
     const ISINCLUDED = 22;
     const ANNIVERSARY = 23;
+    const ISNOTINCLUDED = 24;
 
     private function __construct()
     {
