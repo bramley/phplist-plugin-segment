@@ -40,7 +40,7 @@ class SegmentPlugin_SubscriberConditionEmail extends SegmentPlugin_Condition
 
     public function display($op, $value, $namePrefix)
     {
-        return $op == SegmentPlugin_Operator::ISINCLUDED
+        return $op == (SegmentPlugin_Operator::ISINCLUDED || SegmentPlugin_Operator::ISNOTINCLUDED)
             ? CHtml::textArea($namePrefix . '[value]', $value)
             : CHtml::textField($namePrefix . '[value]', $value);
     }
