@@ -34,6 +34,7 @@ class SegmentPlugin_SubscriberConditionEmail extends SegmentPlugin_Condition
             SegmentPlugin_Operator::REGEXP => s('REGEXP'),
             SegmentPlugin_Operator::NOTREGEXP => s('not REGEXP'),
             SegmentPlugin_Operator::ISINCLUDED => s('is included'),
+            SegmentPlugin_Operator::ISNOTINCLUDED => s('is not included')
         );
     }
 
