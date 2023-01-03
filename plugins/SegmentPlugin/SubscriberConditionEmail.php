@@ -50,6 +50,11 @@ class SegmentPlugin_SubscriberConditionEmail extends SegmentPlugin_Condition
         if (!(is_string($value) && $value !== '')) {
             throw new SegmentPlugin_ValueException();
         }
+
+        if (($operator == SegmentPlugin_Operator::REGEXP || $operator == SegmentPlugin_Operator::NOTREGEXP)
+            && !$this->dao->isRegexValid($value)) {
+            throw new SegmentPlugin_ValueException();
+        }
         $target = null;
 
         switch ($operator) {

@@ -218,4 +218,23 @@ END;
 
         return $this->dbCommand->queryOne($sql);
     }
+
+    /**
+     * Validate the syntax of a regular expression by trying to use it in a query.
+     *
+     * @return bool
+     */
+    public function isRegexValid($regexp)
+    {
+        $regexp = sql_escape($regexp);
+        $sql = "SELECT '' REGEXP '$regexp'";
+
+        try {
+            $this->dbCommand->queryOne($sql);
+        } catch (\Exception $e) {
+            return false;
+        }
+
+        return true;
+    }
 }

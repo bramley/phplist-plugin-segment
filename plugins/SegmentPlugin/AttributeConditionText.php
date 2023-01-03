@@ -57,6 +57,10 @@ class SegmentPlugin_AttributeConditionText extends SegmentPlugin_Condition
             throw new SegmentPlugin_ValueException();
         }
 
+        if (($operator == SegmentPlugin_Operator::REGEXP || $operator == SegmentPlugin_Operator::NOTREGEXP)
+            && !$this->dao->isRegexValid($value)) {
+            throw new SegmentPlugin_ValueException();
+        }
         $ua = $this->createUniqueAlias('ua');
         $value = sql_escape($value);
 

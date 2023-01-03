@@ -1,3 +1,6 @@
+version 2.13.1+20230103
+      Fix problem with an invalid regex causing an exception and a "white page"
+
 version 2.13.0+20221104
 Aris Lydopoulos (1):
       Add IS NOT INCLUDED operator for selecting email addresses that are not in a list.
