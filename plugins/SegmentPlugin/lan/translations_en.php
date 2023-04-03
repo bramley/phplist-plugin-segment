@@ -49,6 +49,7 @@ return [
     ['is not', 'is not'],
     ['is not blank', 'is not blank'],
     ['is not checked', 'is not checked'],
+    ['is not included', 'is not included'],
     ['is one of', 'is one of'],
     ['matches', 'matches'],
     ['none checked', 'none checked'],
