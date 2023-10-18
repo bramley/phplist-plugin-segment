@@ -437,6 +437,7 @@ class SegmentPlugin extends phplistPlugin
         // display combine
         $combineOps = array(SegmentPlugin_Operator::ONE => s('any'), SegmentPlugin_Operator::ALL => s('all'));
         $params['combine'] = $combineOps[$segment->combine()];
+        list($params['totalSubscribers']) = $segment->calculateSubscribers(1);
         $html = $this->render('viewmessage.tpl.php', $params);
 
         return array('Segment conditions', $html);

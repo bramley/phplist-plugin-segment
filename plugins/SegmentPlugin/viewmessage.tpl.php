@@ -45,4 +45,7 @@
         </li>
 <?php endforeach; ?>
     </ul>
+    <?php if ($totalSubscribers > 0): ?>
+      <div><?php echo s('If requeued, campaign will be sent to %d subscribers', $totalSubscribers); ?></div>
+    <?php endif; ?>
 </div>
