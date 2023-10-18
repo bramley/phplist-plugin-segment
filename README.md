@@ -67,6 +67,7 @@ This plugin is free but if you install and find it useful then a donation to sup
 ## Version history ##
 
     version         Description
+    2.14.0+20231018 When viewing message show number of pending subscribers
     2.13.2+20230403 Update translations
     2.13.1+20230103 Fix problem with an invalid regex causing an exception and a "white page"
     2.13.0+20221104 Add IS NOT INCLUDED operator

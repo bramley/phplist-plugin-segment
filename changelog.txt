@@ -1,3 +1,7 @@
+version 2.14.0+20231018
+      When viewing message show number of pending subscribers
+      cs fixer
+
 version 2.13.2+20230403
       Update translations
       Update CS Fixer

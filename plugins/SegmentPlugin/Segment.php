@@ -123,9 +123,9 @@ class Segment
     /**
      * Load all the subscribers who are to receive the campaign.
      *
-     * @throws SegmentPlugin_NoConditionsException if there are not any conditions
-     *
      * @return array [int, BitArray]
+     *
+     * @throws SegmentPlugin_NoConditionsException if there are not any conditions
      */
     public function loadSubscribers()
     {
