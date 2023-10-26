@@ -41,7 +41,7 @@ WHERE name = 'excludelist' AND id = $messageId
 END;
         $excludeSubquery = '';
 
-        if ($data = $this->dbCommand->queryOne($sql, 'data')) {
+        if ($data = $this->dbCommand->queryOne($sql)) {
             $excluded = unserialize(substr($data, 4));
 
             if (($key = array_search(-1, $excluded)) !== false) {
