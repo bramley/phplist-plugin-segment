@@ -1,3 +1,7 @@
+version 2.14.1+20231212
+      Remove unnecessary parameter to queryOne()
+      Use namespaced names for Common plugin classes instead of PEAR names
+
 version 2.14.0+20231018
       When viewing message show number of pending subscribers
       cs fixer

@@ -25,7 +25,7 @@
  *
  * @category  phplist
  */
-class SegmentPlugin_DAO extends CommonPlugin_DAO
+class SegmentPlugin_DAO extends phpList\plugin\Common\DAO
 {
     private function formatInList(array $values)
     {
